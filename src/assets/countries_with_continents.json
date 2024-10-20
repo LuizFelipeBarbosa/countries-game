@@ -1,0 +1,1982 @@
+[
+    {
+        "id": 4,
+        "alpha2": "af",
+        "alpha3": "afg",
+        "name": [
+            "Afghanistan",
+            "Islamic Republic of Afghanistan",
+            "Islamic Emirate of Afghanistan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 8,
+        "alpha2": "al",
+        "alpha3": "alb",
+        "name": [
+            "Albania",
+            "Republic of Albania"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 12,
+        "alpha2": "dz",
+        "alpha3": "dza",
+        "name": [
+            "Algeria",
+            "People's Democratic Republic of Algeria"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 20,
+        "alpha2": "ad",
+        "alpha3": "and",
+        "name": [
+            "Andorra",
+            "Principality of Andorra"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 24,
+        "alpha2": "ao",
+        "alpha3": "ago",
+        "name": [
+            "Angola",
+            "Republic of Angola"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 28,
+        "alpha2": "ag",
+        "alpha3": "atg",
+        "name": [
+            "Antigua and Barbuda"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 32,
+        "alpha2": "ar",
+        "alpha3": "arg",
+        "name": [
+            "Argentina",
+            "Argentine Republic"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 51,
+        "alpha2": "am",
+        "alpha3": "arm",
+        "name": [
+            "Armenia",
+            "Republic of Armenia"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 36,
+        "alpha2": "au",
+        "alpha3": "aus",
+        "name": [
+            "Australia",
+            "Commonwealth of Australia"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 40,
+        "alpha2": "at",
+        "alpha3": "aut",
+        "name": [
+            "Austria",
+            "Republic of Austria"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 31,
+        "alpha2": "az",
+        "alpha3": "aze",
+        "name": [
+            "Azerbaijan",
+            "Republic of Azerbaijan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 44,
+        "alpha2": "bs",
+        "alpha3": "bhs",
+        "name": [
+            "Bahamas",
+            "The Bahamas",
+            "Commonwealth of The Bahamas"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 48,
+        "alpha2": "bh",
+        "alpha3": "bhr",
+        "name": [
+            "Bahrain",
+            "Kingdom of Bahrain"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 50,
+        "alpha2": "bd",
+        "alpha3": "bgd",
+        "name": [
+            "Bangladesh",
+            "People's Republic of Bangladesh"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 52,
+        "alpha2": "bb",
+        "alpha3": "brb",
+        "name": [
+            "Barbados",
+            "Republic of Barbados"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 112,
+        "alpha2": "by",
+        "alpha3": "blr",
+        "name": [
+            "Belarus",
+            "Republic of Belarus"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 56,
+        "alpha2": "be",
+        "alpha3": "bel",
+        "name": [
+            "Belgium",
+            "Kingdom of Belgium"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 84,
+        "alpha2": "bz",
+        "alpha3": "blz",
+        "name": [
+            "Belize"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 204,
+        "alpha2": "bj",
+        "alpha3": "ben",
+        "name": [
+            "Benin",
+            "Republic of Benin"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 64,
+        "alpha2": "bt",
+        "alpha3": "btn",
+        "name": [
+            "Bhutan",
+            "Kingdom of Bhutan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 68,
+        "alpha2": "bo",
+        "alpha3": "bol",
+        "name": [
+            "Bolivia",
+            "Plurinational State of Bolivia"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 70,
+        "alpha2": "ba",
+        "alpha3": "bih",
+        "name": [
+            "Bosnia and Herzegovina",
+            "Bosnia-Herzegovina"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 72,
+        "alpha2": "bw",
+        "alpha3": "bwa",
+        "name": [
+            "Botswana",
+            "Republic of Botswana"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 76,
+        "alpha2": "br",
+        "alpha3": "bra",
+        "name": [
+            "Brazil",
+            "Federative Republic of Brazil"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 96,
+        "alpha2": "bn",
+        "alpha3": "brn",
+        "name": [
+            "Brunei",
+            "Brunei Darussalam",
+            "Nation of Brunei, the Abode of Peace"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 100,
+        "alpha2": "bg",
+        "alpha3": "bgr",
+        "name": [
+            "Bulgaria",
+            "Republic of Bulgaria"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 854,
+        "alpha2": "bf",
+        "alpha3": "bfa",
+        "name": [
+            "Burkina Faso",
+            "Republic of Burkina Faso"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 108,
+        "alpha2": "bi",
+        "alpha3": "bdi",
+        "name": [
+            "Burundi",
+            "Republic of Burundi"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 132,
+        "alpha2": "cv",
+        "alpha3": "cpv",
+        "name": [
+            "Cabo Verde",
+            "Cape Verde",
+            "Republic of Cabo Verde"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 116,
+        "alpha2": "kh",
+        "alpha3": "khm",
+        "name": [
+            "Cambodia",
+            "Kingdom of Cambodia"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 120,
+        "alpha2": "cm",
+        "alpha3": "cmr",
+        "name": [
+            "Cameroon",
+            "Republic of Cameroon"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 124,
+        "alpha2": "ca",
+        "alpha3": "can",
+        "name": [
+            "Canada"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 140,
+        "alpha2": "cf",
+        "alpha3": "caf",
+        "name": [
+            "Central African Republic",
+            "CAR"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 148,
+        "alpha2": "td",
+        "alpha3": "tcd",
+        "name": [
+            "Chad",
+            "Republic of Chad"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 152,
+        "alpha2": "cl",
+        "alpha3": "chl",
+        "name": [
+            "Chile",
+            "Republic of Chile"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 156,
+        "alpha2": "cn",
+        "alpha3": "chn",
+        "name": [
+            "China",
+            "People's Republic of China",
+            "PRC"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 170,
+        "alpha2": "co",
+        "alpha3": "col",
+        "name": [
+            "Colombia",
+            "Republic of Colombia"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 174,
+        "alpha2": "km",
+        "alpha3": "com",
+        "name": [
+            "Comoros",
+            "Union of the Comoros"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 178,
+        "alpha2": "cg",
+        "alpha3": "cog",
+        "name": [
+            "Republic of the Congo",
+            "Congo"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 180,
+        "alpha2": "cd",
+        "alpha3": "cod",
+        "name": [
+            "Democratic Republic of the Congo",
+            "DRC",
+            "Congo-Kinshasa"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 188,
+        "alpha2": "cr",
+        "alpha3": "cri",
+        "name": [
+            "Costa Rica",
+            "Republic of Costa Rica"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 384,
+        "alpha2": "ci",
+        "alpha3": "civ",
+        "name": [
+            "C\u00f4te d'Ivoire",
+            "Ivory Coast",
+            "Republic of C\u00f4te d'Ivoire"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 191,
+        "alpha2": "hr",
+        "alpha3": "hrv",
+        "name": [
+            "Croatia",
+            "Republic of Croatia"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 192,
+        "alpha2": "cu",
+        "alpha3": "cub",
+        "name": [
+            "Cuba",
+            "Republic of Cuba"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 196,
+        "alpha2": "cy",
+        "alpha3": "cyp",
+        "name": [
+            "Cyprus",
+            "Republic of Cyprus"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 203,
+        "alpha2": "cz",
+        "alpha3": "cze",
+        "name": [
+            "Czechia",
+            "Czech Republic"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 208,
+        "alpha2": "dk",
+        "alpha3": "dnk",
+        "name": [
+            "Denmark",
+            "Kingdom of Denmark"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 262,
+        "alpha2": "dj",
+        "alpha3": "dji",
+        "name": [
+            "Djibouti",
+            "Republic of Djibouti"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 212,
+        "alpha2": "dm",
+        "alpha3": "dma",
+        "name": [
+            "Dominica",
+            "Commonwealth of Dominica"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 214,
+        "alpha2": "do",
+        "alpha3": "dom",
+        "name": [
+            "Dominican Republic"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 218,
+        "alpha2": "ec",
+        "alpha3": "ecu",
+        "name": [
+            "Ecuador",
+            "Republic of Ecuador"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 818,
+        "alpha2": "eg",
+        "alpha3": "egy",
+        "name": [
+            "Egypt",
+            "Arab Republic of Egypt"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 222,
+        "alpha2": "sv",
+        "alpha3": "slv",
+        "name": [
+            "El Salvador",
+            "Republic of El Salvador"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 226,
+        "alpha2": "gq",
+        "alpha3": "gnq",
+        "name": [
+            "Equatorial Guinea",
+            "Republic of Equatorial Guinea"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 232,
+        "alpha2": "er",
+        "alpha3": "eri",
+        "name": [
+            "Eritrea",
+            "State of Eritrea"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 233,
+        "alpha2": "ee",
+        "alpha3": "est",
+        "name": [
+            "Estonia",
+            "Republic of Estonia"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 748,
+        "alpha2": "sz",
+        "alpha3": "swz",
+        "name": [
+            "Eswatini",
+            "Swaziland",
+            "Kingdom of Eswatini"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 231,
+        "alpha2": "et",
+        "alpha3": "eth",
+        "name": [
+            "Ethiopia",
+            "Federal Democratic Republic of Ethiopia"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 242,
+        "alpha2": "fj",
+        "alpha3": "fji",
+        "name": [
+            "Fiji",
+            "Republic of Fiji"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 246,
+        "alpha2": "fi",
+        "alpha3": "fin",
+        "name": [
+            "Finland",
+            "Republic of Finland"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 250,
+        "alpha2": "fr",
+        "alpha3": "fra",
+        "name": [
+            "France",
+            "French Republic"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 266,
+        "alpha2": "ga",
+        "alpha3": "gab",
+        "name": [
+            "Gabon",
+            "Gabonese Republic"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 270,
+        "alpha2": "gm",
+        "alpha3": "gmb",
+        "name": [
+            "Gambia",
+            "The Gambia",
+            "Republic of The Gambia"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 268,
+        "alpha2": "ge",
+        "alpha3": "geo",
+        "name": [
+            "Georgia"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 276,
+        "alpha2": "de",
+        "alpha3": "deu",
+        "name": [
+            "Germany",
+            "Federal Republic of Germany"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 288,
+        "alpha2": "gh",
+        "alpha3": "gha",
+        "name": [
+            "Ghana",
+            "Republic of Ghana"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 300,
+        "alpha2": "gr",
+        "alpha3": "grc",
+        "name": [
+            "Greece",
+            "Hellenic Republic"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 308,
+        "alpha2": "gd",
+        "alpha3": "grd",
+        "name": [
+            "Grenada"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 320,
+        "alpha2": "gt",
+        "alpha3": "gtm",
+        "name": [
+            "Guatemala",
+            "Republic of Guatemala"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 324,
+        "alpha2": "gn",
+        "alpha3": "gin",
+        "name": [
+            "Guinea",
+            "Republic of Guinea"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 624,
+        "alpha2": "gw",
+        "alpha3": "gnb",
+        "name": [
+            "Guinea-Bissau",
+            "Guinea Bissau",
+            "Republic of Guinea-Bissau"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 328,
+        "alpha2": "gy",
+        "alpha3": "guy",
+        "name": [
+            "Guyana",
+            "Co-operative Republic of Guyana"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 332,
+        "alpha2": "ht",
+        "alpha3": "hti",
+        "name": [
+            "Haiti",
+            "Republic of Haiti"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 340,
+        "alpha2": "hn",
+        "alpha3": "hnd",
+        "name": [
+            "Honduras",
+            "Republic of Honduras"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 348,
+        "alpha2": "hu",
+        "alpha3": "hun",
+        "name": [
+            "Hungary"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 352,
+        "alpha2": "is",
+        "alpha3": "isl",
+        "name": [
+            "Iceland"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 356,
+        "alpha2": "in",
+        "alpha3": "ind",
+        "name": [
+            "India",
+            "Republic of India",
+            "Bharat"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 360,
+        "alpha2": "id",
+        "alpha3": "idn",
+        "name": [
+            "Indonesia",
+            "Republic of Indonesia"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 364,
+        "alpha2": "ir",
+        "alpha3": "irn",
+        "name": [
+            "Iran",
+            "Islamic Republic of Iran"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 368,
+        "alpha2": "iq",
+        "alpha3": "irq",
+        "name": [
+            "Iraq",
+            "Republic of Iraq"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 372,
+        "alpha2": "ie",
+        "alpha3": "irl",
+        "name": [
+            "Ireland",
+            "Republic of Ireland",
+            "\u00c9ire"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 376,
+        "alpha2": "il",
+        "alpha3": "isr",
+        "name": [
+            "Israel",
+            "State of Israel"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 380,
+        "alpha2": "it",
+        "alpha3": "ita",
+        "name": [
+            "Italy",
+            "Italian Republic"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 388,
+        "alpha2": "jm",
+        "alpha3": "jam",
+        "name": [
+            "Jamaica"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 392,
+        "alpha2": "jp",
+        "alpha3": "jpn",
+        "name": [
+            "Japan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 400,
+        "alpha2": "jo",
+        "alpha3": "jor",
+        "name": [
+            "Jordan",
+            "Hashemite Kingdom of Jordan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 398,
+        "alpha2": "kz",
+        "alpha3": "kaz",
+        "name": [
+            "Kazakhstan",
+            "Republic of Kazakhstan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 404,
+        "alpha2": "ke",
+        "alpha3": "ken",
+        "name": [
+            "Kenya",
+            "Republic of Kenya"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 296,
+        "alpha2": "ki",
+        "alpha3": "kir",
+        "name": [
+            "Kiribati",
+            "Republic of Kiribati"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 408,
+        "alpha2": "kp",
+        "alpha3": "prk",
+        "name": [
+            "North Korea",
+            "Democratic People's Republic of Korea",
+            "DPRK"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 410,
+        "alpha2": "kr",
+        "alpha3": "kor",
+        "name": [
+            "South Korea",
+            "Republic of Korea",
+            "ROK"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 414,
+        "alpha2": "kw",
+        "alpha3": "kwt",
+        "name": [
+            "Kuwait",
+            "State of Kuwait"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 417,
+        "alpha2": "kg",
+        "alpha3": "kgz",
+        "name": [
+            "Kyrgyzstan",
+            "Kyrgyz Republic"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 418,
+        "alpha2": "la",
+        "alpha3": "lao",
+        "name": [
+            "Laos",
+            "Lao People's Democratic Republic"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 428,
+        "alpha2": "lv",
+        "alpha3": "lva",
+        "name": [
+            "Latvia",
+            "Republic of Latvia"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 422,
+        "alpha2": "lb",
+        "alpha3": "lbn",
+        "name": [
+            "Lebanon",
+            "Lebanese Republic"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 426,
+        "alpha2": "ls",
+        "alpha3": "lso",
+        "name": [
+            "Lesotho",
+            "Kingdom of Lesotho"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 430,
+        "alpha2": "lr",
+        "alpha3": "lbr",
+        "name": [
+            "Liberia",
+            "Republic of Liberia"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 434,
+        "alpha2": "ly",
+        "alpha3": "lby",
+        "name": [
+            "Libya",
+            "State of Libya"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 438,
+        "alpha2": "li",
+        "alpha3": "lie",
+        "name": [
+            "Liechtenstein",
+            "Principality of Liechtenstein"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 440,
+        "alpha2": "lt",
+        "alpha3": "ltu",
+        "name": [
+            "Lithuania",
+            "Republic of Lithuania"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 442,
+        "alpha2": "lu",
+        "alpha3": "lux",
+        "name": [
+            "Luxembourg",
+            "Grand Duchy of Luxembourg"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 450,
+        "alpha2": "mg",
+        "alpha3": "mdg",
+        "name": [
+            "Madagascar",
+            "Republic of Madagascar"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 454,
+        "alpha2": "mw",
+        "alpha3": "mwi",
+        "name": [
+            "Malawi",
+            "Republic of Malawi"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 458,
+        "alpha2": "my",
+        "alpha3": "mys",
+        "name": [
+            "Malaysia"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 462,
+        "alpha2": "mv",
+        "alpha3": "mdv",
+        "name": [
+            "Maldives",
+            "Republic of Maldives"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 466,
+        "alpha2": "ml",
+        "alpha3": "mli",
+        "name": [
+            "Mali",
+            "Republic of Mali"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 470,
+        "alpha2": "mt",
+        "alpha3": "mlt",
+        "name": [
+            "Malta",
+            "Republic of Malta"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 584,
+        "alpha2": "mh",
+        "alpha3": "mhl",
+        "name": [
+            "Marshall Islands",
+            "Republic of the Marshall Islands"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 478,
+        "alpha2": "mr",
+        "alpha3": "mrt",
+        "name": [
+            "Mauritania",
+            "Islamic Republic of Mauritania"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 480,
+        "alpha2": "mu",
+        "alpha3": "mus",
+        "name": [
+            "Mauritius",
+            "Republic of Mauritius"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 484,
+        "alpha2": "mx",
+        "alpha3": "mex",
+        "name": [
+            "Mexico",
+            "United Mexican States"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 583,
+        "alpha2": "fm",
+        "alpha3": "fsm",
+        "name": [
+            "Micronesia",
+            "Federated States of Micronesia"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 498,
+        "alpha2": "md",
+        "alpha3": "mda",
+        "name": [
+            "Moldova",
+            "Republic of Moldova"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 492,
+        "alpha2": "mc",
+        "alpha3": "mco",
+        "name": [
+            "Monaco",
+            "Principality of Monaco"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 496,
+        "alpha2": "mn",
+        "alpha3": "mng",
+        "name": [
+            "Mongolia"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 499,
+        "alpha2": "me",
+        "alpha3": "mne",
+        "name": [
+            "Montenegro"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 504,
+        "alpha2": "ma",
+        "alpha3": "mar",
+        "name": [
+            "Morocco",
+            "Kingdom of Morocco"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 508,
+        "alpha2": "mz",
+        "alpha3": "moz",
+        "name": [
+            "Mozambique",
+            "Republic of Mozambique"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 104,
+        "alpha2": "mm",
+        "alpha3": "mmr",
+        "name": [
+            "Myanmar",
+            "Burma",
+            "Republic of the Union of Myanmar"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 516,
+        "alpha2": "na",
+        "alpha3": "nam",
+        "name": [
+            "Namibia",
+            "Republic of Namibia"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 520,
+        "alpha2": "nr",
+        "alpha3": "nru",
+        "name": [
+            "Nauru",
+            "Republic of Nauru"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 524,
+        "alpha2": "np",
+        "alpha3": "npl",
+        "name": [
+            "Nepal",
+            "Federal Democratic Republic of Nepal"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 528,
+        "alpha2": "nl",
+        "alpha3": "nld",
+        "name": [
+            "Netherlands",
+            "Holland",
+            "Kingdom of the Netherlands"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 554,
+        "alpha2": "nz",
+        "alpha3": "nzl",
+        "name": [
+            "New Zealand"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 558,
+        "alpha2": "ni",
+        "alpha3": "nic",
+        "name": [
+            "Nicaragua",
+            "Republic of Nicaragua"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 562,
+        "alpha2": "ne",
+        "alpha3": "ner",
+        "name": [
+            "Niger",
+            "Republic of the Niger"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 566,
+        "alpha2": "ng",
+        "alpha3": "nga",
+        "name": [
+            "Nigeria",
+            "Federal Republic of Nigeria"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 807,
+        "alpha2": "mk",
+        "alpha3": "mkd",
+        "name": [
+            "North Macedonia",
+            "Republic of North Macedonia",
+            "Macedonia"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 578,
+        "alpha2": "no",
+        "alpha3": "nor",
+        "name": [
+            "Norway",
+            "Kingdom of Norway"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 512,
+        "alpha2": "om",
+        "alpha3": "omn",
+        "name": [
+            "Oman",
+            "Sultanate of Oman"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 586,
+        "alpha2": "pk",
+        "alpha3": "pak",
+        "name": [
+            "Pakistan",
+            "Islamic Republic of Pakistan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 585,
+        "alpha2": "pw",
+        "alpha3": "plw",
+        "name": [
+            "Palau",
+            "Republic of Palau"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 591,
+        "alpha2": "pa",
+        "alpha3": "pan",
+        "name": [
+            "Panama",
+            "Republic of Panama"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 598,
+        "alpha2": "pg",
+        "alpha3": "png",
+        "name": [
+            "Papua New Guinea",
+            "Independent State of Papua New Guinea"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 600,
+        "alpha2": "py",
+        "alpha3": "pry",
+        "name": [
+            "Paraguay",
+            "Republic of Paraguay"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 604,
+        "alpha2": "pe",
+        "alpha3": "per",
+        "name": [
+            "Peru",
+            "Republic of Peru"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 608,
+        "alpha2": "ph",
+        "alpha3": "phl",
+        "name": [
+            "Philippines",
+            "Republic of the Philippines"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 616,
+        "alpha2": "pl",
+        "alpha3": "pol",
+        "name": [
+            "Poland",
+            "Republic of Poland"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 620,
+        "alpha2": "pt",
+        "alpha3": "prt",
+        "name": [
+            "Portugal",
+            "Portuguese Republic"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 634,
+        "alpha2": "qa",
+        "alpha3": "qat",
+        "name": [
+            "Qatar",
+            "State of Qatar"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 642,
+        "alpha2": "ro",
+        "alpha3": "rou",
+        "name": [
+            "Romania"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 643,
+        "alpha2": "ru",
+        "alpha3": "rus",
+        "name": [
+            "Russia",
+            "Russian Federation"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 646,
+        "alpha2": "rw",
+        "alpha3": "rwa",
+        "name": [
+            "Rwanda",
+            "Republic of Rwanda"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 659,
+        "alpha2": "kn",
+        "alpha3": "kna",
+        "name": [
+            "Saint Kitts and Nevis",
+            "St Kitts and Nevis",
+            "Federation of Saint Kitts and Nevis"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 662,
+        "alpha2": "lc",
+        "alpha3": "lca",
+        "name": [
+            "Saint Lucia",
+            "St Lucia"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 670,
+        "alpha2": "vc",
+        "alpha3": "vct",
+        "name": [
+            "Saint Vincent and the Grenadines",
+            "St Vincent and the Grenadines"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 882,
+        "alpha2": "ws",
+        "alpha3": "wsm",
+        "name": [
+            "Samoa",
+            "Independent State of Samoa"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 674,
+        "alpha2": "sm",
+        "alpha3": "smr",
+        "name": [
+            "San Marino",
+            "Republic of San Marino"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 678,
+        "alpha2": "st",
+        "alpha3": "stp",
+        "name": [
+            "Sao Tome and Principe",
+            "Democratic Republic of Sao Tome and Principe"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 682,
+        "alpha2": "sa",
+        "alpha3": "sau",
+        "name": [
+            "Saudi Arabia",
+            "Kingdom of Saudi Arabia"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 686,
+        "alpha2": "sn",
+        "alpha3": "sen",
+        "name": [
+            "Senegal",
+            "Republic of Senegal"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 688,
+        "alpha2": "rs",
+        "alpha3": "srb",
+        "name": [
+            "Serbia",
+            "Republic of Serbia"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 690,
+        "alpha2": "sc",
+        "alpha3": "syc",
+        "name": [
+            "Seychelles",
+            "Republic of Seychelles"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 694,
+        "alpha2": "sl",
+        "alpha3": "sle",
+        "name": [
+            "Sierra Leone",
+            "Republic of Sierra Leone"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 702,
+        "alpha2": "sg",
+        "alpha3": "sgp",
+        "name": [
+            "Singapore",
+            "Republic of Singapore"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 703,
+        "alpha2": "sk",
+        "alpha3": "svk",
+        "name": [
+            "Slovakia",
+            "Slovak Republic"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 705,
+        "alpha2": "si",
+        "alpha3": "svn",
+        "name": [
+            "Slovenia",
+            "Republic of Slovenia"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 90,
+        "alpha2": "sb",
+        "alpha3": "slb",
+        "name": [
+            "Solomon Islands"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 706,
+        "alpha2": "so",
+        "alpha3": "som",
+        "name": [
+            "Somalia",
+            "Federal Republic of Somalia"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 710,
+        "alpha2": "za",
+        "alpha3": "zaf",
+        "name": [
+            "South Africa",
+            "Republic of South Africa"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 728,
+        "alpha2": "ss",
+        "alpha3": "ssd",
+        "name": [
+            "South Sudan",
+            "Republic of South Sudan"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 724,
+        "alpha2": "es",
+        "alpha3": "esp",
+        "name": [
+            "Spain",
+            "Kingdom of Spain"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 144,
+        "alpha2": "lk",
+        "alpha3": "lka",
+        "name": [
+            "Sri Lanka",
+            "Democratic Socialist Republic of Sri Lanka"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 729,
+        "alpha2": "sd",
+        "alpha3": "sdn",
+        "name": [
+            "Sudan",
+            "Republic of the Sudan"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 740,
+        "alpha2": "sr",
+        "alpha3": "sur",
+        "name": [
+            "Suriname",
+            "Republic of Suriname"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 752,
+        "alpha2": "se",
+        "alpha3": "swe",
+        "name": [
+            "Sweden",
+            "Kingdom of Sweden"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 756,
+        "alpha2": "ch",
+        "alpha3": "che",
+        "name": [
+            "Switzerland",
+            "Swiss Confederation"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 760,
+        "alpha2": "sy",
+        "alpha3": "syr",
+        "name": [
+            "Syria",
+            "Syrian Arab Republic"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 762,
+        "alpha2": "tj",
+        "alpha3": "tjk",
+        "name": [
+            "Tajikistan",
+            "Republic of Tajikistan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 834,
+        "alpha2": "tz",
+        "alpha3": "tza",
+        "name": [
+            "Tanzania",
+            "United Republic of Tanzania"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 764,
+        "alpha2": "th",
+        "alpha3": "tha",
+        "name": [
+            "Thailand",
+            "Kingdom of Thailand"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 626,
+        "alpha2": "tl",
+        "alpha3": "tls",
+        "name": [
+            "Timor-Leste",
+            "Timor Leste",
+            "East Timor",
+            "Democratic Republic of Timor-Leste"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 768,
+        "alpha2": "tg",
+        "alpha3": "tgo",
+        "name": [
+            "Togo",
+            "Togolese Republic"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 776,
+        "alpha2": "to",
+        "alpha3": "ton",
+        "name": [
+            "Tonga",
+            "Kingdom of Tonga"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 780,
+        "alpha2": "tt",
+        "alpha3": "tto",
+        "name": [
+            "Trinidad and Tobago",
+            "Republic of Trinidad and Tobago"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 788,
+        "alpha2": "tn",
+        "alpha3": "tun",
+        "name": [
+            "Tunisia",
+            "Republic of Tunisia"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 792,
+        "alpha2": "tr",
+        "alpha3": "tur",
+        "name": [
+            "T\u00fcrkiye",
+            "Turkey",
+            "Republic of T\u00fcrkiye"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 795,
+        "alpha2": "tm",
+        "alpha3": "tkm",
+        "name": [
+            "Turkmenistan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 798,
+        "alpha2": "tv",
+        "alpha3": "tuv",
+        "name": [
+            "Tuvalu"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 800,
+        "alpha2": "ug",
+        "alpha3": "uga",
+        "name": [
+            "Uganda",
+            "Republic of Uganda"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 804,
+        "alpha2": "ua",
+        "alpha3": "ukr",
+        "name": [
+            "Ukraine"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 784,
+        "alpha2": "ae",
+        "alpha3": "are",
+        "name": [
+            "United Arab Emirates",
+            "UAE"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 826,
+        "alpha2": "gb",
+        "alpha3": "gbr",
+        "name": [
+            "United Kingdom",
+            "UK",
+            "Great Britain",
+            "Britain",
+            "United Kingdom of Great Britain and Northern Ireland"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 840,
+        "alpha2": "us",
+        "alpha3": "usa",
+        "name": [
+            "United States",
+            "United States of America",
+            "USA",
+            "US",
+            "America"
+        ],
+        "continent": 1
+    },
+    {
+        "id": 858,
+        "alpha2": "uy",
+        "alpha3": "ury",
+        "name": [
+            "Uruguay",
+            "Oriental Republic of Uruguay"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 860,
+        "alpha2": "uz",
+        "alpha3": "uzb",
+        "name": [
+            "Uzbekistan",
+            "Republic of Uzbekistan"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 548,
+        "alpha2": "vu",
+        "alpha3": "vut",
+        "name": [
+            "Vanuatu",
+            "Republic of Vanuatu"
+        ],
+        "continent": 6
+    },
+    {
+        "id": 862,
+        "alpha2": "ve",
+        "alpha3": "ven",
+        "name": [
+            "Venezuela",
+            "Bolivarian Republic of Venezuela"
+        ],
+        "continent": 2
+    },
+    {
+        "id": 704,
+        "alpha2": "vn",
+        "alpha3": "vnm",
+        "name": [
+            "Vietnam",
+            "Socialist Republic of Vietnam"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 887,
+        "alpha2": "ye",
+        "alpha3": "yem",
+        "name": [
+            "Yemen",
+            "Republic of Yemen"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 894,
+        "alpha2": "zm",
+        "alpha3": "zmb",
+        "name": [
+            "Zambia",
+            "Republic of Zambia"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 716,
+        "alpha2": "zw",
+        "alpha3": "zwe",
+        "name": [
+            "Zimbabwe",
+            "Republic of Zimbabwe"
+        ],
+        "continent": 5
+    },
+    {
+        "id": 158,
+        "alpha2": "tw",
+        "alpha3": "twn",
+        "name": [
+            "Taiwan",
+            "Republic of China",
+            "ROC"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 275,
+        "alpha2": "ps",
+        "alpha3": "pse",
+        "name": [
+            "Palestine",
+            "State of Palestine"
+        ],
+        "continent": 4
+    },
+    {
+        "id": 336,
+        "alpha2": "va",
+        "alpha3": "vat",
+        "name": [
+            "Vatican City",
+            "Vatican",
+            "Holy See"
+        ],
+        "continent": 3
+    },
+    {
+        "id": 383,
+        "alpha2": "xk",
+        "alpha3": "xkx",
+        "name": [
+            "Kosovo",
+            "Republic of Kosovo"
+        ],
+        "continent": 3
+    }
+]
