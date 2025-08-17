@@ -284,6 +284,7 @@ const App = () => {
                                                                 timeTaken={gameDuration - timeLeft}
                                                                 totalItems={0}
                                                                 itemLabel="outlines"
+                                                                hideScore={true}
                                                         />
                                                 </>
                                         )}
