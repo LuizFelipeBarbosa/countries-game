@@ -78,7 +78,7 @@ countries.forEach(({ alpha2 }) => {
   const clone = element.cloneNode(true);
   clone.setAttribute('id', alpha2);
 
-  const standaloneSvg = `<svg xmlns="http://www.w3.org/2000/svg" ${svgAttributes}>${clone.outerHTML}</svg>`;
+  const standaloneSvg = createStandaloneSvg(svgAttributes, clone.outerHTML);
   fs.writeFileSync(path.join(outputDir, `${alpha2}.svg`), standaloneSvg, 'utf8');
 });
 
