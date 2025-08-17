@@ -1,9 +1,14 @@
-const StartOverlay = ({ onStart, gameDuration, onDurationChange }) => {
+const StartOverlay = ({
+        onStart,
+        gameDuration,
+        onDurationChange,
+        startLabel = "Start Game",
+}) => {
         const durations = [5, 10, 15];
 
-return (
-<div className="absolute rounded-lg inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
-<div className="flex flex-col items-center gap-4 w-11/12 max-w-xs">
+        return (
+                <div className="absolute rounded-lg inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
+                        <div className="flex flex-col items-center gap-4 w-11/12 max-w-xs">
                                 <label className="text-white font-montserrat">Select Duration:</label>
                                 <select
                                         value={gameDuration}
@@ -20,7 +25,7 @@ return (
                                         onClick={onStart}
                                         className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg text-xl transition duration-300 ease-in-out transform hover:scale-105 font-montserrat tracking-wide"
                                 >
-                                        Start Game
+                                        {startLabel}
                                 </button>
                         </div>
                 </div>

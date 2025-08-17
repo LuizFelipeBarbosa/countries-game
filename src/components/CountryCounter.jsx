@@ -1,4 +1,3 @@
-import React from "react";
 import { ChevronRight } from "lucide-react";
 import { CONTINENTS, TOTAL_COUNTRIES } from "../constants/continents";
 

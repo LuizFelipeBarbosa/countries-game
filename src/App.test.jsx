@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { vi } from 'vitest';
 import App from './App';
-import React from 'react';
 
 // Mock the timer functions
 vi.useFakeTimers();
@@ -9,6 +8,7 @@ vi.useFakeTimers();
 describe('App', () => {
   it('starts the game when the start button is clicked', () => {
     render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /World Map Game/i }));
     const startButton = screen.getByRole('button', { name: /start game/i });
     fireEvent.click(startButton);
     expect(screen.getByPlaceholderText('Enter a country name')).toBeInTheDocument();
@@ -16,6 +16,7 @@ describe('App', () => {
 
   it('handles a correct country guess', () => {
     render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /World Map Game/i }));
     const startButton = screen.getByRole('button', { name: /start game/i });
     fireEvent.click(startButton);
 
@@ -28,6 +29,7 @@ describe('App', () => {
 
   it('handles an incorrect country guess', () => {
     render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /World Map Game/i }));
     const startButton = screen.getByRole('button', { name: /start game/i });
     fireEvent.click(startButton);
 
@@ -40,6 +42,7 @@ describe('App', () => {
 
   it('handles a duplicate country guess', () => {
     render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /World Map Game/i }));
     const startButton = screen.getByRole('button', { name: /start game/i });
     fireEvent.click(startButton);
 
@@ -57,6 +60,7 @@ describe('App', () => {
 
   it('ends the game when the timer runs out', () => {
     render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /World Map Game/i }));
     const startButton = screen.getByRole('button', { name: /start game/i });
     fireEvent.click(startButton);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import WorldMap from "../assets/map.svg";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
 
@@ -69,12 +69,10 @@ const GameBoard = ({
 			if (svgObject.contentDocument) {
 				setSvgLoaded(true);
 
-				const svgDoc = svgObject.contentDocument;
-
-				if (isGameEnded) {
-					const allCountryCodes = VALID_COUNTRIES.map(
-						(country) => country.alpha2
-					);
+                                if (isGameEnded) {
+                                        const allCountryCodes = VALID_COUNTRIES.map(
+                                                (country) => country.alpha2
+                                        );
 					const unHighlightedCountries = allCountryCodes.filter(
 						(code) => !highlightedCountries.includes(code)
 					);
