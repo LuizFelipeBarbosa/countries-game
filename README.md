@@ -1,51 +1,80 @@
 # Countries Game
 
-Interactive quiz for learning world countries built with React and Vite.
+An interactive quiz for learning world countries built with React and Vite. Guess nations by their flags or challenge yourself with an outline-only mode.
+
+## Features
+
+- **Flag Quiz** – identify countries by their flags.
+- **Outline Quiz** – guess countries from their silhouettes.
+- Scoreboard with continent breakdown and countdown timer.
+- Best score and time stored in local storage.
+- Built with React, Vite, Tailwind CSS and Leaflet.
 
 ## Getting Started
 
+### Prerequisites
+- Node.js 18+
+- npm
+
+### Installation
 ```bash
 npm install
+```
+
+### Development Server
+```bash
 npm run dev
 ```
-
-## Outline Quiz
-
-The **Outline Quiz** mode challenges you to identify countries using only their borders.
-
-### Gameplay
-
-1. The game displays the silhouette of a random country.
-2. Type the country's name into the answer box.
-3. Submit to check your guess and move to the next outline.
-
-### Development Setup
-
-Generating the outline assets requires a preprocessing step:
-
-```bash
-npm install --save-dev mapshaper @turf/turf
-npm run extract-outlines
-```
-
-`extract-outlines` fetches raw GeoJSON data and produces simplified SVG paths stored in `src/assets/outlines`.
-
-### Switching Modes
-
-The app starts in the classic flag quiz. To switch to the Outline Quiz:
-
-- Launch the dev server: `npm run dev`
-- Use the in-app mode selector to choose **Outline Quiz**, or start directly with:
-
+Start directly in outline mode:
 ```bash
 npm run dev -- --mode outline
 ```
-- Use the in-app mode selector to choose **Outline Quiz**.
-### Screenshots
 
-![Outline Quiz in action](docs/outline-quiz.gif)
-## NPM Scripts & Dependencies
+### Build for Production
+```bash
+npm run build
+```
 
-- `extract-outlines` – generates outline assets.
-- Dev dependencies: `mapshaper`, `@turf/turf` for geographic processing.
+### Preview Production Build
+```bash
+npm run preview
+```
+
+## Outline Assets
+
+The outline quiz relies on individual SVG files for each country. To regenerate them from `src/assets/map.svg` run:
+
+```bash
+npm run generate:outlines
+```
+
+Generated files are stored in `public/outlines/`.
+
+## Scripts
+
+- `npm run dev` – start the local development server.
+- `npm run build` – create a production build.
+- `npm run preview` – preview the production build.
+- `npm test` – run unit tests with Vitest.
+- `npm run lint` – lint source files with ESLint.
+- `npm run generate:outlines` – create country outline SVGs.
+
+## Testing
+
+Run the test suite and linter:
+
+```bash
+npm test
+npm run lint
+```
+
+## Project Structure
+
+- `src/` – React components, assets and utilities.
+- `public/` – static assets and generated outlines.
+- `scripts/` – helper scripts such as outline generation.
+
+## Contributing
+
+Issues and pull requests are welcome. Feel free to suggest improvements or new features.
 
