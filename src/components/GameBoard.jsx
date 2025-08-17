@@ -427,8 +427,8 @@ const GameBoard = ({
 		handleZoom(delta, e.clientX, e.clientY);
 	};
 
-	return (
-		<div className="relative w-full h-full">
+return (
+<div className="relative w-full h-[60vh] sm:h-[70vh]">
 			<div
 				className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
 					isBlurred ? "opacity-50" : "opacity-100"

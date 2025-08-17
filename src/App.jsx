@@ -11,12 +11,12 @@ import { setItem, getItem } from "./utils/storage";
 import { CONTINENTS, TOTAL_COUNTRIES } from "./constants/continents";
 
 const NavBar = () => (
-	<nav className="bg-blue-600 p-4 text-white">
-		<div className="container mx-auto flex justify-between items-center">
-			<h1 className="text-2xl font-bold font-montserrat tracking-wide">
-				Countries of the World
-			</h1>
-			<div className="flex space-x-4">
+        <nav className="bg-blue-600 p-4 text-white">
+                <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
+                        <h1 className="text-xl sm:text-2xl font-bold font-montserrat tracking-wide">
+                                Countries of the World
+                        </h1>
+                        <div className="flex space-x-4 mt-4 sm:mt-0">
                                 <button
                                         className="p-2 hover:bg-blue-700 rounded"
                                         aria-label="Map"
@@ -248,7 +248,7 @@ const App = () => {
 	return (
 		<div className="min-h-screen bg-gray-200">
 			<NavBar />
-			<div className="container mx-auto mt-8 relative">
+<div className="container mx-auto mt-8 relative px-4">
 				<GameBoard
 					isBlurred={isPaused}
 					guessedCountries={guessedCountries}
