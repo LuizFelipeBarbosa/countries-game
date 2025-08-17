@@ -277,17 +277,7 @@ const App = () => {
                                                         <div className="absolute top-4 right-4 flex items-center">
                                                                 <GameTimer timeLeft={timeLeft} />
                                                         </div>
-                                                        <EndGameOverlay
-                                                                missedCountries={[]}
-                                                                onPlayAgain={handleStartGame}
-                                                                countriesGuessed={0}
-                                                                timeTaken={gameDuration - timeLeft}
-                                                                countriesGuessed={null}
-                                                                timeTaken={gameDuration - timeLeft}
-                                                                totalItems={null}
-                                                                itemLabel="outlines"
-                                                                hideScore={true}
-                                                        {[].length === 0 ? (
+                                                        {missedOutlines.length === 0 ? (
                                                                 <div className="bg-white rounded shadow p-6 text-center mt-8">
                                                                         <h2 className="text-xl font-semibold mb-2">No missed outlines!</h2>
                                                                         <button
@@ -305,6 +295,7 @@ const App = () => {
                                                                         timeTaken={gameDuration - timeLeft}
                                                                         totalItems={0}
                                                                         itemLabel="outlines"
+                                                                        hideScore={true}
                                                                 />
                                                         )}
                                                 </>
