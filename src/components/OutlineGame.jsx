@@ -77,6 +77,7 @@ const OutlineGame = ({ onReturn = () => {} }) => {
 
                 const validCountry = countryMap[normalized];
                 let updatedGuessed = guessedCountries;
+                let answeredCorrectly = false;
 
                 if (validCountry) {
                         if (validCountry === currentCountry) {
@@ -89,6 +90,7 @@ const OutlineGame = ({ onReturn = () => {} }) => {
                                                 message: `Correct! ${validCountry.name[0]} added.`,
                                                 type: "success",
                                         });
+                                        answeredCorrectly = true;
                                 } else {
                                         setFeedback({
                                                 message: `You've already guessed ${validCountry.name[0]}!`,
@@ -116,11 +118,13 @@ const OutlineGame = ({ onReturn = () => {} }) => {
                 clearTimeout(feedbackTimeoutRef.current);
                 feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 3000);
 
-                const next = getRandomCountry(updatedGuessed);
-                if (next) {
-                        setCurrentCountry(next);
-                } else {
-                        setIsGameEnded(true);
+                if (answeredCorrectly) {
+                        const next = getRandomCountry(updatedGuessed);
+                        if (next) {
+                                setCurrentCountry(next);
+                        } else {
+                                setIsGameEnded(true);
+                        }
                 }
         };
 
@@ -146,30 +150,32 @@ const OutlineGame = ({ onReturn = () => {} }) => {
         const seconds = (elapsedTime % 60).toString().padStart(2, "0");
 
         return (
-                <div className="p-4">
+                <div className="p-4 flex flex-col items-center text-center">
                         <button
                                 onClick={onReturn}
-                                className="text-blue-500 underline mb-4 font-montserrat"
+                                className="text-blue-500 underline mb-4 self-start font-montserrat"
                         >
                                 Back to Home
                         </button>
                         {currentCountry && (
-                                <div className="flex justify-center mb-4">
+                                <div className="flex justify-center mb-6">
                                         <img
                                                 src={`/outlines/${currentCountry.alpha2}.svg`}
                                                 alt="Country outline"
-                                                className="w-64 h-64"
+                                                className="w-96 h-96 drop-shadow-lg"
                                         />
                                 </div>
                         )}
-                        <div className="font-montserrat mb-4">
+                        <div className="font-montserrat mb-4 text-lg">
                                 Attempts: {attempts} | Correct: {correct} | Time: {minutes}:{seconds}
                         </div>
-                        <CountryInput
-                                onSubmit={handleGuess}
-                                disabled={isGameEnded}
-                                suggestions={countryNames}
-                        />
+                        <div className="w-full max-w-md">
+                                <CountryInput
+                                        onSubmit={handleGuess}
+                                        disabled={isGameEnded}
+                                        suggestions={countryNames}
+                                />
+                        </div>
                         {feedback && (
                                 <FeedbackMessage
                                         message={feedback.message}
@@ -178,7 +184,7 @@ const OutlineGame = ({ onReturn = () => {} }) => {
                         )}
                         <button
                                 onClick={handleEndRound}
-                                className="bg-blue-500 hover:bg-blue-600 text-white font-montserrat py-2 px-4 rounded mt-4"
+                                className="bg-blue-500 hover:bg-blue-600 text-white font-montserrat py-2 px-4 rounded mt-6 shadow"
                         >
                                 End Round
                         </button>

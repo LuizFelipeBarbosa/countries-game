@@ -55,4 +55,28 @@ describe('OutlineGame', () => {
     // Score should remain zero
     expect(screen.getByText(/Correct: 0/)).toBeInTheDocument();
   });
+
+  it('allows the user to try again after an incorrect guess', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
+
+    const outline = screen.getByAltText(/country outline/i);
+    const initialSrc = outline.getAttribute('src');
+
+    const input = screen.getByPlaceholderText('Enter a country name');
+    fireEvent.change(input, { target: { value: 'Albania' } });
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    expect(screen.getByText(/Albania is not correct/i)).toBeInTheDocument();
+    // Score should remain zero
+    expect(screen.getByText(/Correct: 0/)).toBeInTheDocument();
+    // Outline should remain the same after a wrong guess
+    expect(screen.getByAltText(/country outline/i).getAttribute('src')).toBe(
+      initialSrc
+    );
+
+    fireEvent.change(input, { target: { value: 'Afghanistan' } });
+    fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+    expect(screen.getByText(/Correct: 1/)).toBeInTheDocument();
+  });
 });
