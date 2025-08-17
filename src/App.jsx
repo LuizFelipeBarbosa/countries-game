@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Map, Clock, Settings, Pause, Play, RefreshCw } from "lucide-react";
 
 import VALID_COUNTRIES from "./assets/countries_with_continents.json";
@@ -6,6 +6,7 @@ import GameBoard from "./components/GameBoard";
 import StartOverlay from "./components/StartOverlay";
 import CountryInput from "./components/CountryInput";
 import CountryCounter from "./components/CountryCounter";
+import EndGameOverlay from "./components/EndGameOverlay";
 
 function setCookie(name, value, days) {
 	var expires = "";
@@ -60,7 +61,7 @@ const GameTimer = ({ timeLeft }) => (
 			{(timeLeft % 60).toString().padStart(2, "0")}
 		</p>
 	</div>
-);
+	);
 
 const GiveUpButton = ({ onGiveUp }) => (
 	<button
@@ -69,7 +70,7 @@ const GiveUpButton = ({ onGiveUp }) => (
 	>
 		Give Up
 	</button>
-);
+	);
 
 const PauseButton = ({ isPaused, onTogglePause }) => (
 	<button
@@ -78,19 +79,7 @@ const PauseButton = ({ isPaused, onTogglePause }) => (
 	>
 		{isPaused ? <Play size={24} /> : <Pause size={24} />}
 	</button>
-);
-
-const StartButton = ({ onStart }) => (
-	<button
-		onClick={onStart}
-		className="bg-green-500 hover:bg-green-600 text-white p-2 rounded shadow ml-2"
-	>
-		<div className="flex gap-2">
-			<RefreshCw size={24} />
-			<span className="font-semibold font-montserrat">Retake Quiz</span>
-		</div>
-	</button>
-);
+	);
 
 const FeedbackMessage = ({ message, type }) => (
 	<div
@@ -125,15 +114,31 @@ const App = () => {
 		0, 0, 0, 0, 0, 0, 0,
 	]);
 	const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
-	const [isGameStarted, setIsGameStarted] = useState(false);
-	const [isGameEnded, setIsGameEnded] = useState(false);
-	const [isMenuDown, setIsMenuDown] = useState(false);
-	const [isGameWon, setIsGameWon] = useState(false);
-	const [isPaused, setIsPaused] = useState(false);
-	const [guessedCountries, setGuessedCountries] = useState(new Set());
-	const [feedback, setFeedback] = useState(null);
-	const [bestScore, setBestScore] = useState(null);
-	const [bestTime, setBestTime] = useState(null);
+        const [isGameStarted, setIsGameStarted] = useState(false);
+        const [isGameEnded, setIsGameEnded] = useState(false);
+        const [isMenuDown, setIsMenuDown] = useState(false);
+        const [isGameWon, setIsGameWon] = useState(false);
+        const [isPaused, setIsPaused] = useState(false);
+        const [guessedCountries, setGuessedCountries] = useState(new Set());
+        const [feedback, setFeedback] = useState(null);
+        const [bestScore, setBestScore] = useState(null);
+        const [bestTime, setBestTime] = useState(null);
+
+        const countryMap = useMemo(() => {
+                const map = {};
+                VALID_COUNTRIES.forEach((c) => {
+                        c.name.forEach((n) => {
+                                map[n.toLowerCase()] = c;
+                        });
+                });
+                return map;
+        }, []);
+
+	const missedCountries = useMemo(
+	() =>
+		VALID_COUNTRIES.filter((country) => !guessedCountries.has(country)),
+		[guessedCountries]
+	);
 
 	useEffect(() => {
 		const storedBestScore = getCookie("bestScore");
@@ -215,11 +220,9 @@ const App = () => {
 		setTimeout(() => setFeedback(null), 3000);
 	};
 
-	const handleCountrySubmit = (country) => {
-		const normalizedCountry = country.trim().toLowerCase();
-		const validCountry = VALID_COUNTRIES.find((c) =>
-			c.name.find((a) => a.toLowerCase() === normalizedCountry)
-		);
+        const handleCountrySubmit = (country) => {
+                const normalizedCountry = country.trim().toLowerCase();
+                const validCountry = countryMap[normalizedCountry];
 
 		if (validCountry) {
 			if (guessedCountries.has(validCountry)) {
@@ -269,9 +272,12 @@ const App = () => {
 						/>
 						<div className="absolute top-4 right-4 flex items-center">
 							<GameTimer timeLeft={timeLeft} />
-							<StartButton onStart={handleStartGame} />
-						</div>
-					</>
+					</div>
+						<EndGameOverlay
+							missedCountries={missedCountries}
+							onPlayAgain={handleStartGame}
+						/>
+				</>
 				)}
 				{isGameStarted && (
 					<>
