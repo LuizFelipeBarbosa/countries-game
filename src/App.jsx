@@ -7,7 +7,8 @@ import StartOverlay from "./components/StartOverlay";
 import CountryInput from "./components/CountryInput";
 import CountryCounter from "./components/CountryCounter";
 import EndGameOverlay from "./components/EndGameOverlay";
-import { setCookie, getCookie } from "./utils/cookies";
+import { setItem, getItem } from "./utils/storage";
+import { CONTINENTS, TOTAL_COUNTRIES } from "./constants/continents";
 
 const NavBar = () => (
 	<nav className="bg-blue-600 p-4 text-white">
@@ -90,9 +91,10 @@ const BestScoreDisplay = ({ bestScore, bestTime }) => (
 
 const App = () => {
 
-	const [countriesGuessed, setCountriesGuessed] = useState([
-		0, 0, 0, 0, 0, 0, 0,
-	]);
+        const [countriesGuessed, setCountriesGuessed] = useState([
+                0,
+                ...Array(CONTINENTS.length).fill(0),
+        ]);
 	const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
   const [gameDuration, setGameDuration] = useState(15 * 60); // default 15 minutes in seconds
         const [isGameStarted, setIsGameStarted] = useState(false);
@@ -115,6 +117,11 @@ const App = () => {
                 return map;
         }, []);
 
+        const countryNames = useMemo(
+                () => VALID_COUNTRIES.flatMap((c) => c.name),
+                []
+        );
+
 	const missedCountries = useMemo(
 	() =>
 		VALID_COUNTRIES.filter((country) => !guessedCountries.has(country)),
@@ -122,12 +129,12 @@ const App = () => {
 	);
 
         useEffect(() => {
-                const storedBestScore = getCookie("bestScore");
-                const storedBestTime = getCookie("bestTime");
-                if (storedBestScore) {
+                const storedBestScore = getItem("bestScore");
+                const storedBestTime = getItem("bestTime");
+                if (storedBestScore !== null) {
                         setBestScore(parseInt(storedBestScore));
                 }
-                if (storedBestTime) {
+                if (storedBestTime !== null) {
                         setBestTime(parseInt(storedBestTime));
                 }
         }, []);
@@ -153,7 +160,7 @@ const App = () => {
 	}, [isGameStarted, isPaused, timeLeft]);
 
 	useEffect(() => {
-                if (countriesGuessed[0] >= 197) {
+                if (countriesGuessed[0] >= TOTAL_COUNTRIES) {
                         setIsGameEnded(true);
                         setIsGameStarted(false);
                         updateBestScore();
@@ -170,8 +177,8 @@ const App = () => {
                 ) {
                         setBestScore(currentScore);
                         setBestTime(currentTime);
-                        setCookie("bestScore", currentScore, 365);
-                        setCookie("bestTime", currentTime, 365);
+                        setItem("bestScore", currentScore);
+                        setItem("bestTime", currentTime);
                 }
         };
 
@@ -258,10 +265,12 @@ const App = () => {
 						<div className="absolute top-4 right-4 flex items-center">
 							<GameTimer timeLeft={timeLeft} />
 					</div>
-						<EndGameOverlay
-							missedCountries={missedCountries}
-							onPlayAgain={handleStartGame}
-						/>
+                                                <EndGameOverlay
+                                                        missedCountries={missedCountries}
+                                                        onPlayAgain={handleStartGame}
+                                                        countriesGuessed={countriesGuessed[0]}
+                                                        timeTaken={gameDuration - timeLeft}
+                                                />
 				</>
 				)}
 				{isGameStarted && (
@@ -290,10 +299,11 @@ const App = () => {
                                                 onDurationChange={setGameDuration}
                                         />
                                 )}
-				<CountryInput
-					onSubmit={handleCountrySubmit}
-					disabled={!isGameStarted || isPaused || timeLeft === 0}
-				/>
+                                <CountryInput
+                                        onSubmit={handleCountrySubmit}
+                                        disabled={!isGameStarted || isPaused || timeLeft === 0}
+                                        suggestions={countryNames}
+                                />
 				{feedback && (
 					<FeedbackMessage
 						message={feedback.message}

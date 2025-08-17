@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-const CountryInput = ({ onSubmit, disabled }) => {
-	const [inputValue, setInputValue] = useState("");
+const CountryInput = ({ onSubmit, disabled, suggestions = [] }) => {
+        const [inputValue, setInputValue] = useState("");
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -14,17 +14,23 @@ const CountryInput = ({ onSubmit, disabled }) => {
 	return (
 		<form onSubmit={handleSubmit} className="mt-4 flex">
 			<input
-				type="text"
-				value={inputValue}
-				onChange={(e) => setInputValue(e.target.value)}
-				placeholder="Enter a country name"
-				className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-montserrat"
-				disabled={disabled}
-			/>
-			<button
-				type="submit"
-				className="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 font-montserrat"
-				disabled={disabled}
+                                type="text"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                placeholder="Enter a country name"
+                                className="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-montserrat"
+                                disabled={disabled}
+                                list="country-suggestions"
+                        />
+                        <datalist id="country-suggestions">
+                                {suggestions.map((name) => (
+                                        <option value={name} key={name} />
+                                ))}
+                        </datalist>
+                        <button
+                                type="submit"
+                                className="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 font-montserrat"
+                                disabled={disabled}
 			>
 				Submit
 			</button>
