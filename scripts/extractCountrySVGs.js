@@ -17,7 +17,13 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 
-const svgContent = fs.readFileSync(svgPath, 'utf8');
+let svgContent;
+try {
+  svgContent = fs.readFileSync(svgPath, 'utf8');
+} catch (err) {
+  console.error(`Error reading SVG file at ${svgPath}: ${err.message}`);
+  process.exit(1);
+}
 const dom = new JSDOM(svgContent, { contentType: 'image/svg+xml' });
 const document = dom.window.document;
 
