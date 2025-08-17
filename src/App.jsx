@@ -288,7 +288,7 @@ const App = () => {
                                                                 itemLabel="outlines"
                                                                 hideScore={true}
                                                         />
-                                                        {[].length === 0 ? (
+                                                        {missedOutlines.length === 0 ? (
                                                                 <div className="bg-white rounded shadow p-6 text-center mt-8">
                                                                         <h2 className="text-xl font-semibold mb-2">No missed outlines!</h2>
                                                                         <button
