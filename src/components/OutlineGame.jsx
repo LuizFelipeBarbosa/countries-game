@@ -31,7 +31,22 @@ const OutlineGame = () => {
                 }, 1000);
 
                 return () => clearInterval(timer);
+        const isGameEndedRef = useRef(isGameEnded);
+
+        // Keep the ref in sync with the state
+        useEffect(() => {
+                isGameEndedRef.current = isGameEnded;
         }, [isGameEnded]);
+
+        useEffect(() => {
+                const timer = setInterval(() => {
+                        if (!isGameEndedRef.current) {
+                                setElapsedTime((prev) => prev + 1);
+                        }
+                }, 1000);
+
+                return () => clearInterval(timer);
+        }, []);
 
         const countryMap = useMemo(() => {
                 const map = {};
