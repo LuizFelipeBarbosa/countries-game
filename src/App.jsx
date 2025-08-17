@@ -267,65 +267,7 @@ const App = () => {
                         <div className="min-h-screen bg-gray-200">
                                 <NavBar />
                                 <div className="container mx-auto mt-8 relative px-4">
-                                        <OutlineGame
-                                                isBlurred={isPaused}
-                                                isGameStarted={isGameStarted}
-                                                isGameEnded={isGameEnded}
-                                        />
-                                        {isGameEnded && (
-                                                <>
-                                                        <div className="absolute top-4 right-4 flex items-center">
-                                                                <GameTimer timeLeft={timeLeft} />
-                                                        </div>
-                                                        {missedOutlines.length === 0 ? (
-                                                                <div className="bg-white rounded shadow p-6 text-center mt-8">
-                                                                        <h2 className="text-xl font-semibold mb-2">No missed outlines!</h2>
-                                                                        <button
-                                                                                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                                                                                onClick={handleStartGame}
-                                                                        >
-                                                                                Play Again
-                                                                        </button>
-                                                                </div>
-                                                        ) : (
-                                                                <EndGameOverlay
-                                                                        missedCountries={[]}
-                                                                        onPlayAgain={handleStartGame}
-                                                                        countriesGuessed={0}
-                                                                        timeTaken={gameDuration - timeLeft}
-                                                                        totalItems={0}
-                                                                        itemLabel="outlines"
-                                                                        hideScore={true}
-                                                                />
-                                                        )}
-                                                </>
-                                        )}
-                                        {isGameStarted && (
-                                                <div className="absolute top-4 right-4">
-                                                        <div className="flex items-center">
-                                                                <GameTimer timeLeft={timeLeft} />
-                                                                <PauseButton
-                                                                        isPaused={isPaused}
-                                                                        onTogglePause={handleTogglePause}
-                                                                />
-                                                        </div>
-                                                        <GiveUpButton onGiveUp={handleGiveUp} />
-                                                </div>
-                                        )}
-                                        {!isGameStarted && !isGameEnded && (
-                                                <StartOverlay
-                                                        onStart={handleStartGame}
-                                                        gameDuration={gameDuration}
-                                                        onDurationChange={setGameDuration}
-                                                        startLabel="Start Quiz"
-                                                />
-                                        )}
-                                        {feedback && (
-                                                <FeedbackMessage
-                                                        message={feedback.message}
-                                                        type={feedback.type}
-                                                />
-                                        )}
+                                        <OutlineGame />
                                 </div>
                         </div>
                 );

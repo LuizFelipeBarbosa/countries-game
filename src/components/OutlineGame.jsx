@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import CountryInput from "./CountryInput";
 import EndGameOverlay from "./EndGameOverlay";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
@@ -23,15 +23,8 @@ const OutlineGame = () => {
         const [feedback, setFeedback] = useState(null);
         const [isGameEnded, setIsGameEnded] = useState(false);
 
-        useEffect(() => {
-                const timer = setInterval(() => {
-                        if (!isGameEnded) {
-                                setElapsedTime((prev) => prev + 1);
-                        }
-                }, 1000);
-
-                return () => clearInterval(timer);
         const isGameEndedRef = useRef(isGameEnded);
+        const feedbackTimeoutRef = useRef(null);
 
         // Keep the ref in sync with the state
         useEffect(() => {
@@ -92,6 +85,7 @@ const OutlineGame = () => {
                         });
                 }
 
+                clearTimeout(feedbackTimeoutRef.current);
                 feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 3000);
         };
 
