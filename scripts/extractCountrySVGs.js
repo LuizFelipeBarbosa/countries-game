@@ -79,7 +79,11 @@ countries.forEach(({ alpha2 }) => {
   clone.setAttribute('id', alpha2);
 
   const standaloneSvg = createStandaloneSvg(svgAttributes, clone.outerHTML);
-  fs.writeFileSync(path.join(outputDir, `${alpha2}.svg`), standaloneSvg, 'utf8');
+  try {
+    fs.writeFileSync(path.join(outputDir, `${alpha2}.svg`), standaloneSvg, 'utf8');
+  } catch (err) {
+    console.error(`Failed to write SVG for country '${alpha2}' to '${path.join(outputDir, `${alpha2}.svg`)}':`, err.message);
+  }
 });
 
 console.log('Country SVG outlines generated in', outputDir);
