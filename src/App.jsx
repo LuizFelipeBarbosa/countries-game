@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Map, Clock, Settings, Pause, Play, RefreshCw } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Map, Settings, Pause, Play, RefreshCw } from "lucide-react";
 
 import VALID_COUNTRIES from "./assets/countries_with_continents.json";
 import GameBoard from "./components/GameBoard";
@@ -115,30 +115,36 @@ const BestScoreDisplay = ({ bestScore, bestTime }) => (
 );
 
 const App = () => {
-	const [countriesGuessed, setCountriesGuessed] = useState([
-		0, 0, 0, 0, 0, 0, 0,
-	]);
-	const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
+        const [countriesGuessed, setCountriesGuessed] = useState([
+                0, 0, 0, 0, 0, 0, 0,
+        ]);
+        const [gameDuration, setGameDuration] = useState(15 * 60); // default 15 minutes in seconds
+        const [timeLeft, setTimeLeft] = useState(gameDuration);
 	const [isGameStarted, setIsGameStarted] = useState(false);
 	const [isGameEnded, setIsGameEnded] = useState(false);
 	const [isMenuDown, setIsMenuDown] = useState(false);
-	const [isGameWon, setIsGameWon] = useState(false);
 	const [isPaused, setIsPaused] = useState(false);
 	const [guessedCountries, setGuessedCountries] = useState(new Set());
 	const [feedback, setFeedback] = useState(null);
 	const [bestScore, setBestScore] = useState(null);
 	const [bestTime, setBestTime] = useState(null);
 
-	useEffect(() => {
-		const storedBestScore = getCookie("bestScore");
-		const storedBestTime = getCookie("bestTime");
-		if (storedBestScore) {
-			setBestScore(parseInt(storedBestScore));
-		}
-		if (storedBestTime) {
-			setBestTime(parseInt(storedBestTime));
-		}
-	}, []);
+        useEffect(() => {
+                const storedBestScore = getCookie("bestScore");
+                const storedBestTime = getCookie("bestTime");
+                if (storedBestScore) {
+                        setBestScore(parseInt(storedBestScore));
+                }
+                if (storedBestTime) {
+                        setBestTime(parseInt(storedBestTime));
+                }
+        }, []);
+
+        useEffect(() => {
+                if (!isGameStarted) {
+                        setTimeLeft(gameDuration);
+                }
+        }, [gameDuration, isGameStarted]);
 
 	useEffect(() => {
 		let timer;
@@ -155,39 +161,37 @@ const App = () => {
 	}, [isGameStarted, isPaused, timeLeft]);
 
 	useEffect(() => {
-		if (countriesGuessed[0] >= 197) {
-			setIsGameWon(true); // Currently not used for anything
-			setIsGameEnded(true);
-			setIsGameStarted(false);
-			updateBestScore();
-		}
-	}, [countriesGuessed]);
+                if (countriesGuessed[0] >= 197) {
+                        setIsGameEnded(true);
+                        setIsGameStarted(false);
+                        updateBestScore();
+                }
+        }, [countriesGuessed]);
 
-	const updateBestScore = () => {
-		const currentScore = countriesGuessed[0];
-		const currentTime = 15 * 60 - timeLeft; // Time spent in seconds
-		if (
-			!bestScore ||
-			currentScore > bestScore ||
-			(currentScore === bestScore && currentTime < bestTime)
-		) {
-			setBestScore(currentScore);
-			setBestTime(currentTime);
-			setCookie("bestScore", currentScore, 365);
-			setCookie("bestTime", currentTime, 365);
-		}
-	};
+        const updateBestScore = () => {
+                const currentScore = countriesGuessed[0];
+                const currentTime = gameDuration - timeLeft; // Time spent in seconds
+                if (
+                        !bestScore ||
+                        currentScore > bestScore ||
+                        (currentScore === bestScore && currentTime < bestTime)
+                ) {
+                        setBestScore(currentScore);
+                        setBestTime(currentTime);
+                        setCookie("bestScore", currentScore, 365);
+                        setCookie("bestTime", currentTime, 365);
+                }
+        };
 
-	const handleStartGame = () => {
-		setIsGameStarted(true);
-		setIsGameEnded(false);
-		setIsGameWon(false);
-		setTimeLeft(15 * 60); // Reset to 15 minutes
-		setCountriesGuessed([0, 0, 0, 0, 0, 0, 0]);
-		setIsPaused(false);
-		setGuessedCountries(new Set()); // Reset guessed countries
-		setFeedback(null);
-	};
+        const handleStartGame = () => {
+                setIsGameStarted(true);
+                setIsGameEnded(false);
+                setTimeLeft(gameDuration); // Reset to selected duration
+                setCountriesGuessed([0, 0, 0, 0, 0, 0, 0]);
+                setIsPaused(false);
+                setGuessedCountries(new Set()); // Reset guessed countries
+                setFeedback(null);
+        };
 
 	const handleTogglePause = () => {
 		setIsPaused(!isPaused);
@@ -286,13 +290,13 @@ const App = () => {
 						</div>
 					</>
 				)}
-				{!isGameStarted && !isGameEnded && (
-					<StartOverlay
-						onStart={handleStartGame}
-						count={countriesGuessed}
-						isGameEnded={isGameEnded}
-					/>
-				)}
+                                {!isGameStarted && !isGameEnded && (
+                                        <StartOverlay
+                                                onStart={handleStartGame}
+                                                gameDuration={gameDuration}
+                                                onDurationChange={setGameDuration}
+                                        />
+                                )}
 				<CountryInput
 					onSubmit={handleCountrySubmit}
 					disabled={!isGameStarted || isPaused || timeLeft === 0}
