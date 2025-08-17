@@ -1,9 +1,9 @@
 const StartOverlay = ({ onStart, gameDuration, onDurationChange }) => {
         const durations = [5, 10, 15];
 
-        return (
-                <div className="absolute rounded-lg inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
-                        <div className="flex flex-col items-center gap-4">
+return (
+<div className="absolute rounded-lg inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
+<div className="flex flex-col items-center gap-4 w-11/12 max-w-xs">
                                 <label className="text-white font-montserrat">Select Duration:</label>
                                 <select
                                         value={gameDuration}
