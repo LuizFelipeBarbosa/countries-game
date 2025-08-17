@@ -267,7 +267,7 @@ const App = () => {
                         <div className="min-h-screen bg-gray-200">
                                 <NavBar />
                                 <div className="container mx-auto mt-8 relative px-4">
-                                        <OutlineGame />
+                                        <OutlineGame onReturn={() => setGameMode(null)} />
                                 </div>
                         </div>
                 );

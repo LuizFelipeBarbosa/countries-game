@@ -15,21 +15,33 @@ const FeedbackMessage = ({ message, type }) => (
         </div>
 );
 
-const OutlineGame = () => {
+const OutlineGame = ({ onReturn = () => {} }) => {
         const [attempts, setAttempts] = useState(0);
         const [correct, setCorrect] = useState(0);
         const [elapsedTime, setElapsedTime] = useState(0);
         const [guessedCountries, setGuessedCountries] = useState(new Set());
         const [feedback, setFeedback] = useState(null);
         const [isGameEnded, setIsGameEnded] = useState(false);
+        const [currentCountry, setCurrentCountry] = useState(null);
 
         const isGameEndedRef = useRef(isGameEnded);
         const feedbackTimeoutRef = useRef(null);
+
+        const getRandomCountry = (exclude = guessedCountries) => {
+                const remaining = VALID_COUNTRIES.filter((c) => !exclude.has(c));
+                if (remaining.length === 0) return null;
+                const index = Math.floor(Math.random() * remaining.length);
+                return remaining[index];
+        };
 
         // Keep the ref in sync with the state
         useEffect(() => {
                 isGameEndedRef.current = isGameEnded;
         }, [isGameEnded]);
+
+        useEffect(() => {
+                setCurrentCountry(getRandomCountry());
+        }, []);
 
         useEffect(() => {
                 const timer = setInterval(() => {
@@ -64,18 +76,34 @@ const OutlineGame = () => {
                 setAttempts((prev) => prev + 1);
 
                 const validCountry = countryMap[normalized];
+                let updatedGuessed = guessedCountries;
+
                 if (validCountry) {
-                        if (guessedCountries.has(validCountry)) {
+                        if (validCountry === currentCountry) {
+                                if (!guessedCountries.has(validCountry)) {
+                                        updatedGuessed = new Set(guessedCountries);
+                                        updatedGuessed.add(validCountry);
+                                        setGuessedCountries(updatedGuessed);
+                                        setCorrect((prev) => prev + 1);
+                                        setFeedback({
+                                                message: `Correct! ${validCountry.name[0]} added.`,
+                                                type: "success",
+                                        });
+                                } else {
+                                        setFeedback({
+                                                message: `You've already guessed ${validCountry.name[0]}!`,
+                                                type: "error",
+                                        });
+                                }
+                        } else if (guessedCountries.has(validCountry)) {
                                 setFeedback({
                                         message: `You've already guessed ${validCountry.name[0]}!`,
                                         type: "error",
                                 });
                         } else {
-                                setGuessedCountries((prev) => new Set(prev).add(validCountry));
-                                setCorrect((prev) => prev + 1);
                                 setFeedback({
-                                        message: `Correct! ${validCountry.name[0]} added.`,
-                                        type: "success",
+                                        message: `${guess} is not correct.`,
+                                        type: "error",
                                 });
                         }
                 } else {
@@ -87,6 +115,13 @@ const OutlineGame = () => {
 
                 clearTimeout(feedbackTimeoutRef.current);
                 feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 3000);
+
+                const next = getRandomCountry(updatedGuessed);
+                if (next) {
+                        setCurrentCountry(next);
+                } else {
+                        setIsGameEnded(true);
+                }
         };
 
         const handleEndRound = () => {
@@ -104,6 +139,7 @@ const OutlineGame = () => {
                 setGuessedCountries(new Set());
                 setFeedback(null);
                 setIsGameEnded(false);
+                setCurrentCountry(getRandomCountry(new Set()));
         };
 
         const minutes = Math.floor(elapsedTime / 60);
@@ -111,6 +147,21 @@ const OutlineGame = () => {
 
         return (
                 <div className="p-4">
+                        <button
+                                onClick={onReturn}
+                                className="text-blue-500 underline mb-4 font-montserrat"
+                        >
+                                Back to Home
+                        </button>
+                        {currentCountry && (
+                                <div className="flex justify-center mb-4">
+                                        <img
+                                                src={`/outlines/${currentCountry.alpha2}.svg`}
+                                                alt="Country outline"
+                                                className="w-64 h-64"
+                                        />
+                                </div>
+                        )}
                         <div className="font-montserrat mb-4">
                                 Attempts: {attempts} | Correct: {correct} | Time: {minutes}:{seconds}
                         </div>
