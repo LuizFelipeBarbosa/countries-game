@@ -282,7 +282,9 @@ const App = () => {
                                                                 onPlayAgain={handleStartGame}
                                                                 countriesGuessed={0}
                                                                 timeTaken={gameDuration - timeLeft}
-                                                                totalItems={0}
+                                                                countriesGuessed={null}
+                                                                timeTaken={gameDuration - timeLeft}
+                                                                totalItems={null}
                                                                 itemLabel="outlines"
                                                                 hideScore={true}
                                                         />
