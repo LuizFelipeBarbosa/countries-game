@@ -44,7 +44,6 @@ npm run dev -- --mode outline
 ### Screenshots
 
 ![Outline Quiz in action](docs/outline-quiz.gif)
-
 ## NPM Scripts & Dependencies
 
 - `extract-outlines` – generates outline assets.
