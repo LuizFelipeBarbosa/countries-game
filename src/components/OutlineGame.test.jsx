@@ -7,12 +7,20 @@ import App from '../App';
 vi.useFakeTimers();
 
 describe('OutlineGame', () => {
-  it('renders the outline game when starting from the home screen', () => {
+  beforeEach(() => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('renders an outline and returns home', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
-    expect(
-      screen.getByPlaceholderText('Enter a country name')
-    ).toBeInTheDocument();
+    expect(screen.getByAltText(/country outline/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /back to home/i }));
+    expect(screen.getByRole('button', { name: /outline quiz/i })).toBeInTheDocument();
   });
 
   it('updates score and timer on a valid guess', () => {
@@ -20,7 +28,7 @@ describe('OutlineGame', () => {
     fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
 
     const input = screen.getByPlaceholderText('Enter a country name');
-    fireEvent.change(input, { target: { value: 'France' } });
+    fireEvent.change(input, { target: { value: 'Afghanistan' } });
     fireEvent.click(screen.getByRole('button', { name: /submit/i }));
 
     // Score should increment after a correct guess
