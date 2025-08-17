@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Map, Clock, Settings, Pause, Play } from "lucide-react";
+import { useState } from "react";
 
 const CountryInput = ({ onSubmit, disabled }) => {
 	const [inputValue, setInputValue] = useState("");
