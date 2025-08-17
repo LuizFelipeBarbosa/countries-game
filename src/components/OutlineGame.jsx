@@ -77,7 +77,7 @@ const OutlineGame = () => {
                         });
                 }
 
-                setTimeout(() => setFeedback(null), 3000);
+                feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 3000);
         };
 
         const handleEndRound = () => {
