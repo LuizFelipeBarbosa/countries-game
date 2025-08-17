@@ -29,7 +29,20 @@ const svgAttributes = viewBox
   ? `viewBox="${viewBox}"`
   : `viewBox="0 0 ${width} ${height}"`;
 
-const countries = JSON.parse(fs.readFileSync(countriesPath, 'utf8'));
+let countries;
+try {
+  const countriesJson = fs.readFileSync(countriesPath, 'utf8');
+  countries = JSON.parse(countriesJson);
+} catch (err) {
+  if (err.code === 'ENOENT') {
+    console.error(`Error: Countries JSON file not found at ${countriesPath}`);
+  } else if (err instanceof SyntaxError) {
+    console.error(`Error: Countries JSON file at ${countriesPath} is not valid JSON.`);
+  } else {
+    console.error(`Error reading or parsing countries JSON file at ${countriesPath}:`, err.message);
+  }
+  process.exit(1);
+}
 
 const specialCases = {
   fr: 'frx',
