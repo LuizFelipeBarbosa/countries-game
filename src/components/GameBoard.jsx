@@ -395,20 +395,22 @@ const GameBoard = ({
 					</object>
 				</div>
 				{!isBlurred && (
-					<div className="absolute bottom-4 right-4 space-x-2">
-						<button
-							onClick={handleZoomIn}
-							className="bg-white text-blue-500 px-3 py-1 rounded"
-						>
-							+
-						</button>
-						<button
-							onClick={handleZoomOut}
-							className="bg-white text-blue-500 px-3 py-1 rounded"
-						>
-							-
-						</button>
-					</div>
+                                        <div className="absolute bottom-4 right-4 space-x-2">
+                                                <button
+                                                        onClick={handleZoomIn}
+                                                        className="bg-white text-blue-500 px-3 py-1 rounded"
+                                                        aria-label="Zoom in"
+                                                >
+                                                        +
+                                                </button>
+                                                <button
+                                                        onClick={handleZoomOut}
+                                                        className="bg-white text-blue-500 px-3 py-1 rounded"
+                                                        aria-label="Zoom out"
+                                                >
+                                                        -
+                                                </button>
+                                        </div>
 				)}
 			</div>
 			{isBlurred && (

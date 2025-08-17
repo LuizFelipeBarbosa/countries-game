@@ -36,15 +36,21 @@ const NavBar = () => (
 				Countries of the World
 			</h1>
 			<div className="flex space-x-4">
-				<button className="p-2 hover:bg-blue-700 rounded">
-					<Map size={24} />
-				</button>
-				<button className="p-2 hover:bg-blue-700 rounded">
-					<Settings size={24} />
-				</button>
-			</div>
-		</div>
-	</nav>
+                                <button
+                                        className="p-2 hover:bg-blue-700 rounded"
+                                        aria-label="Map"
+                                >
+                                        <Map size={24} />
+                                </button>
+                                <button
+                                        className="p-2 hover:bg-blue-700 rounded"
+                                        aria-label="Settings"
+                                >
+                                        <Settings size={24} />
+                                </button>
+                        </div>
+                </div>
+        </nav>
 );
 
 const GameTimer = ({ timeLeft }) => (
