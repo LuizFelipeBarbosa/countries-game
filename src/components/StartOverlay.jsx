@@ -1,5 +1,3 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Map, Clock, Settings, Pause, Play } from "lucide-react";
 
 const StartOverlay = ({ onStart, isGameEnded, count }) => {
 	// if (isGameEnded) {

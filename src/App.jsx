@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Map, Clock, Settings, Pause, Play } from "lucide-react";
+import { Map, Clock, Settings, Pause, Play, RefreshCw } from "lucide-react";
 
 import VALID_COUNTRIES from "./assets/countries_with_continents.json";
 import GameBoard from "./components/GameBoard";
@@ -108,15 +108,25 @@ const App = () => {
 		0, 0, 0, 0, 0, 0, 0,
 	]);
 	const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
-	const [isGameStarted, setIsGameStarted] = useState(false);
-	const [isGameEnded, setIsGameEnded] = useState(false);
-	const [isMenuDown, setIsMenuDown] = useState(false);
-	const [isGameWon, setIsGameWon] = useState(false);
-	const [isPaused, setIsPaused] = useState(false);
-	const [guessedCountries, setGuessedCountries] = useState(new Set());
-	const [feedback, setFeedback] = useState(null);
-	const [bestScore, setBestScore] = useState(null);
-	const [bestTime, setBestTime] = useState(null);
+        const [isGameStarted, setIsGameStarted] = useState(false);
+        const [isGameEnded, setIsGameEnded] = useState(false);
+        const [isMenuDown, setIsMenuDown] = useState(false);
+        const [isGameWon, setIsGameWon] = useState(false);
+        const [isPaused, setIsPaused] = useState(false);
+        const [guessedCountries, setGuessedCountries] = useState(new Set());
+        const [feedback, setFeedback] = useState(null);
+        const [bestScore, setBestScore] = useState(null);
+        const [bestTime, setBestTime] = useState(null);
+
+        const countryMap = useMemo(() => {
+                const map = {};
+                VALID_COUNTRIES.forEach((c) => {
+                        c.name.forEach((n) => {
+                                map[n.toLowerCase()] = c;
+                        });
+                });
+                return map;
+        }, []);
 
 	const missedCountries = useMemo(
 	() =>
@@ -204,11 +214,9 @@ const App = () => {
 		setTimeout(() => setFeedback(null), 3000);
 	};
 
-	const handleCountrySubmit = (country) => {
-		const normalizedCountry = country.trim().toLowerCase();
-		const validCountry = VALID_COUNTRIES.find((c) =>
-			c.name.find((a) => a.toLowerCase() === normalizedCountry)
-		);
+        const handleCountrySubmit = (country) => {
+                const normalizedCountry = country.trim().toLowerCase();
+                const validCountry = countryMap[normalizedCountry];
 
 		if (validCountry) {
 			if (guessedCountries.has(validCountry)) {
