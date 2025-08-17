@@ -287,7 +287,26 @@ const App = () => {
                                                                 totalItems={null}
                                                                 itemLabel="outlines"
                                                                 hideScore={true}
-                                                        />
+                                                        {[].length === 0 ? (
+                                                                <div className="bg-white rounded shadow p-6 text-center mt-8">
+                                                                        <h2 className="text-xl font-semibold mb-2">No missed outlines!</h2>
+                                                                        <button
+                                                                                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                                                                onClick={handleStartGame}
+                                                                        >
+                                                                                Play Again
+                                                                        </button>
+                                                                </div>
+                                                        ) : (
+                                                                <EndGameOverlay
+                                                                        missedCountries={[]}
+                                                                        onPlayAgain={handleStartGame}
+                                                                        countriesGuessed={0}
+                                                                        timeTaken={gameDuration - timeLeft}
+                                                                        totalItems={0}
+                                                                        itemLabel="outlines"
+                                                                />
+                                                        )}
                                                 </>
                                         )}
                                         {isGameStarted && (
