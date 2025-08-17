@@ -1,7 +1,10 @@
+/* eslint-env node */
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
+import process from 'process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,6 +69,9 @@ const specialCases = {
   it: 'Italy_mainland',
   ca: 'Canada_mainland',
 };
+
+const createStandaloneSvg = (attributes, content) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" ${attributes}>${content}</svg>`;
 
 countries.forEach(({ alpha2 }) => {
   const mapId = specialCases[alpha2] || alpha2;
