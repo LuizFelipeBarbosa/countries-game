@@ -150,4 +150,3 @@ const OutlineGame = () => {
 };
 
 export default OutlineGame;
-
