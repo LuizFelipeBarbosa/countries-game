@@ -40,7 +40,7 @@ The app starts in the classic flag quiz. To switch to the Outline Quiz:
 ```bash
 npm run dev -- --mode outline
 ```
-
+- Use the in-app mode selector to choose **Outline Quiz**.
 ### Screenshots
 
 ![Outline Quiz in action](docs/outline-quiz.gif)
