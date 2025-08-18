@@ -160,6 +160,14 @@ const OutlineGame = ({ onReturn = () => {} }) => {
         const handleSkip = () => {
                 if (isGameEnded) return;
                 setAttempts((prev) => prev + 1);
+                if (currentCountry) {
+                        setFeedback({
+                                message: `Skipped! The correct answer was: ${currentCountry.name[0]}.`,
+                                type: "info",
+                        });
+                        clearTimeout(feedbackTimeoutRef.current);
+                        feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 3000);
+                }
                 const next = getRandomCountry();
                 if (next) {
                         setCurrentCountry(next);
