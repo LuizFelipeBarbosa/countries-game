@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Map, Settings, Pause, Play } from "lucide-react";
+import { Pause, Play } from "lucide-react";
 
 import VALID_COUNTRIES from "./assets/countries_with_continents.json";
 import GameBoard from "./components/GameBoard";
@@ -12,24 +12,27 @@ import Home from "./Home";
 import { setItem, getItem } from "./utils/storage";
 import { CONTINENTS, TOTAL_COUNTRIES } from "./constants/continents";
 
-const NavBar = () => (
+const NavBar = ({ onSelect }) => (
         <nav className="bg-blue-600 p-4 text-white">
                 <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
-                        <h1 className="text-xl sm:text-2xl font-bold font-montserrat tracking-wide">
+                        <h1
+                                className="text-xl sm:text-2xl font-bold font-montserrat tracking-wide cursor-pointer"
+                                onClick={() => onSelect(null)}
+                        >
                                 Countries of the World
                         </h1>
                         <div className="flex space-x-4 mt-4 sm:mt-0">
                                 <button
-                                        className="p-2 hover:bg-blue-700 rounded"
-                                        aria-label="Map"
+                                        className="p-2 hover:bg-blue-700 rounded font-montserrat"
+                                        onClick={() => onSelect("world")}
                                 >
-                                        <Map size={24} />
+                                        World Map Game
                                 </button>
                                 <button
-                                        className="p-2 hover:bg-blue-700 rounded"
-                                        aria-label="Settings"
+                                        className="p-2 hover:bg-blue-700 rounded font-montserrat"
+                                        onClick={() => onSelect("outline")}
                                 >
-                                        <Settings size={24} />
+                                        Outline Quiz
                                 </button>
                         </div>
                 </div>
@@ -259,13 +262,18 @@ const App = () => {
 	};
 
         if (!gameMode) {
-                return <Home onSelect={handleSelectGame} />;
+                return (
+                        <div className="min-h-screen bg-gray-200">
+                                <NavBar onSelect={handleSelectGame} />
+                                <Home />
+                        </div>
+                );
         }
 
         if (gameMode === "outline") {
                 return (
                         <div className="min-h-screen bg-gray-200">
-                                <NavBar />
+                                <NavBar onSelect={handleSelectGame} />
                                 <div className="container mx-auto mt-8 relative px-4">
                                         <OutlineGame onReturn={() => setGameMode(null)} />
                                 </div>
@@ -275,7 +283,7 @@ const App = () => {
 
         return (
                 <div className="min-h-screen bg-gray-200">
-                        <NavBar />
+                        <NavBar onSelect={handleSelectGame} />
                         <div className="container mx-auto mt-8 relative px-4">
                                 <GameBoard
                                         isBlurred={isPaused}
