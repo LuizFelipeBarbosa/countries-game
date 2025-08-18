@@ -39,6 +39,16 @@ describe('OutlineGame', () => {
     expect(newSrc).not.toBe(initialSrc);
   });
 
+  it('clears the hint when the country changes', () => {
+    vi.spyOn(Math, 'random').mockReturnValueOnce(0).mockReturnValueOnce(0.1);
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
+    fireEvent.click(screen.getByRole('button', { name: /hint/i }));
+    expect(screen.getByText(/this country is in/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+    expect(screen.queryByText(/this country is in/i)).not.toBeInTheDocument();
+  });
+
   it('updates score and timer on a valid guess', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));

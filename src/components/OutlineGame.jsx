@@ -65,6 +65,10 @@ const OutlineGame = ({ onReturn = () => {} }) => {
         }, []);
 
         useEffect(() => {
+                setHint(null);
+        }, [currentCountry]);
+
+        useEffect(() => {
                 const timer = setInterval(() => {
                         if (!isGameEndedRef.current) {
                                 setElapsedTime((prev) => prev + 1);
@@ -156,14 +160,6 @@ const OutlineGame = ({ onReturn = () => {} }) => {
         const handleSkip = () => {
                 if (isGameEnded) return;
                 setAttempts((prev) => prev + 1);
-                if (currentCountry) {
-                        setFeedback({
-                                message: `Skipped! The correct answer was: ${currentCountry.name[0]}.`,
-                                type: "info",
-                        });
-                        clearTimeout(feedbackTimeoutRef.current);
-                        feedbackTimeoutRef.current = setTimeout(() => setFeedback(null), 3000);
-                }
                 const next = getRandomCountry();
                 if (next) {
                         setCurrentCountry(next);
@@ -176,6 +172,7 @@ const OutlineGame = ({ onReturn = () => {} }) => {
                 if (isGameEnded || !currentCountry) return;
                 const continentName = CONTINENTS[currentCountry.continent - 1].name;
                 setHint(`This country is in ${continentName}.`);
+                setTimeout(() => setHint(null), 3000);
         };
 
         const missedCountries = useMemo(() => {
