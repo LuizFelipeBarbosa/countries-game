@@ -262,12 +262,7 @@ const App = () => {
 	};
 
         if (!gameMode) {
-                return (
-                        <div className="min-h-screen bg-gray-200">
-                                <NavBar onSelect={handleSelectGame} />
-                                <Home />
-                        </div>
-                );
+                return <Home onSelect={handleSelectGame} />;
         }
 
         if (gameMode === "outline") {
