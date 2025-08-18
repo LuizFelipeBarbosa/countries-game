@@ -176,7 +176,6 @@ const OutlineGame = ({ onReturn = () => {} }) => {
                 if (isGameEnded || !currentCountry) return;
                 const continentName = CONTINENTS[currentCountry.continent - 1].name;
                 setHint(`This country is in ${continentName}.`);
-                setTimeout(() => setHint(null), 3000);
         };
 
         const missedCountries = useMemo(() => {
