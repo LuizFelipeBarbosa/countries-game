@@ -15,12 +15,28 @@ describe('OutlineGame', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders an outline and returns home', () => {
+  it('renders an outline', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
     expect(screen.getByRole('img', { name: /country outline/i })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /back to home/i }));
-    expect(screen.getByRole('button', { name: /outline quiz/i })).toBeInTheDocument();
+  });
+
+  it('shows a hint when the hint button is clicked', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
+    fireEvent.click(screen.getByRole('button', { name: /hint/i }));
+    expect(screen.getByText(/this country is in/i)).toBeInTheDocument();
+  });
+
+  it('loads a new country when the skip button is clicked', () => {
+    vi.spyOn(Math, 'random').mockReturnValueOnce(0).mockReturnValueOnce(0.1);
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
+    const outline = screen.getByRole('img', { name: /country outline/i });
+    const initialSrc = outline.getAttribute('data');
+    fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+    const newSrc = outline.getAttribute('data');
+    expect(newSrc).not.toBe(initialSrc);
   });
 
   it('updates score and timer on a valid guess', () => {

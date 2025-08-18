@@ -2,13 +2,16 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import CountryInput from "./CountryInput";
 import EndGameOverlay from "./EndGameOverlay";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
+import { CONTINENTS } from "../constants/continents";
 
 const FeedbackMessage = ({ message, type }) => (
         <div
                 className={`mt-2 p-2 font-montserrat rounded ${
                         type === "success"
                                 ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
+                                : type === "error"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-blue-100 text-blue-700"
                 }`}
         >
                 {message}
@@ -23,6 +26,7 @@ const OutlineGame = ({ onReturn = () => {} }) => {
         const [feedback, setFeedback] = useState(null);
         const [isGameEnded, setIsGameEnded] = useState(false);
         const [currentCountry, setCurrentCountry] = useState(null);
+        const [hint, setHint] = useState(null);
 
         const isGameEndedRef = useRef(isGameEnded);
         const feedbackTimeoutRef = useRef(null);
@@ -149,6 +153,24 @@ const OutlineGame = ({ onReturn = () => {} }) => {
                 setIsGameEnded(true);
         };
 
+        const handleSkip = () => {
+                if (isGameEnded) return;
+                setAttempts((prev) => prev + 1);
+                const next = getRandomCountry();
+                if (next) {
+                        setCurrentCountry(next);
+                } else {
+                        setIsGameEnded(true);
+                }
+        };
+
+        const handleHint = () => {
+                if (isGameEnded || !currentCountry) return;
+                const continentName = CONTINENTS[currentCountry.continent - 1].name;
+                setHint(`This country is in ${continentName}.`);
+                setTimeout(() => setHint(null), 3000);
+        };
+
         const missedCountries = useMemo(() => {
                 return VALID_COUNTRIES.filter((c) => !guessedCountries.has(c));
         }, [guessedCountries]);
@@ -168,12 +190,6 @@ const OutlineGame = ({ onReturn = () => {} }) => {
 
         return (
                 <div className="p-4 flex flex-col items-center text-center">
-                        <button
-                                onClick={onReturn}
-                                className="text-blue-500 underline mb-4 self-start font-montserrat"
-                        >
-                                Back to Home
-                        </button>
                         {currentCountry && (
                                 <div className="flex justify-center mb-6">
                                         <object
@@ -203,12 +219,27 @@ const OutlineGame = ({ onReturn = () => {} }) => {
                                         type={feedback.type}
                                 />
                         )}
-                        <button
-                                onClick={handleEndRound}
-                                className="bg-blue-500 hover:bg-blue-600 text-white font-montserrat py-2 px-4 rounded mt-6 shadow"
-                        >
-                                End Round
-                        </button>
+                        {hint && <FeedbackMessage message={hint} type="hint" />}
+                        <div className="flex space-x-4 mt-6">
+                                <button
+                                        onClick={handleHint}
+                                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-montserrat py-2 px-4 rounded shadow"
+                                >
+                                        Hint
+                                </button>
+                                <button
+                                        onClick={handleSkip}
+                                        className="bg-gray-500 hover:bg-gray-600 text-white font-montserrat py-2 px-4 rounded shadow"
+                                >
+                                        Skip
+                                </button>
+                                <button
+                                        onClick={handleEndRound}
+                                        className="bg-blue-500 hover:bg-blue-600 text-white font-montserrat py-2 px-4 rounded shadow"
+                                >
+                                        End Round
+                                </button>
+                        </div>
                         {isGameEnded && (
                                 <EndGameOverlay
                                         missedCountries={missedCountries}
