@@ -26,6 +26,23 @@ const OutlineGame = ({ onReturn = () => {} }) => {
 
         const isGameEndedRef = useRef(isGameEnded);
         const feedbackTimeoutRef = useRef(null);
+        const svgObjectRef = useRef(null);
+
+        const handleSvgLoad = () => {
+                const svgDoc = svgObjectRef.current?.contentDocument;
+                const svgEl = svgDoc?.querySelector("svg");
+                if (svgEl) {
+                        const bbox = svgEl.getBBox();
+                        svgEl.setAttribute(
+                                "viewBox",
+                                `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`,
+                        );
+                        svgEl.removeAttribute("width");
+                        svgEl.removeAttribute("height");
+                        svgEl.setAttribute("width", "100%");
+                        svgEl.setAttribute("height", "100%");
+                }
+        };
 
         const getRandomCountry = (exclude = guessedCountries) => {
                 const remaining = VALID_COUNTRIES.filter((c) => !exclude.has(c));
@@ -159,9 +176,13 @@ const OutlineGame = ({ onReturn = () => {} }) => {
                         </button>
                         {currentCountry && (
                                 <div className="flex justify-center mb-6">
-                                        <img
-                                                src={`/outlines/${currentCountry.alpha2}.svg`}
-                                                alt="Country outline"
+                                        <object
+                                                data={`/outlines/${currentCountry.alpha2}.svg`}
+                                                type="image/svg+xml"
+                                                role="img"
+                                                aria-label="Country outline"
+                                                ref={svgObjectRef}
+                                                onLoad={handleSvgLoad}
                                                 className="w-96 h-96 drop-shadow-lg"
                                         />
                                 </div>
