@@ -18,7 +18,7 @@ describe('OutlineGame', () => {
   it('renders an outline and returns home', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
-    expect(screen.getByAltText(/country outline/i)).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /country outline/i })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /back to home/i }));
     expect(screen.getByRole('button', { name: /outline quiz/i })).toBeInTheDocument();
   });
@@ -60,8 +60,8 @@ describe('OutlineGame', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /outline quiz/i }));
 
-    const outline = screen.getByAltText(/country outline/i);
-    const initialSrc = outline.getAttribute('src');
+    const outline = screen.getByRole('img', { name: /country outline/i });
+    const initialSrc = outline.getAttribute('data');
 
     const input = screen.getByPlaceholderText('Enter a country name');
     fireEvent.change(input, { target: { value: 'Albania' } });
@@ -71,9 +71,9 @@ describe('OutlineGame', () => {
     // Score should remain zero
     expect(screen.getByText(/Correct: 0/)).toBeInTheDocument();
     // Outline should remain the same after a wrong guess
-    expect(screen.getByAltText(/country outline/i).getAttribute('src')).toBe(
-      initialSrc
-    );
+    expect(
+      screen.getByRole('img', { name: /country outline/i }).getAttribute('data')
+    ).toBe(initialSrc);
 
     fireEvent.change(input, { target: { value: 'Afghanistan' } });
     fireEvent.click(screen.getByRole('button', { name: /submit/i }));
