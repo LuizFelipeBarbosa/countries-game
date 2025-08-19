@@ -199,7 +199,10 @@ const GameBoard = ({
 			.scaleExtent([1, 8])
 			.on("zoom", (event) => {
 				const { transform } = event;
-				select(zoomContainerRef.current).attr("transform", transform);
+				select(zoomContainerRef.current).style(
+					"transform",
+					`translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`
+				);
 				setZoomLevel(transform.k);
 			});
 
