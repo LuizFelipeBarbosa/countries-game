@@ -268,7 +268,7 @@ const GameBoard = ({
                         window.visualViewport?.removeEventListener(
                                 "resize",
                                 updateViewport
-                let visualViewportListenerAdded = false;
+                const visualViewportListenerAdded = false;
                 updateViewport();
                 if (window.visualViewport) {
                         window.visualViewport.addEventListener("resize", updateViewport);
