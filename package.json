@@ -12,6 +12,8 @@
     "generate:outlines": "node scripts/extractCountrySVGs.js"
   },
   "dependencies": {
+    "d3-selection": "^3.0.0",
+    "d3-zoom": "^3.0.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.447.0",
     "react": "^18.3.1",

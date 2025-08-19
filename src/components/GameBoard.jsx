@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { zoom as d3Zoom, zoomIdentity } from "d3-zoom";
+import { select } from "d3-selection";
 import WorldMap from "../assets/map.svg";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
 
@@ -8,15 +10,13 @@ const GameBoard = ({
 	isGameEnded,
 	isGameStarted,
 }) => {
-	const [zoom, setZoom] = useState(1);
-	const [pan, setPan] = useState({ x: 0, y: 0 });
-	const [isDragging, setIsDragging] = useState(false);
-	const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-        const [svgLoaded, setSvgLoaded] = useState(false);
-        const pinchRef = useRef(null);
+	const [svgLoaded, setSvgLoaded] = useState(false);
+	const [zoomLevel, setZoomLevel] = useState(1);
 
 	const svgObjectRef = useRef(null);
 	const containerRef = useRef(null);
+	const zoomContainerRef = useRef(null);
+	const zoomBehavior = useRef(null);
 
 	let highlightedCountries = [...guessedCountries].map(
 		(country) => country.alpha2
@@ -167,13 +167,13 @@ const GameBoard = ({
 							"central"
 						);
 						textElement.setAttribute("font-family", "Arial");
-						if (zoom < 1.5) {
+						if (zoomLevel < 1.5) {
 							textElement.setAttribute("font-size", "20");
-						} else if (zoom < 2) {
+						} else if (zoomLevel < 2) {
 							textElement.setAttribute("font-size", "16");
-						} else if (zoom < 3) {
+						} else if (zoomLevel < 3) {
 							textElement.setAttribute("font-size", "12");
-						} else if (zoom < 4) {
+						} else if (zoomLevel < 4) {
 							textElement.setAttribute("font-size", "8");
 						} else {
 							textElement.setAttribute("font-size", "4");
@@ -192,268 +192,57 @@ const GameBoard = ({
 				});
 			}
 		}
-	}, [guessedCountries, isGameEnded, svgLoaded]);
+	}, [guessedCountries, isGameEnded, svgLoaded, zoomLevel]);
 
 	useEffect(() => {
-		// Update font size based on zoom level
-		if (
-			svgLoaded &&
-			svgObjectRef.current &&
-			svgObjectRef.current.contentDocument
-		) {
-			const svgDoc = svgObjectRef.current.contentDocument;
-			const textElements = svgDoc.querySelectorAll(
-				'text[data-country-name="true"]'
-			);
-
-			textElements.forEach((textElement) => {
-				if (zoom < 1.5) {
-					textElement.setAttribute("font-size", "20");
-				} else if (zoom < 2) {
-					textElement.setAttribute("font-size", "16");
-				} else if (zoom < 3) {
-					textElement.setAttribute("font-size", "12");
-				} else if (zoom < 4) {
-					textElement.setAttribute("font-size", "8");
-				} else {
-					textElement.setAttribute("font-size", "4");
-				}
-			});
-		}
-	}, [zoom, svgLoaded]);
-
-	useEffect(() => {
-		const container = containerRef.current;
-		if (container) {
-			const preventDefaultScroll = (e) => {
-				e.preventDefault();
-			};
-
-			container.addEventListener("wheel", preventDefaultScroll, {
-				passive: false,
+		const z = d3Zoom()
+			.scaleExtent([1, 8])
+			.on("zoom", (event) => {
+				const { transform } = event;
+				select(zoomContainerRef.current).attr("transform", transform);
+				setZoomLevel(transform.k);
 			});
 
-			return () => {
-				container.removeEventListener("wheel", preventDefaultScroll);
-			};
-		}
-	}, []);
+		zoomBehavior.current = z;
+		const container = select(containerRef.current);
+		container.call(z);
 
-	const handleZoomIn = (e) => {
-		e.preventDefault();
-		const container = containerRef.current;
-		if (container) {
-			const rect = container.getBoundingClientRect();
-			const centerX = rect.width / 2;
-			const centerY = rect.height / 2;
-			handleZoom(0.1, centerX, centerY);
-		}
-	};
-
-	const handleZoomOut = (e) => {
-		e.preventDefault();
-		const container = containerRef.current;
-		if (container) {
-			const rect = container.getBoundingClientRect();
-			const centerX = rect.width / 2;
-			const centerY = rect.height / 2;
-			handleZoom(-0.1, centerX, centerY);
-		}
-	};
-
-        const handleMouseDown = (e) => {
-                setIsDragging(true);
-                setDragStart({ x: e.clientX, y: e.clientY });
-        };
-
-        const handleTouchStart = (e) => {
-                if (e.touches.length === 1) {
-                        setIsDragging(true);
-                        setDragStart({
-                                x: e.touches[0].clientX,
-                                y: e.touches[0].clientY,
-                        });
-                } else if (e.touches.length === 2) {
-                        const distance = Math.hypot(
-                                e.touches[0].clientX - e.touches[1].clientX,
-                                e.touches[0].clientY - e.touches[1].clientY
-                        );
-                        pinchRef.current = {
-                                initialDistance: distance,
-                                startZoom: zoom,
-                        };
-                }
-        };
-
-	const calculatePanLimits = (containerRect, svgRect, currentZoom) => {
-		const horizontalOverflow = Math.max(
-			0,
-			(svgRect.width * currentZoom - containerRect.width) / 2
-		);
-		const verticalOverflow = Math.max(
-			0,
-			(svgRect.height * currentZoom - containerRect.height) / 2
-		);
-
-		return {
-			minX: -horizontalOverflow,
-			maxX: horizontalOverflow,
-			minY: -verticalOverflow,
-			maxY: verticalOverflow,
+		return () => {
+			container.on(".zoom", null);
 		};
+	}, [svgLoaded]);
+
+	const handleZoomIn = () => {
+		if (zoomBehavior.current) {
+			select(containerRef.current)
+				.transition()
+				.duration(200)
+				.call(zoomBehavior.current.scaleBy, 1.2);
+		}
 	};
 
-        const handleMouseMove = (e) => {
-                if (isDragging) {
-                        const dx = e.clientX - dragStart.x;
-                        const dy = e.clientY - dragStart.y;
-                        setPan((prevPan) => {
-                                const container = containerRef.current;
-                                const svgObject = svgObjectRef.current;
-                                if (!container || !svgObject) return prevPan;
-
-                                const containerRect = container.getBoundingClientRect();
-                                const svgRect = svgObject.getBoundingClientRect();
-
-                                const { minX, maxX, minY, maxY } = calculatePanLimits(
-                                        containerRect,
-                                        svgRect,
-                                        zoom
-                                );
-
-                                const newX = Math.min(Math.max(prevPan.x + dx, minX), maxX);
-                                const newY = Math.min(Math.max(prevPan.y + dy, minY), maxY);
-
-                                return { x: newX, y: newY };
-                        });
-                        setDragStart({ x: e.clientX, y: e.clientY });
-                }
-        };
-
-        const handleTouchMove = (e) => {
-                if (e.touches.length === 1 && isDragging) {
-                        const touch = e.touches[0];
-                        const dx = touch.clientX - dragStart.x;
-                        const dy = touch.clientY - dragStart.y;
-                        setPan((prevPan) => {
-                                const container = containerRef.current;
-                                const svgObject = svgObjectRef.current;
-                                if (!container || !svgObject) return prevPan;
-
-                                const containerRect = container.getBoundingClientRect();
-                                const svgRect = svgObject.getBoundingClientRect();
-
-                                const { minX, maxX, minY, maxY } = calculatePanLimits(
-                                        containerRect,
-                                        svgRect,
-                                        zoom
-                                );
-
-                                const newX = Math.min(Math.max(prevPan.x + dx, minX), maxX);
-                                const newY = Math.min(Math.max(prevPan.y + dy, minY), maxY);
-
-                                return { x: newX, y: newY };
-                        });
-                        setDragStart({ x: touch.clientX, y: touch.clientY });
-                } else if (e.touches.length === 2 && pinchRef.current) {
-                        const distance = Math.hypot(
-                                e.touches[0].clientX - e.touches[1].clientX,
-                                e.touches[0].clientY - e.touches[1].clientY
-                        );
-                        const scale =
-                                distance / pinchRef.current.initialDistance;
-                        const newZoom = pinchRef.current.startZoom * scale;
-                        const delta = newZoom - zoom;
-                        const midX =
-                                (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                        const midY =
-                                (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                        handleZoom(delta, midX, midY);
-                }
-        };
-
-	const handleZoom = (delta, clientX, clientY) => {
-		setZoom((prevZoom) => {
-			const container = containerRef.current;
-			const svgObject = svgObjectRef.current;
-			if (!container || !svgObject) return prevZoom;
-
-			const containerRect = container.getBoundingClientRect();
-			const svgRect = svgObject.getBoundingClientRect();
-
-			// Calculate cursor position relative to the container
-			const x = clientX - containerRect.left;
-			const y = clientY - containerRect.top;
-
-			// Calculate cursor position relative to the content (considering current pan and zoom)
-			const contentX = (x - pan.x) / prevZoom;
-			const contentY = (y - pan.y) / prevZoom;
-
-			const newZoom = Math.max(1, Math.min(prevZoom + delta, 8));
-
-			// Calculate new pan position to keep the point under cursor in the same place
-			let newPanX = x - contentX * newZoom;
-			let newPanY = y - contentY * newZoom;
-
-			// Adjust pan to respect the new limits
-			const { minX, maxX, minY, maxY } = calculatePanLimits(
-				containerRect,
-				svgRect,
-				newZoom
-			);
-			newPanX = Math.min(Math.max(newPanX, minX), maxX);
-			newPanY = Math.min(Math.max(newPanY, minY), maxY);
-
-			setPan({ x: newPanX, y: newPanY });
-
-			return newZoom;
-		});
+	const handleZoomOut = () => {
+		if (zoomBehavior.current) {
+			select(containerRef.current)
+				.transition()
+				.duration(200)
+				.call(zoomBehavior.current.scaleBy, 0.8);
+		}
 	};
 
-        const handleMouseUp = () => {
-                setIsDragging(false);
-        };
-
-        const handleTouchEnd = () => {
-                setIsDragging(false);
-                pinchRef.current = null;
-        };
-
-	const handleWheel = (e) => {
-		e.preventDefault();
-		const delta = e.deltaY * -0.001;
-		handleZoom(delta, e.clientX, e.clientY);
-	};
-
-return (
-<div className="relative w-full h-[60vh] sm:h-[70vh]">
+	return (
+		<div className="relative w-full h-[60vh] sm:h-[70vh]">
 			<div
 				className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
 					isBlurred ? "opacity-50" : "opacity-100"
 				}`}
 				ref={containerRef}
-				onMouseDown={!isBlurred ? handleMouseDown : undefined}
-                                onMouseMove={!isBlurred ? handleMouseMove : undefined}
-                                onMouseUp={!isBlurred ? handleMouseUp : undefined}
-                                onMouseLeave={!isBlurred ? handleMouseUp : undefined}
-                                onWheel={!isBlurred ? handleWheel : undefined}
-                                onTouchStart={!isBlurred ? handleTouchStart : undefined}
-                                onTouchMove={!isBlurred ? handleTouchMove : undefined}
-                                onTouchEnd={!isBlurred ? handleTouchEnd : undefined}
-                                onTouchCancel={!isBlurred ? handleTouchEnd : undefined}
-                                style={{
-                                        cursor: isDragging ? "grabbing" : "grab",
-                                        touchAction: "none",
-                                }}
+				style={{
+					cursor: isBlurred ? "default" : "grab",
+					touchAction: "none",
+				}}
 			>
-				<div
-					className="bg-blue-400 rounded-md relative select-none"
-					style={{
-						transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-						transformOrigin: "0 0",
-						cursor: isDragging ? "grabbing" : "grab",
-					}}
-				>
+				<g ref={zoomContainerRef}>
 					<object
 						ref={svgObjectRef}
 						type="image/svg+xml"
@@ -463,24 +252,24 @@ return (
 					>
 						Your browser does not support SVG
 					</object>
-				</div>
+				</g>
 				{!isBlurred && (
-                                        <div className="absolute bottom-4 right-4 space-x-2">
-                                                <button
-                                                        onClick={handleZoomIn}
-                                                        className="bg-white text-blue-500 px-3 py-1 rounded"
-                                                        aria-label="Zoom in"
-                                                >
-                                                        +
-                                                </button>
-                                                <button
-                                                        onClick={handleZoomOut}
-                                                        className="bg-white text-blue-500 px-3 py-1 rounded"
-                                                        aria-label="Zoom out"
-                                                >
-                                                        -
-                                                </button>
-                                        </div>
+					<div className="absolute bottom-4 right-4 space-x-2">
+						<button
+							onClick={handleZoomIn}
+							className="bg-white text-blue-500 px-3 py-1 rounded"
+							aria-label="Zoom in"
+						>
+							+
+						</button>
+						<button
+							onClick={handleZoomOut}
+							className="bg-white text-blue-500 px-3 py-1 rounded"
+							aria-label="Zoom out"
+						>
+							-
+						</button>
+					</div>
 				)}
 			</div>
 			{isBlurred && (
