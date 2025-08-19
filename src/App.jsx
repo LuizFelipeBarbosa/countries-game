@@ -279,12 +279,22 @@ const App = () => {
 		<div className="min-h-screen bg-gray-200">
 			<NavBar onSelect={handleSelectGame} />
 			<div className="container mx-auto mt-8 relative px-4">
-				<GameBoard
-					isBlurred={isPaused}
-					guessedCountries={guessedCountries}
-					isGameEnded={isGameEnded}
-					isGameStarted={isGameStarted}
-				/>
+				<div className="flex flex-col md:flex-row gap-4">
+					<GameBoard
+						isBlurred={isPaused}
+						guessedCountries={guessedCountries}
+						isGameEnded={isGameEnded}
+						isGameStarted={isGameStarted}
+					/>
+					{isGameEnded && (
+						<EndGameOverlay
+							missedCountries={missedCountries}
+							onPlayAgain={handleStartGame}
+							countriesGuessed={countriesGuessed[0]}
+							timeTaken={gameDuration - timeLeft}
+						/>
+					)}
+				</div>
 				{isGameEnded && (
 					<>
 						<CountryCounter
@@ -295,12 +305,6 @@ const App = () => {
 						<div className="absolute top-4 right-8 flex items-center">
 							<GameTimer timeLeft={timeLeft} />
 						</div>
-						<EndGameOverlay
-							missedCountries={missedCountries}
-							onPlayAgain={handleStartGame}
-							countriesGuessed={countriesGuessed[0]}
-							timeTaken={gameDuration - timeLeft}
-						/>
 					</>
 				)}
 				{isGameStarted && (
