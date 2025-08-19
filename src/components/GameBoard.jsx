@@ -268,7 +268,20 @@ const GameBoard = ({
                         window.visualViewport?.removeEventListener(
                                 "resize",
                                 updateViewport
-                        );
+                let visualViewportListenerAdded = false;
+                updateViewport();
+                if (window.visualViewport) {
+                        window.visualViewport.addEventListener("resize", updateViewport);
+                        visualViewportListenerAdded = true;
+                }
+                window.addEventListener("resize", updateViewport);
+                return () => {
+                        if (visualViewportListenerAdded && window.visualViewport) {
+                                window.visualViewport.removeEventListener(
+                                        "resize",
+                                        updateViewport
+                                );
+                        }
                         window.removeEventListener("resize", updateViewport);
                 };
         }, []);
