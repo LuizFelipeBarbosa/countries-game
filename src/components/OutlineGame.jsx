@@ -7,7 +7,7 @@ import { CONTINENTS } from "../constants/continents";
 
 const FeedbackMessage = ({ message, type }) => (
 	<div
-		className={`mt-2 p-2 font-montserrat rounded ${
+		className={`p-2 font-montserrat rounded ${
 			type === "success"
 				? "bg-green-100 text-green-700"
 				: type === "error"
@@ -20,7 +20,7 @@ const FeedbackMessage = ({ message, type }) => (
 );
 
 const OutlineGame = () => {
-        const [attempts, setAttempts] = useState(0);
+	const [attempts, setAttempts] = useState(0);
 	const [correct, setCorrect] = useState(0);
 	const [elapsedTime, setElapsedTime] = useState(0);
 	const [guessedCountries, setGuessedCountries] = useState(new Set());
@@ -184,7 +184,7 @@ const OutlineGame = () => {
 		if (isGameEnded || !currentCountry) return;
 		const continentName = CONTINENTS[currentCountry.continent - 1].name;
 		setHint(`This country is in ${continentName}.`);
-		setTimeout(() => setHint(null), 3000);
+		setTimeout(() => setHint(null), 10000);
 	};
 
 	const missedCountries = useMemo(() => {
@@ -206,30 +206,6 @@ const OutlineGame = () => {
 
 	return (
 		<div className="p-4 flex flex-col items-center text-center">
-			{currentCountry && (
-				<div className="flex justify-center mb-6">
-                                        <object
-                                                data={`/quality_outlines/${QUALITY_OUTLINE_MAP[currentCountry.alpha2]}`}
-                                                type="image/svg+xml"
-                                                role="img"
-                                                aria-label="Country outline"
-                                                ref={svgObjectRef}
-                                                onLoad={handleSvgLoad}
-                                                className="w-96 h-96 drop-shadow-lg"
-                                        />
-                                </div>
-                        )}
-			<div className="font-montserrat mb-4 text-lg">
-				Attempts: {attempts} | Correct: {correct} | Time: {minutes}:
-				{seconds}
-			</div>
-			<div className="w-full max-w-md">
-				<CountryInput
-					onSubmit={handleGuess}
-					disabled={isGameEnded}
-					suggestions={countryNames}
-				/>
-			</div>
 			{feedback && (
 				<FeedbackMessage
 					message={feedback.message}
@@ -237,7 +213,26 @@ const OutlineGame = () => {
 				/>
 			)}
 			{hint && <FeedbackMessage message={hint} type="hint" />}
-			<div className="flex space-x-4 mt-6">
+			{currentCountry && (
+				<div className="flex justify-center my-6">
+					<object
+						data={`/quality_outlines/${
+							QUALITY_OUTLINE_MAP[currentCountry.alpha2]
+						}`}
+						type="image/svg+xml"
+						role="img"
+						aria-label="Country outline"
+						ref={svgObjectRef}
+						onLoad={handleSvgLoad}
+						className="w-96 h-96 drop-shadow-lg"
+					/>
+				</div>
+			)}
+			<div className="font-montserrat mb-4 text-lg">
+				Attempts: {attempts} | Correct: {correct} | Time: {minutes}:
+				{seconds}
+			</div>
+			<div className="flex space-x-4">
 				<button
 					onClick={handleHint}
 					className="bg-yellow-500 hover:bg-yellow-600 text-white font-montserrat py-2 px-4 rounded shadow"
@@ -256,6 +251,13 @@ const OutlineGame = () => {
 				>
 					End Round
 				</button>
+			</div>
+			<div className="w-full max-w-md">
+				<CountryInput
+					onSubmit={handleGuess}
+					disabled={isGameEnded}
+					suggestions={countryNames}
+				/>
 			</div>
 			{isGameEnded && (
 				<EndGameOverlay
