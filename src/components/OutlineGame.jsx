@@ -213,21 +213,45 @@ const OutlineGame = () => {
 				/>
 			)}
 			{hint && <FeedbackMessage message={hint} type="hint" />}
-			{currentCountry && (
-				<div className="flex justify-center my-6">
-					<object
-						data={`/quality_outlines/${
-							QUALITY_OUTLINE_MAP[currentCountry.alpha2]
-						}`}
-						type="image/svg+xml"
-						role="img"
-						aria-label="Country outline"
-						ref={svgObjectRef}
-						onLoad={handleSvgLoad}
-						className="w-96 h-96 drop-shadow-lg"
-					/>
-				</div>
-			)}
+                        {isGameEnded ? (
+                                <div className="flex flex-col md:flex-row justify-center my-6 gap-4">
+                                        {currentCountry && (
+                                                <object
+                                                        data={`/quality_outlines/${
+                                                                QUALITY_OUTLINE_MAP[currentCountry.alpha2]
+                                                        }`}
+                                                        type="image/svg+xml"
+                                                        role="img"
+                                                        aria-label="Country outline"
+                                                        ref={svgObjectRef}
+                                                        onLoad={handleSvgLoad}
+                                                        className="w-96 h-96 drop-shadow-lg"
+                                                />
+                                        )}
+                                        <EndGameOverlay
+                                                missedCountries={missedCountries}
+                                                onPlayAgain={handlePlayAgain}
+                                                countriesGuessed={correct}
+                                                timeTaken={elapsedTime}
+                                        />
+                                </div>
+                        ) : (
+                                currentCountry && (
+                                        <div className="flex justify-center my-6">
+                                                <object
+                                                        data={`/quality_outlines/${
+                                                                QUALITY_OUTLINE_MAP[currentCountry.alpha2]
+                                                        }`}
+                                                        type="image/svg+xml"
+                                                        role="img"
+                                                        aria-label="Country outline"
+                                                        ref={svgObjectRef}
+                                                        onLoad={handleSvgLoad}
+                                                        className="w-96 h-96 drop-shadow-lg"
+                                                />
+                                        </div>
+                                )
+                        )}
 			<div className="font-montserrat mb-4 text-lg">
 				Attempts: {attempts} | Correct: {correct} | Time: {minutes}:
 				{seconds}
@@ -259,14 +283,6 @@ const OutlineGame = () => {
 					suggestions={countryNames}
 				/>
 			</div>
-			{isGameEnded && (
-				<EndGameOverlay
-					missedCountries={missedCountries}
-					onPlayAgain={handlePlayAgain}
-					countriesGuessed={correct}
-					timeTaken={elapsedTime}
-				/>
-			)}
 		</div>
 	);
 };
