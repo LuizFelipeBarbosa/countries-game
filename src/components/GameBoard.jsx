@@ -359,6 +359,7 @@ const GameBoard = ({
         const handleTouchMove = (e) => {
                 e.preventDefault();
                 if (e.touches.length === 1 && isDragging) {
+                        e.preventDefault();
                         const touch = e.touches[0];
                         const dx = touch.clientX - dragStart.x;
                         const dy = touch.clientY - dragStart.y;
