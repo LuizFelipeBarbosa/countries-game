@@ -10,19 +10,30 @@ const GameBoard = ({
 }) => {
 	const [zoom, setZoom] = useState(1);
 	const [pan, setPan] = useState({ x: 0, y: 0 });
-	const [isDragging, setIsDragging] = useState(false);
-	const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-	const [svgLoaded, setSvgLoaded] = useState(false);
-	const pinchRef = useRef(null);
+        const [isDragging, setIsDragging] = useState(false);
+        const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+        const [svgLoaded, setSvgLoaded] = useState(false);
+        const pinchRef = useRef(null);
 
-	const svgObjectRef = useRef(null);
-	const containerRef = useRef(null);
+        const [viewport, setViewport] = useState({
+                height:
+                        typeof window !== "undefined"
+                                ? window.visualViewport?.height ?? window.innerHeight
+                                : 0,
+                width:
+                        typeof window !== "undefined"
+                                ? window.visualViewport?.width ?? window.innerWidth
+                                : 0,
+        });
+
+        const svgObjectRef = useRef(null);
+        const containerRef = useRef(null);
 
 	let highlightedCountries = [...guessedCountries].map(
 		(country) => country.alpha2
 	);
 
-	useEffect(() => {
+        useEffect(() => {
 		const svgObject = svgObjectRef.current;
 
 		const applyHighlighting = (color, countryList) => {
@@ -237,31 +248,55 @@ const GameBoard = ({
 				container.removeEventListener("wheel", preventDefaultScroll);
 			};
 		}
-	}, []);
+        }, []);
+
+        useEffect(() => {
+                const updateViewport = () => {
+                        setViewport({
+                                height:
+                                        window.visualViewport?.height ??
+                                        window.innerHeight,
+                                width:
+                                        window.visualViewport?.width ??
+                                        window.innerWidth,
+                        });
+                };
+                updateViewport();
+                window.visualViewport?.addEventListener("resize", updateViewport);
+                window.addEventListener("resize", updateViewport);
+                return () => {
+                        window.visualViewport?.removeEventListener(
+                                "resize",
+                                updateViewport
+                        );
+                        window.removeEventListener("resize", updateViewport);
+                };
+        }, []);
 
 	const handleMouseDown = (e) => {
 		setIsDragging(true);
 		setDragStart({ x: e.clientX, y: e.clientY });
 	};
 
-	const handleTouchStart = (e) => {
-		if (e.touches.length === 1) {
-			setIsDragging(true);
-			setDragStart({
-				x: e.touches[0].clientX,
-				y: e.touches[0].clientY,
-			});
-		} else if (e.touches.length === 2) {
-			const distance = Math.hypot(
-				e.touches[0].clientX - e.touches[1].clientX,
-				e.touches[0].clientY - e.touches[1].clientY
-			);
-			pinchRef.current = {
-				initialDistance: distance,
-				startZoom: zoom,
-			};
-		}
-	};
+        const handleTouchStart = (e) => {
+                e.preventDefault();
+                if (e.touches.length === 1) {
+                        setIsDragging(true);
+                        setDragStart({
+                                x: e.touches[0].clientX,
+                                y: e.touches[0].clientY,
+                        });
+                } else if (e.touches.length === 2) {
+                        const distance = Math.hypot(
+                                e.touches[0].clientX - e.touches[1].clientX,
+                                e.touches[0].clientY - e.touches[1].clientY
+                        );
+                        pinchRef.current = {
+                                initialDistance: distance,
+                                startZoom: zoom,
+                        };
+                }
+        };
 
 	const calculatePanLimits = (containerRect, svgRect, currentZoom) => {
 		const horizontalOverflow = Math.max(
@@ -308,44 +343,45 @@ const GameBoard = ({
 		}
 	};
 
-	const handleTouchMove = (e) => {
-		if (e.touches.length === 1 && isDragging) {
-			const touch = e.touches[0];
-			const dx = touch.clientX - dragStart.x;
-			const dy = touch.clientY - dragStart.y;
-			setPan((prevPan) => {
-				const container = containerRef.current;
-				const svgObject = svgObjectRef.current;
-				if (!container || !svgObject) return prevPan;
+        const handleTouchMove = (e) => {
+                e.preventDefault();
+                if (e.touches.length === 1 && isDragging) {
+                        const touch = e.touches[0];
+                        const dx = touch.clientX - dragStart.x;
+                        const dy = touch.clientY - dragStart.y;
+                        setPan((prevPan) => {
+                                const container = containerRef.current;
+                                const svgObject = svgObjectRef.current;
+                                if (!container || !svgObject) return prevPan;
 
-				const containerRect = container.getBoundingClientRect();
-				const svgRect = svgObject.getBoundingClientRect();
+                                const containerRect = container.getBoundingClientRect();
+                                const svgRect = svgObject.getBoundingClientRect();
 
-				const { minX, maxX, minY, maxY } = calculatePanLimits(
-					containerRect,
-					svgRect,
-					zoom
-				);
+                                const { minX, maxX, minY, maxY } = calculatePanLimits(
+                                        containerRect,
+                                        svgRect,
+                                        zoom
+                                );
 
-				const newX = Math.min(Math.max(prevPan.x + dx, minX), maxX);
-				const newY = Math.min(Math.max(prevPan.y + dy, minY), maxY);
+                                const newX = Math.min(Math.max(prevPan.x + dx, minX), maxX);
+                                const newY = Math.min(Math.max(prevPan.y + dy, minY), maxY);
 
-				return { x: newX, y: newY };
-			});
-			setDragStart({ x: touch.clientX, y: touch.clientY });
-		} else if (e.touches.length === 2 && pinchRef.current) {
-			const distance = Math.hypot(
-				e.touches[0].clientX - e.touches[1].clientX,
-				e.touches[0].clientY - e.touches[1].clientY
-			);
-			const scale = distance / pinchRef.current.initialDistance;
-			const newZoom = pinchRef.current.startZoom * scale;
-			const delta = newZoom - zoom;
-			const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-			const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-			handleZoom(delta, midX, midY);
-		}
-	};
+                                return { x: newX, y: newY };
+                        });
+                        setDragStart({ x: touch.clientX, y: touch.clientY });
+                } else if (e.touches.length === 2 && pinchRef.current) {
+                        const distance = Math.hypot(
+                                e.touches[0].clientX - e.touches[1].clientX,
+                                e.touches[0].clientY - e.touches[1].clientY
+                        );
+                        const scale = distance / pinchRef.current.initialDistance;
+                        const newZoom = pinchRef.current.startZoom * scale;
+                        const delta = newZoom - zoom;
+                        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                        handleZoom(delta, midX, midY);
+                }
+        };
 
 	const handleZoom = (delta, clientX, clientY) => {
 		setZoom((prevZoom) => {
@@ -389,23 +425,32 @@ const GameBoard = ({
 		setIsDragging(false);
 	};
 
-	const handleTouchEnd = () => {
-		setIsDragging(false);
-		pinchRef.current = null;
-	};
+        const handleTouchEnd = (e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                pinchRef.current = null;
+        };
 
-	const handleWheel = (e) => {
-		e.preventDefault();
-		const delta = e.deltaY * -0.001;
-		handleZoom(delta, e.clientX, e.clientY);
-	};
+        const handleWheel = (e) => {
+                e.preventDefault();
+                const delta = e.deltaY * -0.001;
+                handleZoom(delta, e.clientX, e.clientY);
+        };
 
-	return (
-		<div className="relative w-full h-[60vh] sm:h-[70vh]">
-			<div
-				className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
-					isBlurred ? "opacity-50" : "opacity-100"
-				}`}
+        const containerHeight =
+                viewport.width >= 640
+                        ? viewport.height * 0.7
+                        : viewport.height * 0.6;
+
+        return (
+                <div
+                        className="relative w-full"
+                        style={{ height: `${containerHeight}px` }}
+                >
+                        <div
+                                className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
+                                        isBlurred ? "opacity-50" : "opacity-100"
+                                }`}
 				ref={containerRef}
 				onMouseDown={!isBlurred ? handleMouseDown : undefined}
 				onMouseMove={!isBlurred ? handleMouseMove : undefined}
