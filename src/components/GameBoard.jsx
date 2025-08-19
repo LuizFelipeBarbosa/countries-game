@@ -255,7 +255,7 @@ const GameBoard = ({
 					>
 						Your browser does not support SVG
 					</object>
-				</g>
+				</div>
 				{!isBlurred && (
 					<div className="absolute bottom-4 right-4 space-x-2">
 						<button
