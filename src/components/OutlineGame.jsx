@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import CountryInput from "./CountryInput";
 import EndGameOverlay from "./EndGameOverlay";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
+import QUALITY_OUTLINE_MAP from "../assets/quality_outline_map.json";
 import { CONTINENTS } from "../constants/continents";
 
 const FeedbackMessage = ({ message, type }) => (
@@ -18,8 +19,8 @@ const FeedbackMessage = ({ message, type }) => (
 	</div>
 );
 
-const OutlineGame = ({ onReturn = () => {} }) => {
-	const [attempts, setAttempts] = useState(0);
+const OutlineGame = () => {
+        const [attempts, setAttempts] = useState(0);
 	const [correct, setCorrect] = useState(0);
 	const [elapsedTime, setElapsedTime] = useState(0);
 	const [guessedCountries, setGuessedCountries] = useState(new Set());
@@ -207,17 +208,17 @@ const OutlineGame = ({ onReturn = () => {} }) => {
 		<div className="p-4 flex flex-col items-center text-center">
 			{currentCountry && (
 				<div className="flex justify-center mb-6">
-					<object
-						data={`/outlines/${currentCountry.alpha2}.svg`}
-						type="image/svg+xml"
-						role="img"
-						aria-label="Country outline"
-						ref={svgObjectRef}
-						onLoad={handleSvgLoad}
-						className="w-96 h-96 drop-shadow-lg"
-					/>
-				</div>
-			)}
+                                        <object
+                                                data={`/quality_outlines/${QUALITY_OUTLINE_MAP[currentCountry.alpha2]}`}
+                                                type="image/svg+xml"
+                                                role="img"
+                                                aria-label="Country outline"
+                                                ref={svgObjectRef}
+                                                onLoad={handleSvgLoad}
+                                                className="w-96 h-96 drop-shadow-lg"
+                                        />
+                                </div>
+                        )}
 			<div className="font-montserrat mb-4 text-lg">
 				Attempts: {attempts} | Correct: {correct} | Time: {minutes}:
 				{seconds}
