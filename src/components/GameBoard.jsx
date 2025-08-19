@@ -242,7 +242,7 @@ const GameBoard = ({
 					touchAction: "none",
 				}}
 			>
-				<g ref={zoomContainerRef}>
+				<div ref={zoomContainerRef}>
 					<object
 						ref={svgObjectRef}
 						type="image/svg+xml"
