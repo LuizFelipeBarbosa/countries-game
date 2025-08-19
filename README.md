@@ -42,7 +42,8 @@ npm run preview
 
 ## Outline Assets
 
-The outline quiz relies on individual SVG files for each country. To regenerate them from `src/assets/map.svg` run:
+The outline quiz relies on individual SVG files for each country. High-quality versions are available in `public/quality_outlines/`.
+To regenerate outlines from `src/assets/map.svg` run:
 
 ```bash
 npm run generate:outlines
