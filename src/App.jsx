@@ -277,73 +277,84 @@ const App = () => {
 
 	return (
 		<div className="min-h-screen bg-gray-200">
-			<NavBar onSelect={handleSelectGame} />
-			<div className="container mx-auto mt-8 relative px-4">
-				<GameBoard
-					isBlurred={isPaused}
-					guessedCountries={guessedCountries}
-					isGameEnded={isGameEnded}
-					isGameStarted={isGameStarted}
-				/>
-				{isGameEnded && (
-					<>
-						<CountryCounter
-							onToggleMenu={handleToggleMenu}
-							isMenuDown={isMenuDown}
-							count={countriesGuessed}
-						/>
-						<div className="absolute top-4 right-8 flex items-center">
-							<GameTimer timeLeft={timeLeft} />
-						</div>
-						<EndGameOverlay
-							missedCountries={missedCountries}
-							onPlayAgain={handleStartGame}
-							countriesGuessed={countriesGuessed[0]}
-							timeTaken={gameDuration - timeLeft}
-						/>
-					</>
-				)}
-				{isGameStarted && (
-					<>
-						<CountryCounter
-							onToggleMenu={handleToggleMenu}
-							isMenuDown={isMenuDown}
-							count={countriesGuessed}
-						/>
-						<div className="absolute top-4 right-8">
-							<div className="flex items-center">
-								<GameTimer timeLeft={timeLeft} />
-								<PauseButton
-									isPaused={isPaused}
-									onTogglePause={handleTogglePause}
-								/>
-							</div>
-							<GiveUpButton onGiveUp={handleGiveUp} />
-						</div>
-					</>
-				)}
-				{!isGameStarted && !isGameEnded && (
-					<StartOverlay
-						onStart={handleStartGame}
-						gameDuration={gameDuration}
-						onDurationChange={setGameDuration}
-					/>
-				)}
-				<CountryInput
-					onSubmit={handleCountrySubmit}
-					disabled={!isGameStarted || isPaused || timeLeft === 0}
-					suggestions={countryNames}
-				/>
-				{feedback && (
-					<FeedbackMessage
-						message={feedback.message}
-						type={feedback.type}
-					/>
-				)}
-				<BestScoreDisplay bestScore={bestScore} bestTime={bestTime} />
-			</div>
-		</div>
-	);
+                        <NavBar onSelect={handleSelectGame} />
+                        <div className="container mx-auto mt-8 relative px-4">
+                                {isGameEnded ? (
+                                        <div className="flex flex-col lg:flex-row gap-4">
+                                                <div className="relative flex-1">
+                                                        <GameBoard
+                                                                isBlurred={isPaused}
+                                                                guessedCountries={guessedCountries}
+                                                                isGameEnded={isGameEnded}
+                                                                isGameStarted={isGameStarted}
+                                                        />
+                                                        <CountryCounter
+                                                                onToggleMenu={handleToggleMenu}
+                                                                isMenuDown={isMenuDown}
+                                                                count={countriesGuessed}
+                                                        />
+                                                        <div className="absolute top-4 right-8 flex items-center">
+                                                                <GameTimer timeLeft={timeLeft} />
+                                                        </div>
+                                                </div>
+                                                <EndGameOverlay
+                                                        missedCountries={missedCountries}
+                                                        onPlayAgain={handleStartGame}
+                                                        countriesGuessed={countriesGuessed[0]}
+                                                        timeTaken={gameDuration - timeLeft}
+                                                />
+                                        </div>
+                                ) : (
+                                        <>
+                                                <GameBoard
+                                                        isBlurred={isPaused}
+                                                        guessedCountries={guessedCountries}
+                                                        isGameEnded={isGameEnded}
+                                                        isGameStarted={isGameStarted}
+                                                />
+                                                {isGameStarted && (
+                                                        <>
+                                                                <CountryCounter
+                                                                        onToggleMenu={handleToggleMenu}
+                                                                        isMenuDown={isMenuDown}
+                                                                        count={countriesGuessed}
+                                                                />
+                                                                <div className="absolute top-4 right-8">
+                                                                        <div className="flex items-center">
+                                                                                <GameTimer timeLeft={timeLeft} />
+                                                                                <PauseButton
+                                                                                        isPaused={isPaused}
+                                                                                        onTogglePause={handleTogglePause}
+                                                                                />
+                                                                        </div>
+                                                                        <GiveUpButton onGiveUp={handleGiveUp} />
+                                                                </div>
+                                                        </>
+                                                )}
+                                                {!isGameStarted && (
+                                                        <StartOverlay
+                                                                onStart={handleStartGame}
+                                                                gameDuration={gameDuration}
+                                                                onDurationChange={setGameDuration}
+                                                        />
+                                                )}
+                                        </>
+                                )}
+                                <CountryInput
+                                        onSubmit={handleCountrySubmit}
+                                        disabled={!isGameStarted || isPaused || timeLeft === 0}
+                                        suggestions={countryNames}
+                                />
+                                {feedback && (
+                                        <FeedbackMessage
+                                                message={feedback.message}
+                                                type={feedback.type}
+                                        />
+                                )}
+                                <BestScoreDisplay bestScore={bestScore} bestTime={bestTime} />
+                        </div>
+                </div>
+        );
 };
 
 export default App;
