@@ -421,51 +421,49 @@ const GameBoard = ({
 		handleZoom(delta, e.clientX, e.clientY);
 	};
 
-	return (
-		<div className="relative w-full h-[60vh] sm:h-[70vh]">
-			<div
-				className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
-					isBlurred ? "opacity-50" : "opacity-100"
-				}`}
-				ref={containerRef}
-				onMouseDown={!isBlurred ? handleMouseDown : undefined}
-				onMouseMove={!isBlurred ? handleMouseMove : undefined}
-				onMouseUp={!isBlurred ? handleMouseUp : undefined}
-				onMouseLeave={!isBlurred ? handleMouseUp : undefined}
-				onWheel={!isBlurred ? handleWheel : undefined}
-				onTouchStart={!isBlurred ? handleTouchStart : undefined}
-				onTouchMove={!isBlurred ? handleTouchMove : undefined}
-				onTouchEnd={!isBlurred ? handleTouchEnd : undefined}
-				onTouchCancel={!isBlurred ? handleTouchEnd : undefined}
-				style={{
-					cursor: isDragging ? "grabbing" : "grab",
-					touchAction: "none",
-				}}
-			>
-				<div
-					className="bg-blue-400 rounded-md relative select-none"
-					style={{
-						transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-						transformOrigin: "0 0",
-						cursor: isDragging ? "grabbing" : "grab",
-					}}
-				>
-					<object
-						ref={svgObjectRef}
-						type="image/svg+xml"
-						className="preserve-aspect-ratio w-full h-full pointer-events-none"
-						data={WorldMap}
-						aria-label="World Map"
-					>
-						Your browser does not support SVG
-					</object>
-				</div>
-			</div>
-			{isBlurred && (
-				<div className="absolute top-0 left-0 rounded-lg w-full h-full bg-opacity-50 backdrop-blur-3xl select-none transition-opacity duration-500"></div>
-			)}
-		</div>
-	);
+        return (
+                <div
+                        className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-[60vh] sm:h-[70vh] overflow-hidden select-none transition-opacity duration-500 ${
+                                isBlurred ? "opacity-50" : "opacity-100"
+                        }`}
+                        ref={containerRef}
+                        onMouseDown={!isBlurred ? handleMouseDown : undefined}
+                        onMouseMove={!isBlurred ? handleMouseMove : undefined}
+                        onMouseUp={!isBlurred ? handleMouseUp : undefined}
+                        onMouseLeave={!isBlurred ? handleMouseUp : undefined}
+                        onWheel={!isBlurred ? handleWheel : undefined}
+                        onTouchStart={!isBlurred ? handleTouchStart : undefined}
+                        onTouchMove={!isBlurred ? handleTouchMove : undefined}
+                        onTouchEnd={!isBlurred ? handleTouchEnd : undefined}
+                        onTouchCancel={!isBlurred ? handleTouchEnd : undefined}
+                        style={{
+                                cursor: isDragging ? "grabbing" : "grab",
+                                touchAction: "none",
+                        }}
+                >
+                        <div
+                                className="bg-blue-400 rounded-md relative select-none"
+                                style={{
+                                        transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                                        transformOrigin: "0 0",
+                                        cursor: isDragging ? "grabbing" : "grab",
+                                }}
+                        >
+                                <object
+                                        ref={svgObjectRef}
+                                        type="image/svg+xml"
+                                        className="preserve-aspect-ratio w-full h-full pointer-events-none"
+                                        data={WorldMap}
+                                        aria-label="World Map"
+                                >
+                                        Your browser does not support SVG
+                                </object>
+                        </div>
+                        {isBlurred && (
+                                <div className="absolute top-0 left-0 rounded-lg w-full h-full bg-opacity-50 backdrop-blur-3xl select-none transition-opacity duration-500"></div>
+                        )}
+                </div>
+        );
 };
 
 export default GameBoard;
