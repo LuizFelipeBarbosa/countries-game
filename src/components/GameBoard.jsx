@@ -15,12 +15,33 @@ const GameBoard = ({
 	const [svgLoaded, setSvgLoaded] = useState(false);
 	const pinchRef = useRef(null);
 
-	const svgObjectRef = useRef(null);
-	const containerRef = useRef(null);
+        const svgObjectRef = useRef(null);
+        const containerRef = useRef(null);
 
-	let highlightedCountries = [...guessedCountries].map(
-		(country) => country.alpha2
-	);
+        let highlightedCountries = [...guessedCountries].map(
+                (country) => country.alpha2
+        );
+
+        useEffect(() => {
+                const visualViewport = window.visualViewport;
+
+                const updateHeight = () => {
+                        if (visualViewport && containerRef.current) {
+                                containerRef.current.style.height = `${visualViewport.height}px`;
+                        }
+                };
+
+                if (visualViewport) {
+                        visualViewport.addEventListener("resize", updateHeight);
+                        updateHeight();
+                }
+
+                return () => {
+                        if (visualViewport) {
+                                visualViewport.removeEventListener("resize", updateHeight);
+                        }
+                };
+        }, []);
 
 	useEffect(() => {
 		const svgObject = svgObjectRef.current;
