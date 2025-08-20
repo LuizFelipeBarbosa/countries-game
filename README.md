@@ -1,81 +1,78 @@
-# Countries Game
+# Countries of the World Game
 
-An interactive quiz for learning world countries built with React and Vite. Guess nations by their flags or challenge yourself with an outline-only mode.
+This is a web-based geography game designed to test and improve your knowledge of world countries. The application features multiple game modes to challenge you in different ways. Built with modern web technologies like React, Vite, and Tailwind CSS, it offers a fast and responsive user experience.
 
 ## Features
 
-- **Flag Quiz** – identify countries by their flags.
-- **Outline Quiz** – guess countries from their silhouettes.
-- Scoreboard with continent breakdown and countdown timer.
-- Best score and time stored in local storage.
-- Built with React, Vite, Tailwind CSS and Leaflet.
+-   **Two Challenging Game Modes:**
+    -   **World Map Game:** Guess the countries by name and see them highlighted on an interactive world map.
+    -   **Outline Quiz:** Test your recognition skills by identifying countries from their geographical outlines.
+-   **Timed Challenges:** Race against the clock to guess as many countries as you can within the time limit.
+-   **Scoring System:** Keep track of your progress with a real-time counter for guessed countries.
+-   **Best Score Tracking:** The game saves your best score and fastest time to your browser's local storage, so you can compete against yourself.
+-   **Instant Feedback:** Receive immediate feedback on your guesses, letting you know if you're correct or if you've already guessed a country.
+-   **Responsive Design:** Enjoy a seamless experience on both desktop and mobile devices.
 
 ## Getting Started
 
+To get a local copy up and running, follow these simple steps.
+
 ### Prerequisites
-- Node.js 18+
-- npm
+
+Make sure you have Node.js and npm installed on your machine. You can download them from [https://nodejs.org/](https://nodejs.org/).
 
 ### Installation
-```bash
-npm install
-```
 
-### Development Server
-```bash
+1.  Clone the repo:
+    ```sh
+    git clone https://github.com/username/repo-name.git
+    ```
+2.  Navigate to the project directory:
+    ```sh
+    cd your_repository
+    ```
+3.  Install NPM packages:
+    ```sh
+    npm install
+    ```
+
+### Running the Application
+
+To start the development server, run the following command:
+
+```sh
 npm run dev
 ```
-Start directly in outline mode:
-```bash
-npm run dev -- --mode outline
-```
 
-### Build for Production
-```bash
-npm run build
-```
+This will start the application in development mode. Open [http://localhost:5173](http://localhost:5173) (or the address shown in your terminal) to view it in the browser. The page will reload if you make edits.
 
-### Preview Production Build
-```bash
-npm run preview
-```
+## Available Scripts
 
-## Outline Assets
+In the project directory, you can run the following commands:
 
-The outline quiz relies on individual SVG files for each country. High-quality versions are available in `public/quality_outlines/`.
-To regenerate outlines from `src/assets/map.svg` run:
-
-```bash
-npm run generate:outlines
-```
-
-Generated files are stored in `public/outlines/`.
-
-## Scripts
-
-- `npm run dev` – start the local development server.
-- `npm run build` – create a production build.
-- `npm run preview` – preview the production build.
-- `npm test` – run unit tests with Vitest.
-- `npm run lint` – lint source files with ESLint.
-- `npm run generate:outlines` – create country outline SVGs.
-
-## Testing
-
-Run the test suite and linter:
-
-```bash
-npm test
-npm run lint
-```
+-   `npm run dev`: Runs the app in the development mode.
+-   `npm run build`: Builds the app for production to the `dist` folder.
+-   `npm run preview`: Serves the production build locally for previewing.
+-   `npm test`: Runs the test suite using Vitest.
+-   `npm run lint`: Lints the code using ESLint to find and fix problems.
+-   `npm run generate:outlines`: A custom script to extract country SVG outlines from a larger map file.
 
 ## Project Structure
 
-- `src/` – React components, assets and utilities.
-- `public/` – static assets and generated outlines.
-- `scripts/` – helper scripts such as outline generation.
-
-## Contributing
-
-Issues and pull requests are welcome. Feel free to suggest improvements or new features.
-
+```
+/
+├── public/              # Static assets, including country outlines
+├── src/                 # Source code
+│   ├── assets/          # JSON data and images
+│   ├── components/      # React components
+│   ├── constants/       # Constant values
+│   ├── utils/           # Utility functions
+│   ├── App.jsx          # Main application component
+│   └── main.jsx         # Entry point of the application
+├── scripts/             # Node.js scripts for asset generation
+├── .gitignore           # Git ignore file
+├── index.html           # Main HTML file
+├── package.json         # Project metadata and dependencies
+├── README.md            # You are here!
+└── vite.config.js       # Vite configuration
+```
