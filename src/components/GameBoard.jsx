@@ -3,24 +3,47 @@ import WorldMap from "../assets/map.svg";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
 
 const GameBoard = ({
-	guessedCountries,
-	isBlurred,
-	isGameEnded,
-	isGameStarted,
+        guessedCountries,
+        isBlurred,
+        isGameEnded,
+        isGameStarted,
 }) => {
-	const [zoom, setZoom] = useState(1);
-	const [pan, setPan] = useState({ x: 0, y: 0 });
-	const [isDragging, setIsDragging] = useState(false);
-	const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-	const [svgLoaded, setSvgLoaded] = useState(false);
-	const pinchRef = useRef(null);
+        const [zoom, setZoom] = useState(1);
+        const [pan, setPan] = useState({ x: 0, y: 0 });
+        const [isDragging, setIsDragging] = useState(false);
+        const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+        const [svgLoaded, setSvgLoaded] = useState(false);
+        const [boardHeight, setBoardHeight] = useState(0);
+        const pinchRef = useRef(null);
 
-	const svgObjectRef = useRef(null);
-	const containerRef = useRef(null);
+        const svgObjectRef = useRef(null);
+        const containerRef = useRef(null);
 
-	let highlightedCountries = [...guessedCountries].map(
-		(country) => country.alpha2
-	);
+        let highlightedCountries = [...guessedCountries].map(
+                (country) => country.alpha2
+        );
+
+        useEffect(() => {
+                const updateHeight = () => {
+                        const height = window.visualViewport
+                                ? window.visualViewport.height
+                                : window.innerHeight;
+                        const ratio = window.innerWidth >= 640 ? 0.7 : 0.6;
+                        setBoardHeight(height * ratio);
+                };
+
+                updateHeight();
+                window.addEventListener("resize", updateHeight);
+                window.visualViewport?.addEventListener("resize", updateHeight);
+
+                return () => {
+                        window.removeEventListener("resize", updateHeight);
+                        window.visualViewport?.removeEventListener(
+                                "resize",
+                                updateHeight
+                        );
+                };
+        }, []);
 
 	useEffect(() => {
 		const svgObject = svgObjectRef.current;
@@ -400,8 +423,8 @@ const GameBoard = ({
 		handleZoom(delta, e.clientX, e.clientY);
 	};
 
-	return (
-		<div className="relative w-full h-[60vh] sm:h-[70vh]">
+        return (
+                <div className="relative w-full" style={{ height: boardHeight }}>
 			<div
 				className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
 					isBlurred ? "opacity-50" : "opacity-100"
