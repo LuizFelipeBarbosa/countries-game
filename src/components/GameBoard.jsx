@@ -267,24 +267,25 @@ const GameBoard = ({
 		setDragStart({ x: e.clientX, y: e.clientY });
 	};
 
-	const handleTouchStart = (e) => {
-		if (e.touches.length === 1) {
-			setIsDragging(true);
-			setDragStart({
-				x: e.touches[0].clientX,
-				y: e.touches[0].clientY,
-			});
-		} else if (e.touches.length === 2) {
-			const distance = Math.hypot(
-				e.touches[0].clientX - e.touches[1].clientX,
-				e.touches[0].clientY - e.touches[1].clientY
-			);
-			pinchRef.current = {
-				initialDistance: distance,
-				startZoom: zoom,
-			};
-		}
-	};
+        const handleTouchStart = (e) => {
+                e.preventDefault();
+                if (e.touches.length === 1) {
+                        setIsDragging(true);
+                        setDragStart({
+                                x: e.touches[0].clientX,
+                                y: e.touches[0].clientY,
+                        });
+                } else if (e.touches.length === 2) {
+                        const distance = Math.hypot(
+                                e.touches[0].clientX - e.touches[1].clientX,
+                                e.touches[0].clientY - e.touches[1].clientY
+                        );
+                        pinchRef.current = {
+                                initialDistance: distance,
+                                startZoom: zoom,
+                        };
+                }
+        };
 
 	const calculatePanLimits = (containerRect, svgRect, currentZoom) => {
 		const horizontalOverflow = Math.max(
@@ -331,44 +332,45 @@ const GameBoard = ({
 		}
 	};
 
-	const handleTouchMove = (e) => {
-		if (e.touches.length === 1 && isDragging) {
-			const touch = e.touches[0];
-			const dx = touch.clientX - dragStart.x;
-			const dy = touch.clientY - dragStart.y;
-			setPan((prevPan) => {
-				const container = containerRef.current;
-				const svgObject = svgObjectRef.current;
-				if (!container || !svgObject) return prevPan;
+        const handleTouchMove = (e) => {
+                e.preventDefault();
+                if (e.touches.length === 1 && isDragging) {
+                        const touch = e.touches[0];
+                        const dx = touch.clientX - dragStart.x;
+                        const dy = touch.clientY - dragStart.y;
+                        setPan((prevPan) => {
+                                const container = containerRef.current;
+                                const svgObject = svgObjectRef.current;
+                                if (!container || !svgObject) return prevPan;
 
-				const containerRect = container.getBoundingClientRect();
-				const svgRect = svgObject.getBoundingClientRect();
+                                const containerRect = container.getBoundingClientRect();
+                                const svgRect = svgObject.getBoundingClientRect();
 
-				const { minX, maxX, minY, maxY } = calculatePanLimits(
-					containerRect,
-					svgRect,
-					zoom
-				);
+                                const { minX, maxX, minY, maxY } = calculatePanLimits(
+                                        containerRect,
+                                        svgRect,
+                                        zoom
+                                );
 
-				const newX = Math.min(Math.max(prevPan.x + dx, minX), maxX);
-				const newY = Math.min(Math.max(prevPan.y + dy, minY), maxY);
+                                const newX = Math.min(Math.max(prevPan.x + dx, minX), maxX);
+                                const newY = Math.min(Math.max(prevPan.y + dy, minY), maxY);
 
-				return { x: newX, y: newY };
-			});
-			setDragStart({ x: touch.clientX, y: touch.clientY });
-		} else if (e.touches.length === 2 && pinchRef.current) {
-			const distance = Math.hypot(
-				e.touches[0].clientX - e.touches[1].clientX,
-				e.touches[0].clientY - e.touches[1].clientY
-			);
-			const scale = distance / pinchRef.current.initialDistance;
-			const newZoom = pinchRef.current.startZoom * scale;
-			const delta = newZoom - zoom;
-			const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-			const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-			handleZoom(delta, midX, midY);
-		}
-	};
+                                return { x: newX, y: newY };
+                        });
+                        setDragStart({ x: touch.clientX, y: touch.clientY });
+                } else if (e.touches.length === 2 && pinchRef.current) {
+                        const distance = Math.hypot(
+                                e.touches[0].clientX - e.touches[1].clientX,
+                                e.touches[0].clientY - e.touches[1].clientY
+                        );
+                        const scale = distance / pinchRef.current.initialDistance;
+                        const newZoom = pinchRef.current.startZoom * scale;
+                        const delta = newZoom - zoom;
+                        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                        handleZoom(delta, midX, midY);
+                }
+        };
 
 	const handleZoom = (delta, clientX, clientY) => {
 		setZoom((prevZoom) => {
@@ -417,11 +419,32 @@ const GameBoard = ({
 		pinchRef.current = null;
 	};
 
-	const handleWheel = (e) => {
-		e.preventDefault();
-		const delta = e.deltaY * -0.001;
-		handleZoom(delta, e.clientX, e.clientY);
-	};
+        const handleWheel = (e) => {
+                e.preventDefault();
+                const delta = e.deltaY * -0.001;
+                handleZoom(delta, e.clientX, e.clientY);
+        };
+
+        useEffect(() => {
+                const container = containerRef.current;
+                if (!container) return;
+
+                if (!isBlurred) {
+                        const opts = { passive: false };
+                        container.addEventListener("touchstart", handleTouchStart, opts);
+                        container.addEventListener("touchmove", handleTouchMove, opts);
+                        container.addEventListener("touchend", handleTouchEnd);
+                        container.addEventListener("touchcancel", handleTouchEnd);
+                }
+
+                return () => {
+                        if (!container) return;
+                        container.removeEventListener("touchstart", handleTouchStart);
+                        container.removeEventListener("touchmove", handleTouchMove);
+                        container.removeEventListener("touchend", handleTouchEnd);
+                        container.removeEventListener("touchcancel", handleTouchEnd);
+                };
+        }, [isBlurred, handleTouchStart, handleTouchMove, handleTouchEnd]);
 
         return (
                 <div className="relative w-full" style={{ height: boardHeight }}>
@@ -435,14 +458,10 @@ const GameBoard = ({
 				onMouseUp={!isBlurred ? handleMouseUp : undefined}
 				onMouseLeave={!isBlurred ? handleMouseUp : undefined}
 				onWheel={!isBlurred ? handleWheel : undefined}
-				onTouchStart={!isBlurred ? handleTouchStart : undefined}
-				onTouchMove={!isBlurred ? handleTouchMove : undefined}
-				onTouchEnd={!isBlurred ? handleTouchEnd : undefined}
-				onTouchCancel={!isBlurred ? handleTouchEnd : undefined}
-				style={{
-					cursor: isDragging ? "grabbing" : "grab",
-					touchAction: "none",
-				}}
+                                style={{
+                                        cursor: isDragging ? "grabbing" : "grab",
+                                        touchAction: "none",
+                                }}
 			>
 				<div
 					className="bg-blue-400 rounded-md relative select-none"
