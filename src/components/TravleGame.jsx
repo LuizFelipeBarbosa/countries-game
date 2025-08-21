@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { CheckCircle, GitCommit } from 'lucide-react';
 import CountryInput from './CountryInput';
 import countries from '../assets/countries.json';
@@ -277,7 +277,6 @@ const TravleGame = () => {
       if (!container || !svgObject) return prevZoom;
 
       const containerRect = container.getBoundingClientRect();
-      const svgRect = svgObject.getBoundingClientRect();
 
       const x = clientX - containerRect.left;
       const y = clientY - containerRect.top;
@@ -388,8 +387,8 @@ const TravleGame = () => {
         </div>
         <div className="w-full md:w-1/3">
           <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-xl font-bold">From: {gameState.start.toUpperCase()}</h2>
-            <h2 className="text-xl font-bold">To: {gameState.end.toUpperCase()}</h2>
+            <h2 className="text-xl font-bold">From: {countries.find(c => c.alpha3 === gameState.start)?.name[0]}</h2>
+            <h2 className="text-xl font-bold">To: {countries.find(c => c.alpha3 === gameState.end)?.name[0]}</h2>
             <p className="mt-2">
               Shortest Path: <strong>{gameState.shortest}</strong>
             </p>
