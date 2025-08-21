@@ -10,7 +10,6 @@ import { getItem, setItem } from '../utils/storage';
 
 const TravleGame = () => {
   const [notification, setNotification] = useState(null);
-  const [puzzleMode, setPuzzleMode] = useState('random'); // 'random' or 'daily'
   const [gameState, setGameState] = useState(() => {
     const savedGame = getItem('travleGameState');
     return savedGame ? JSON.parse(savedGame) : {
@@ -141,11 +140,6 @@ const TravleGame = () => {
       newStatus = 'lost';
     }
 
-    if (newStatus !== 'playing' && puzzleMode === 'daily') {
-      const today = new Date().setHours(0, 0, 0, 0);
-      setItem(`travle-daily-${today}`, 'true');
-    }
-
     setGameState(prev => ({
       ...prev,
       guesses: newGuesses,
@@ -156,14 +150,7 @@ const TravleGame = () => {
 
   const startNewGame = () => {
     clearAllColors();
-    const today = new Date().setHours(0, 0, 0, 0);
-    if (puzzleMode === 'daily' && getItem(`travle-daily-${today}`)) {
-      setNotification('You have already played the daily puzzle today. Come back tomorrow!');
-      setTimeout(() => setNotification(null), 3000);
-      return;
-    }
-    const seed = puzzleMode === 'daily' ? today : undefined;
-    const { start, end, shortest } = generatePuzzle(adjacencyMap, bfsForPath, seed);
+    const { start, end, shortest } = generatePuzzle(adjacencyMap, bfsForPath);
     const dStart = bfs(start);
     const dEnd = bfs(end);
 
@@ -186,7 +173,7 @@ const TravleGame = () => {
     if (adjacencyMap.size > 0 && !getItem('travleGameState')) {
       startNewGame();
     }
-  }, [adjacencyMap, puzzleMode]);
+  }, [adjacencyMap]);
 
   useEffect(() => {
     setItem('travleGameState', JSON.stringify(gameState));
@@ -389,12 +376,6 @@ const TravleGame = () => {
         </div>
       )}
       <h1 className="text-2xl font-bold mb-4">Travle Game</h1>
-      <button
-        className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded mb-4"
-        onClick={() => setPuzzleMode(prev => prev === 'random' ? 'daily' : 'random')}
-      >
-        {puzzleMode === 'random' ? 'Switch to Daily Mode' : 'Switch to Random Mode'}
-      </button>
       <div className="flex flex-col md:flex-row gap-4 w-full">
         <div
           className="w-full md:w-2/3 h-96 bg-gray-300 rounded-lg overflow-hidden"
