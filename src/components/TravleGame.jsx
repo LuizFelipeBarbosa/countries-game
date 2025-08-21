@@ -210,16 +210,19 @@ const TravleGame = () => {
 	const coloredCountriesRef = useRef(new Map());
 	const previousGuessesRef = useRef([]);
 
-	const clearAllColors = () => {
-		const svgDoc = svgObjectRef.current?.contentDocument;
-		if (!svgDoc) return;
-		coloredCountriesRef.current.forEach((_, alpha2) => {
-			const el = svgDoc.getElementById(alpha2);
-			if (el) el.style.fill = "#d4d4d8";
-		});
-		coloredCountriesRef.current.clear();
-		previousGuessesRef.current = [];
-	};
+        const clearAllColors = () => {
+                const svgDoc = svgObjectRef.current?.contentDocument;
+                if (!svgDoc) return;
+                coloredCountriesRef.current.forEach((_, alpha2) => {
+                        const group = svgDoc.getElementById(alpha2);
+                        if (group) {
+                                const paths = group.querySelectorAll("path");
+                                paths.forEach((p) => (p.style.fill = "#d4d4d8"));
+                        }
+                });
+                coloredCountriesRef.current.clear();
+                previousGuessesRef.current = [];
+        };
 
 	const handleMouseDown = (e) => {
 		setIsDragging(true);
@@ -357,16 +360,17 @@ const TravleGame = () => {
 			countries.map((c) => [c.alpha3, c.alpha2])
 		);
 
-		const highlightCountry = (iso3, color) => {
-			const alpha2 = countryToAlpha2.get(iso3);
-			if (alpha2) {
-				const countryElement = svgDoc.getElementById(alpha2);
-				if (countryElement) {
-					countryElement.style.fill = color;
-					coloredCountriesRef.current.set(alpha2, color);
-				}
-			}
-		};
+                const highlightCountry = (iso3, color) => {
+                        const alpha2 = countryToAlpha2.get(iso3);
+                        if (alpha2) {
+                                const group = svgDoc.getElementById(alpha2);
+                                if (group) {
+                                        const paths = group.querySelectorAll("path");
+                                        paths.forEach((p) => (p.style.fill = color));
+                                        coloredCountriesRef.current.set(alpha2, color);
+                                }
+                        }
+                };
 
 		const prevGuesses = previousGuessesRef.current;
 		const newGuesses = gameState.guesses.slice(prevGuesses.length);
