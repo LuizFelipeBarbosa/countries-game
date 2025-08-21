@@ -27,6 +27,17 @@ const Home = ({ onSelect }) => {
                                                 Identify the country based solely on its geographic outline.
                                         </p>
                                 </button>
+                                <button
+                                        className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition flex flex-col items-center"
+                                        onClick={() => onSelect("travle")}
+                                >
+                                        <h2 className="text-xl font-semibold mb-2 font-montserrat">
+                                                Travle Game
+                                        </h2>
+                                        <p className="text-gray-600 text-center font-montserrat">
+                                                Connect the start and end countries by guessing adjacent countries.
+                                        </p>
+                                </button>
                         </div>
                 </div>
         );

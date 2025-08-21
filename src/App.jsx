@@ -8,6 +8,7 @@ import CountryInput from "./components/CountryInput";
 import CountryCounter from "./components/CountryCounter";
 import EndGameOverlay from "./components/EndGameOverlay";
 import OutlineGame from "./components/OutlineGame";
+import TravleGame from "./components/TravleGame";
 import Home from "./Home";
 import { setItem, getItem } from "./utils/storage";
 import { CONTINENTS, TOTAL_COUNTRIES } from "./constants/continents";
@@ -33,6 +34,12 @@ const NavBar = ({ onSelect }) => (
 					onClick={() => onSelect("outline")}
 				>
 					Outline Quiz
+				</button>
+				<button
+					className="p-2 hover:bg-blue-700 rounded font-montserrat"
+					onClick={() => onSelect("travle")}
+				>
+					Travle Game
 				</button>
 			</div>
 		</div>
@@ -270,6 +277,17 @@ const App = () => {
 				<NavBar onSelect={handleSelectGame} />
 				<div className="container mx-auto mt-8 relative px-4">
 					<OutlineGame onReturn={() => setGameMode(null)} />
+				</div>
+			</div>
+		);
+	}
+
+	if (gameMode === "travle") {
+		return (
+			<div className="min-h-screen bg-gray-200">
+				<NavBar onSelect={handleSelectGame} />
+				<div className="container mx-auto mt-8 relative px-4">
+					<TravleGame onReturn={() => setGameMode(null)} />
 				</div>
 			</div>
 		);
