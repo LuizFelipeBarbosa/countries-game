@@ -5,7 +5,6 @@ import countries from '../assets/countries.json';
 import WorldMap from '../assets/map.svg';
 import borders from '../assets/borders.json';
 import crossings from '../assets/crossings.json';
-import aliases from '../assets/aliases.json';
 import { generatePuzzle } from '../utils/puzzle';
 import { getItem, setItem } from '../utils/storage';
 
@@ -52,6 +51,16 @@ const TravleGame = () => {
 
     return map;
   }, [gameState.settings.INCLUDE_CROSSINGS]);
+
+  const aliases = useMemo(() => {
+    const map = {};
+    countries.forEach(country => {
+      country.name.forEach(n => {
+        map[n.toLowerCase()] = country.alpha3;
+      });
+    });
+    return map;
+  }, []);
 
   const bfs = (startNode) => {
     const distances = new Map();
@@ -189,7 +198,7 @@ const TravleGame = () => {
     return 'orange';
   };
 
-  const countryNames = useMemo(() => Object.keys(aliases), []);
+  const countryNames = useMemo(() => Object.keys(aliases), [aliases]);
 
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
