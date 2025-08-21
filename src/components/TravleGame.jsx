@@ -8,6 +8,7 @@ import borders from "../assets/borders.json";
 import crossings from "../assets/crossings.json";
 import { generatePuzzle } from "../utils/puzzle";
 import { getItem, setItem } from "../utils/storage";
+import { applyHighlighting } from "../utils/mapColoring";
 
 const TravleGame = () => {
 	const [notification, setNotification] = useState(null);
@@ -54,15 +55,19 @@ const TravleGame = () => {
 		return map;
 	}, [gameState.settings.INCLUDE_CROSSINGS]);
 
-	const aliases = useMemo(() => {
-		const map = {};
-		countries.forEach((country) => {
-			country.name.forEach((n) => {
-				map[n.toLowerCase()] = country.alpha3;
-			});
-		});
-		return map;
-	}, []);
+        const aliases = useMemo(() => {
+                const map = {};
+                countries.forEach((country) => {
+                        country.name.forEach((n) => {
+                                map[n.toLowerCase()] = country.alpha3;
+                        });
+                });
+                return map;
+        }, []);
+
+        const iso3ToAlpha2 = useMemo(() => {
+                return new Map(countries.map((c) => [c.alpha3, c.alpha2]));
+        }, []);
 
 	const bfs = (startNode) => {
 		const distances = new Map();
@@ -210,16 +215,14 @@ const TravleGame = () => {
 	const coloredCountriesRef = useRef(new Map());
 	const previousGuessesRef = useRef([]);
 
-	const clearAllColors = () => {
-		const svgDoc = svgObjectRef.current?.contentDocument;
-		if (!svgDoc) return;
-		coloredCountriesRef.current.forEach((_, alpha2) => {
-			const el = svgDoc.getElementById(alpha2);
-			if (el) el.style.fill = "#d4d4d8";
-		});
-		coloredCountriesRef.current.clear();
-		previousGuessesRef.current = [];
-	};
+        const clearAllColors = () => {
+                const svgDoc = svgObjectRef.current?.contentDocument;
+                if (!svgDoc) return;
+                const colored = Array.from(coloredCountriesRef.current.keys());
+                applyHighlighting(svgDoc, "#d4d4d8", colored);
+                coloredCountriesRef.current.clear();
+                previousGuessesRef.current = [];
+        };
 
 	const handleMouseDown = (e) => {
 		setIsDragging(true);
@@ -336,57 +339,55 @@ const TravleGame = () => {
 		};
 	}, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
-	useEffect(() => {
-		if (!svgLoaded) return;
-		const svgDoc = svgObjectRef.current?.contentDocument;
-		if (!svgDoc) return;
-		const allCountryPaths = svgDoc.querySelectorAll("path");
-		allCountryPaths.forEach((path) => {
-			path.style.fill = "#d4d4d8";
-		});
-		coloredCountriesRef.current.clear();
-		previousGuessesRef.current = [];
-	}, [svgLoaded]);
+        useEffect(() => {
+                if (!svgLoaded) return;
+                const svgDoc = svgObjectRef.current?.contentDocument;
+                if (!svgDoc) return;
+                const allAlpha2 = countries.map((c) => c.alpha2);
+                applyHighlighting(svgDoc, "#d4d4d8", allAlpha2);
+                coloredCountriesRef.current.clear();
+                previousGuessesRef.current = [];
+        }, [svgLoaded]);
 
-	useEffect(() => {
-		if (!svgLoaded) return;
-		const svgDoc = svgObjectRef.current?.contentDocument;
-		if (!svgDoc) return;
+        useEffect(() => {
+                if (!svgLoaded) return;
+                const svgDoc = svgObjectRef.current?.contentDocument;
+                if (!svgDoc) return;
 
-		const countryToAlpha2 = new Map(
-			countries.map((c) => [c.alpha3, c.alpha2])
-		);
+                const highlight = (alpha2Codes, color) => {
+                        applyHighlighting(svgDoc, color, alpha2Codes);
+                        alpha2Codes.forEach((code) =>
+                                coloredCountriesRef.current.set(code, color)
+                        );
+                };
 
-		const highlightCountry = (iso3, color) => {
-			const alpha2 = countryToAlpha2.get(iso3);
-			if (alpha2) {
-				const countryElement = svgDoc.getElementById(alpha2);
-				if (countryElement) {
-					countryElement.style.fill = color;
-					coloredCountriesRef.current.set(alpha2, color);
-				}
-			}
-		};
+                const prevGuesses = previousGuessesRef.current;
+                const newGuesses = gameState.guesses.slice(prevGuesses.length);
+                newGuesses.forEach((guess) => {
+                        const alpha2 = iso3ToAlpha2.get(guess);
+                        if (alpha2) {
+                                const color =
+                                        getGuessColor(guess) === "green"
+                                                ? "#4ade80"
+                                                : "#facc15";
+                                highlight([alpha2], color);
+                        }
+                });
 
-		const prevGuesses = previousGuessesRef.current;
-		const newGuesses = gameState.guesses.slice(prevGuesses.length);
-		newGuesses.forEach((guess) => {
-			const color =
-				getGuessColor(guess) === "green" ? "#4ade80" : "#facc15";
-			highlightCountry(guess, color);
-		});
+                const alpha2Start = iso3ToAlpha2.get(gameState.start);
+                if (alpha2Start) highlight([alpha2Start], "#60a5fa");
+                const alpha2End = iso3ToAlpha2.get(gameState.end);
+                if (alpha2End) highlight([alpha2End], "#a78bfa");
 
-		highlightCountry(gameState.start, "#60a5fa");
-		highlightCountry(gameState.end, "#a78bfa");
-
-		previousGuessesRef.current = gameState.guesses;
-	}, [
-		gameState.guesses,
-		gameState.start,
-		gameState.end,
-		getGuessColor,
-		svgLoaded,
-	]);
+                previousGuessesRef.current = gameState.guesses;
+        }, [
+                gameState.guesses,
+                gameState.start,
+                gameState.end,
+                getGuessColor,
+                svgLoaded,
+                iso3ToAlpha2,
+        ]);
 
 	return (
 		<div className="p-4 flex flex-col items-center text-center">

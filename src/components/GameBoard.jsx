@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import WorldMap from "../assets/map.svg";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
+import { applyHighlighting } from "../utils/mapColoring";
 
 const GameBoard = ({
         guessedCountries,
@@ -45,80 +46,53 @@ const GameBoard = ({
                 };
         }, []);
 
-	useEffect(() => {
-		const svgObject = svgObjectRef.current;
+        useEffect(() => {
+                const svgObject = svgObjectRef.current;
 
-		const applyHighlighting = (color, countryList) => {
-			const svgDoc = svgObject.contentDocument;
-			if (svgDoc) {
-				const taiwanElement = svgDoc.getElementById("tw");
-				const kosovoElement = svgDoc.getElementById("xk");
+                const onLoad = () => {
+                        setSvgLoaded(true);
+                };
 
-				countryList.forEach((alpha2Code) => {
-					const countryElement = svgDoc.getElementById(alpha2Code);
+                if (svgObject) {
+                        if (svgObject.contentDocument) {
+                                setSvgLoaded(true);
+                                const svgDoc = svgObject.contentDocument;
 
-					if (countryElement) {
-						countryElement.style.fill = color;
+                                if (isGameEnded) {
+                                        const allCountryCodes = VALID_COUNTRIES.map(
+                                                (country) => country.alpha2
+                                        );
+                                        const unHighlightedCountries = allCountryCodes.filter(
+                                                (code) => !highlightedCountries.includes(code)
+                                        );
+                                        applyHighlighting(
+                                                svgDoc,
+                                                "#f87171",
+                                                unHighlightedCountries
+                                        );
+                                        highlightedCountries = [];
+                                }
 
-						const descendants =
-							countryElement.querySelectorAll("*");
-						descendants.forEach((element) => {
-							if (
-								(alpha2Code === "rs" &&
-									kosovoElement &&
-									kosovoElement.contains(element)) ||
-								(alpha2Code === "cn" &&
-									taiwanElement &&
-									taiwanElement.contains(element))
-							) {
-								return;
-							}
-							element.style.fill = color;
-						});
-					} else {
-						console.warn(
-							`Country with id '${alpha2Code}' not found in the SVG.`
-						);
-					}
-				});
-			}
-		};
+                                if (isGameStarted && highlightedCountries.length === 0) {
+                                        const allCountryCodes = VALID_COUNTRIES.map(
+                                                (country) => country.alpha2
+                                        );
+                                        applyHighlighting(svgDoc, "#fed7aa", allCountryCodes);
+                                }
 
-		const onLoad = () => {
-			setSvgLoaded(true);
-		};
-
-		if (svgObject) {
-			if (svgObject.contentDocument) {
-				setSvgLoaded(true);
-
-				if (isGameEnded) {
-					const allCountryCodes = VALID_COUNTRIES.map(
-						(country) => country.alpha2
-					);
-					const unHighlightedCountries = allCountryCodes.filter(
-						(code) => !highlightedCountries.includes(code)
-					);
-					applyHighlighting("#f87171", unHighlightedCountries);
-					highlightedCountries = [];
-				}
-
-				if (isGameStarted && highlightedCountries.length === 0) {
-					const allCountryCodes = VALID_COUNTRIES.map(
-						(country) => country.alpha2
-					);
-					applyHighlighting("#fed7aa", allCountryCodes);
-				}
-
-				applyHighlighting("#4ade80", highlightedCountries);
-			} else {
-				svgObject.addEventListener("load", onLoad);
-				return () => {
-					svgObject.removeEventListener("load", onLoad);
-				};
-			}
-		}
-	}, [highlightedCountries, isGameEnded, isGameStarted]);
+                                applyHighlighting(
+                                        svgDoc,
+                                        "#4ade80",
+                                        highlightedCountries
+                                );
+                        } else {
+                                svgObject.addEventListener("load", onLoad);
+                                return () => {
+                                        svgObject.removeEventListener("load", onLoad);
+                                };
+                        }
+                }
+        }, [highlightedCountries, isGameEnded, isGameStarted]);
 
 	useEffect(() => {
 		if (svgLoaded) {
