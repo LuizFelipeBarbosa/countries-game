@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { CheckCircle, GitCommit } from 'lucide-react';
 import CountryInput from './CountryInput';
 import countries from '../assets/countries.json';
@@ -72,6 +72,29 @@ const TravleGame = () => {
     return distances;
   };
 
+  const bfsForPath = (startNode, endNode) => {
+    const queue = [[startNode, [startNode]]];
+    const visited = new Set([startNode]);
+
+    while (queue.length > 0) {
+      const [currentNode, currentPath] = queue.shift();
+
+      if (currentNode === endNode) {
+        return currentPath;
+      }
+
+      const neighbors = adjacencyMap.get(currentNode) || [];
+      for (const neighbor of neighbors) {
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          const newPath = [...currentPath, neighbor];
+          queue.push([neighbor, newPath]);
+        }
+      }
+    }
+    return null; // No path found
+  };
+
   const [distStart, setDistStart] = useState(new Map());
   const [distEnd, setDistEnd] = useState(new Map());
 
@@ -130,7 +153,7 @@ const TravleGame = () => {
       return;
     }
     const seed = puzzleMode === 'daily' ? today : undefined;
-    const { start, end, shortest } = generatePuzzle(adjacencyMap, seed);
+    const { start, end, shortest } = generatePuzzle(adjacencyMap, bfsForPath, seed);
     const dStart = bfs(start);
     const dEnd = bfs(end);
 
@@ -194,11 +217,103 @@ const TravleGame = () => {
     setIsDragging(false);
   };
 
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+      });
+    } else if (e.touches.length === 2) {
+      const distance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      pinchRef.current = {
+        initialDistance: distance,
+        startZoom: zoom,
+      };
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1 && isDragging) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - dragStart.x;
+      const dy = touch.clientY - dragStart.y;
+      setPan((prevPan) => ({ x: prevPan.x + dx, y: prevPan.y + dy }));
+      setDragStart({ x: touch.clientX, y: touch.clientY });
+    } else if (e.touches.length === 2 && pinchRef.current) {
+      const distance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const scale = distance / pinchRef.current.initialDistance;
+      const newZoom = pinchRef.current.startZoom * scale;
+      const delta = newZoom - zoom;
+      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      handleZoom(delta, midX, midY);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    pinchRef.current = null;
+  };
+
   const handleWheel = (e) => {
     e.preventDefault();
     const delta = e.deltaY * -0.001;
-    setZoom((prevZoom) => Math.max(1, Math.min(prevZoom + delta, 8)));
+    handleZoom(delta, e.clientX, e.clientY);
   };
+
+  const handleZoom = (delta, clientX, clientY) => {
+    setZoom((prevZoom) => {
+      const container = containerRef.current;
+      const svgObject = svgObjectRef.current;
+      if (!container || !svgObject) return prevZoom;
+
+      const containerRect = container.getBoundingClientRect();
+      const svgRect = svgObject.getBoundingClientRect();
+
+      const x = clientX - containerRect.left;
+      const y = clientY - containerRect.top;
+
+      const contentX = (x - pan.x) / prevZoom;
+      const contentY = (y - pan.y) / prevZoom;
+
+      const newZoom = Math.max(1, Math.min(prevZoom + delta, 8));
+
+      let newPanX = x - contentX * newZoom;
+      let newPanY = y - contentY * newZoom;
+
+      setPan({ x: newPanX, y: newPanY });
+
+      return newZoom;
+    });
+  };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const opts = { passive: false };
+    container.addEventListener("touchstart", handleTouchStart, opts);
+    container.addEventListener("touchmove", handleTouchMove, opts);
+    container.addEventListener("touchend", handleTouchEnd);
+    container.addEventListener("touchcancel", handleTouchEnd);
+
+    return () => {
+      if (!container) return;
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchmove", handleTouchMove);
+      container.removeEventListener("touchend", handleTouchEnd);
+      container.removeEventListener("touchcancel", handleTouchEnd);
+    };
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
   useEffect(() => {
     const svgObject = svgObjectRef.current;
