@@ -155,6 +155,7 @@ const TravleGame = () => {
   };
 
   const startNewGame = () => {
+    clearAllColors();
     const today = new Date().setHours(0, 0, 0, 0);
     if (puzzleMode === 'daily' && getItem(`travle-daily-${today}`)) {
       setNotification('You have already played the daily puzzle today. Come back tomorrow!');
@@ -207,6 +208,20 @@ const TravleGame = () => {
   const pinchRef = useRef(null);
   const svgObjectRef = useRef(null);
   const containerRef = useRef(null);
+  const [svgLoaded, setSvgLoaded] = useState(false);
+  const coloredCountriesRef = useRef(new Map());
+  const previousGuessesRef = useRef([]);
+
+  const clearAllColors = () => {
+    const svgDoc = svgObjectRef.current?.contentDocument;
+    if (!svgDoc) return;
+    coloredCountriesRef.current.forEach((_, alpha2) => {
+      const el = svgDoc.getElementById(alpha2);
+      if (el) el.style.fill = '#d4d4d8';
+    });
+    coloredCountriesRef.current.clear();
+    previousGuessesRef.current = [];
+  };
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -324,16 +339,23 @@ const TravleGame = () => {
   }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
   useEffect(() => {
-    const svgObject = svgObjectRef.current;
-    if (!svgObject || !svgObject.contentDocument) return;
-    const svgDoc = svgObject.contentDocument;
-
-    const countryToAlpha2 = new Map(countries.map(c => [c.alpha3, c.alpha2]));
-
+    if (!svgLoaded) return;
+    const svgDoc = svgObjectRef.current?.contentDocument;
+    if (!svgDoc) return;
     const allCountryPaths = svgDoc.querySelectorAll('path');
     allCountryPaths.forEach(path => {
-      path.style.fill = '#d4d4d8'; // zinc-300
+      path.style.fill = '#d4d4d8';
     });
+    coloredCountriesRef.current.clear();
+    previousGuessesRef.current = [];
+  }, [svgLoaded]);
+
+  useEffect(() => {
+    if (!svgLoaded) return;
+    const svgDoc = svgObjectRef.current?.contentDocument;
+    if (!svgDoc) return;
+
+    const countryToAlpha2 = new Map(countries.map(c => [c.alpha3, c.alpha2]));
 
     const highlightCountry = (iso3, color) => {
       const alpha2 = countryToAlpha2.get(iso3);
@@ -341,18 +363,23 @@ const TravleGame = () => {
         const countryElement = svgDoc.getElementById(alpha2);
         if (countryElement) {
           countryElement.style.fill = color;
+          coloredCountriesRef.current.set(alpha2, color);
         }
       }
     };
 
-    highlightCountry(gameState.start, '#60a5fa'); // blue-400
-    highlightCountry(gameState.end, '#a78bfa'); // violet-400
-
-    gameState.guesses.forEach(guess => {
-      const color = getGuessColor(guess) === 'green' ? '#4ade80' : '#facc15'; // green-400, yellow-400
+    const prevGuesses = previousGuessesRef.current;
+    const newGuesses = gameState.guesses.slice(prevGuesses.length);
+    newGuesses.forEach(guess => {
+      const color = getGuessColor(guess) === 'green' ? '#4ade80' : '#facc15';
       highlightCountry(guess, color);
     });
-  }, [gameState.guesses, gameState.start, gameState.end, getGuessColor]);
+
+    highlightCountry(gameState.start, '#60a5fa');
+    highlightCountry(gameState.end, '#a78bfa');
+
+    previousGuessesRef.current = gameState.guesses;
+  }, [gameState.guesses, gameState.start, gameState.end, getGuessColor, svgLoaded]);
 
   return (
     <div className="p-4 flex flex-col items-center text-center">
@@ -391,6 +418,7 @@ const TravleGame = () => {
               data={WorldMap}
               aria-label="World Map"
               className="w-full h-full"
+              onLoad={() => setSvgLoaded(true)}
             />
           </div>
         </div>
