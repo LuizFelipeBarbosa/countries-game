@@ -207,37 +207,32 @@ const TravleGame = () => {
   const pinchRef = useRef(null);
   const svgObjectRef = useRef(null);
   const containerRef = useRef(null);
+  const activePointers = useRef(new Map());
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX, y: e.clientY });
+  const clampPan = (nextPan, currentZoom) => {
+    const container = containerRef.current;
+    if (!container) return nextPan;
+    const rect = container.getBoundingClientRect();
+    const maxX = (rect.width * (currentZoom - 1)) / 2;
+    const maxY = (rect.height * (currentZoom - 1)) / 2;
+    return {
+      x: Math.min(Math.max(nextPan.x, -maxX), maxX),
+      y: Math.min(Math.max(nextPan.y, -maxY), maxY),
+    };
   };
 
-  const handleMouseMove = (e) => {
-    if (isDragging) {
-      const dx = e.clientX - dragStart.x;
-      const dy = e.clientY - dragStart.y;
-      setPan((prevPan) => ({ x: prevPan.x + dx, y: prevPan.y + dy }));
-      setDragStart({ x: e.clientX, y: e.clientY });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleTouchStart = (e) => {
+  const handlePointerDown = (e) => {
     e.preventDefault();
-    if (e.touches.length === 1) {
+    e.target.setPointerCapture?.(e.pointerId);
+    activePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (activePointers.current.size === 1) {
       setIsDragging(true);
-      setDragStart({
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-      });
-    } else if (e.touches.length === 2) {
+      setDragStart({ x: e.clientX, y: e.clientY });
+    } else if (activePointers.current.size === 2) {
+      const points = Array.from(activePointers.current.values());
       const distance = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
+        points[0].x - points[1].x,
+        points[0].y - points[1].y
       );
       pinchRef.current = {
         initialDistance: distance,
@@ -246,31 +241,40 @@ const TravleGame = () => {
     }
   };
 
-  const handleTouchMove = (e) => {
-    e.preventDefault();
-    if (e.touches.length === 1 && isDragging) {
-      const touch = e.touches[0];
-      const dx = touch.clientX - dragStart.x;
-      const dy = touch.clientY - dragStart.y;
-      setPan((prevPan) => ({ x: prevPan.x + dx, y: prevPan.y + dy }));
-      setDragStart({ x: touch.clientX, y: touch.clientY });
-    } else if (e.touches.length === 2 && pinchRef.current) {
+  const handlePointerMove = (e) => {
+    if (!activePointers.current.has(e.pointerId)) return;
+    activePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (activePointers.current.size === 1 && isDragging) {
+      const dx = e.clientX - dragStart.x;
+      const dy = e.clientY - dragStart.y;
+      setPan(prevPan => clampPan({ x: prevPan.x + dx, y: prevPan.y + dy }, zoom));
+      setDragStart({ x: e.clientX, y: e.clientY });
+    } else if (activePointers.current.size === 2 && pinchRef.current) {
+      const points = Array.from(activePointers.current.values());
       const distance = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
+        points[0].x - points[1].x,
+        points[0].y - points[1].y
       );
       const scale = distance / pinchRef.current.initialDistance;
       const newZoom = pinchRef.current.startZoom * scale;
       const delta = newZoom - zoom;
-      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const midX = (points[0].x + points[1].x) / 2;
+      const midY = (points[0].y + points[1].y) / 2;
       handleZoom(delta, midX, midY);
     }
   };
 
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-    pinchRef.current = null;
+  const handlePointerUp = (e) => {
+    activePointers.current.delete(e.pointerId);
+    if (activePointers.current.size < 2) {
+      pinchRef.current = null;
+    }
+    if (activePointers.current.size === 0) {
+      setIsDragging(false);
+    } else if (activePointers.current.size === 1) {
+      const remaining = Array.from(activePointers.current.values())[0];
+      setDragStart({ x: remaining.x, y: remaining.y });
+    }
   };
 
   const handleWheel = (e) => {
@@ -280,48 +284,25 @@ const TravleGame = () => {
   };
 
   const handleZoom = (delta, clientX, clientY) => {
-    setZoom((prevZoom) => {
-      const container = containerRef.current;
-      const svgObject = svgObjectRef.current;
-      if (!container || !svgObject) return prevZoom;
-
-      const containerRect = container.getBoundingClientRect();
-
-      const x = clientX - containerRect.left;
-      const y = clientY - containerRect.top;
-
-      const contentX = (x - pan.x) / prevZoom;
-      const contentY = (y - pan.y) / prevZoom;
-
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    setZoom(prevZoom => {
       const newZoom = Math.max(1, Math.min(prevZoom + delta, 8));
-
-      let newPanX = x - contentX * newZoom;
-      let newPanY = y - contentY * newZoom;
-
-      setPan({ x: newPanX, y: newPanY });
-
+      setPan(prevPan => {
+        const contentX = (x - prevPan.x) / prevZoom;
+        const contentY = (y - prevPan.y) / prevZoom;
+        let newPan = {
+          x: x - contentX * newZoom,
+          y: y - contentY * newZoom,
+        };
+        return clampPan(newPan, newZoom);
+      });
       return newZoom;
     });
   };
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const opts = { passive: false };
-    container.addEventListener("touchstart", handleTouchStart, opts);
-    container.addEventListener("touchmove", handleTouchMove, opts);
-    container.addEventListener("touchend", handleTouchEnd);
-    container.addEventListener("touchcancel", handleTouchEnd);
-
-    return () => {
-      if (!container) return;
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchmove", handleTouchMove);
-      container.removeEventListener("touchend", handleTouchEnd);
-      container.removeEventListener("touchcancel", handleTouchEnd);
-    };
-  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
   useEffect(() => {
     const svgObject = svgObjectRef.current;
@@ -372,12 +353,13 @@ const TravleGame = () => {
         <div
           className="w-full md:w-2/3 h-96 bg-gray-300 rounded-lg overflow-hidden"
           ref={containerRef}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+          onPointerCancel={handlePointerUp}
           onWheel={handleWheel}
-          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+          style={{ cursor: isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
         >
           <div
             style={{
