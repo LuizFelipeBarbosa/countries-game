@@ -368,24 +368,33 @@ const TravleGame = () => {
 			const svgObject = svgObjectRef.current;
 			if (!container || !svgObject) return prevZoom;
 
-			const containerRect = container.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const svgRect = svgObject.getBoundingClientRect();
 
-			const x = clientX - containerRect.left;
-			const y = clientY - containerRect.top;
+                        const x = clientX - containerRect.left;
+                        const y = clientY - containerRect.top;
 
-			const contentX = (x - pan.x) / prevZoom;
-			const contentY = (y - pan.y) / prevZoom;
+                        const contentX = (x - pan.x) / prevZoom;
+                        const contentY = (y - pan.y) / prevZoom;
 
-			const newZoom = Math.max(1, Math.min(prevZoom + delta, 8));
+                        const newZoom = Math.max(1, Math.min(prevZoom + delta, 8));
 
-			let newPanX = x - contentX * newZoom;
-			let newPanY = y - contentY * newZoom;
+                        let newPanX = x - contentX * newZoom;
+                        let newPanY = y - contentY * newZoom;
 
-			setPan({ x: newPanX, y: newPanY });
+                        const { minX, maxX, minY, maxY } = calculatePanLimits(
+                                containerRect,
+                                svgRect,
+                                newZoom
+                        );
+                        newPanX = Math.min(Math.max(newPanX, minX), maxX);
+                        newPanY = Math.min(Math.max(newPanY, minY), maxY);
 
-			return newZoom;
-		});
-	};
+                        setPan({ x: newPanX, y: newPanY });
+
+                        return newZoom;
+                });
+        };
 
 	useEffect(() => {
 		const container = containerRef.current;
