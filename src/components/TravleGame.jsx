@@ -209,12 +209,13 @@ const TravleGame = () => {
 	const [pan, setPan] = useState({ x: 0, y: 0 });
 	const [isDragging, setIsDragging] = useState(false);
 	const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-	const pinchRef = useRef(null);
-	const svgObjectRef = useRef(null);
-	const containerRef = useRef(null);
-	const [svgLoaded, setSvgLoaded] = useState(false);
-	const coloredCountriesRef = useRef(new Map());
-	const previousGuessesRef = useRef([]);
+        const pinchRef = useRef(null);
+        const svgObjectRef = useRef(null);
+        const containerRef = useRef(null);
+        const [svgLoaded, setSvgLoaded] = useState(false);
+        const [boardHeight, setBoardHeight] = useState(0);
+        const coloredCountriesRef = useRef(new Map());
+        const previousGuessesRef = useRef([]);
 
 	const clearAllColors = () => {
 		const svgDoc = svgObjectRef.current?.contentDocument;
@@ -296,11 +297,11 @@ const TravleGame = () => {
 		handleZoom(delta, e.clientX, e.clientY);
 	};
 
-	const handleZoom = (delta, clientX, clientY) => {
-		setZoom((prevZoom) => {
-			const container = containerRef.current;
-			const svgObject = svgObjectRef.current;
-			if (!container || !svgObject) return prevZoom;
+        const handleZoom = (delta, clientX, clientY) => {
+                setZoom((prevZoom) => {
+                        const container = containerRef.current;
+                        const svgObject = svgObjectRef.current;
+                        if (!container || !svgObject) return prevZoom;
 
 			const containerRect = container.getBoundingClientRect();
 
@@ -317,9 +318,31 @@ const TravleGame = () => {
 
 			setPan({ x: newPanX, y: newPanY });
 
-			return newZoom;
-		});
-	};
+                        return newZoom;
+                });
+        };
+
+        useEffect(() => {
+                const updateHeight = () => {
+                        const height = window.visualViewport
+                                ? window.visualViewport.height
+                                : window.innerHeight;
+                        const ratio = window.innerWidth >= 640 ? 0.7 : 0.6;
+                        setBoardHeight(height * ratio);
+                };
+
+                updateHeight();
+                window.addEventListener("resize", updateHeight);
+                window.visualViewport?.addEventListener("resize", updateHeight);
+
+                return () => {
+                        window.removeEventListener("resize", updateHeight);
+                        window.visualViewport?.removeEventListener(
+                                "resize",
+                                updateHeight
+                        );
+                };
+        }, []);
 
 	useEffect(() => {
 		const container = containerRef.current;
@@ -397,16 +420,19 @@ const TravleGame = () => {
 			)}
 			<h1 className="text-2xl font-bold mb-4">Travle Game</h1>
 			<div className="flex flex-col md:flex-row gap-4 w-full">
-				<div
-					className="w-full md:w-2/3 h-96 bg-gray-300 rounded-lg overflow-hidden"
-					ref={containerRef}
-					onMouseDown={handleMouseDown}
-					onMouseMove={handleMouseMove}
-					onMouseUp={handleMouseUp}
-					onMouseLeave={handleMouseUp}
-					onWheel={handleWheel}
-					style={{ cursor: isDragging ? "grabbing" : "grab" }}
-				>
+                                <div
+                                        className="w-full md:w-2/3 bg-gray-300 rounded-lg overflow-hidden"
+                                        ref={containerRef}
+                                        onMouseDown={handleMouseDown}
+                                        onMouseMove={handleMouseMove}
+                                        onMouseUp={handleMouseUp}
+                                        onMouseLeave={handleMouseUp}
+                                        onWheel={handleWheel}
+                                        style={{
+                                                cursor: isDragging ? "grabbing" : "grab",
+                                                height: boardHeight,
+                                        }}
+                                >
 					<div
 						style={{
 							transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
