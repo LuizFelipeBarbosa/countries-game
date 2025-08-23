@@ -141,15 +141,16 @@ const TravleGame = () => {
 			return;
 		}
 
-		const newGuesses = [...gameState.guesses, iso3];
-		const newRemaining = gameState.remaining - 1;
-		let newStatus = gameState.status;
+                const newGuesses = [...gameState.guesses, iso3];
+                const newRemaining = gameState.remaining - 1;
+                const endNeighbors = adjacencyMap.get(gameState.end) || [];
+                let newStatus = gameState.status;
 
-		if (iso3 === gameState.end) {
-			newStatus = "won";
-		} else if (newRemaining === 0) {
-			newStatus = "lost";
-		}
+                if (endNeighbors.includes(iso3)) {
+                        newStatus = "won";
+                } else if (newRemaining === 0) {
+                        newStatus = "lost";
+                }
 
 		setGameState((prev) => ({
 			...prev,
