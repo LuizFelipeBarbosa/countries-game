@@ -10,3 +10,7 @@ export const getItem = (key) => {
     return value;
   }
 };
+
+export const removeItem = (key) => {
+  localStorage.removeItem(key);
+};
