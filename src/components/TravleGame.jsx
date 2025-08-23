@@ -497,16 +497,46 @@ const TravleGame = () => {
 			{gameState.status !== "playing" && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
 					<div className="bg-white p-8 rounded-lg shadow-lg text-center">
-						<h2 className="text-2xl font-bold mb-4">
-							{gameState.status === "won"
-								? "You Won!"
-								: "Game Over!"}
-						</h2>
-						<p>
-							You found the path in {gameState.guesses.length - 1}{" "}
-							guesses.
-						</p>
-						<p>Shortest possible path was {gameState.shortest}.</p>
+                                                <h2 className="text-2xl font-bold mb-4">
+                                                        {gameState.status === "won"
+                                                                ? `You got within one border of ${
+                                                                        countries.find(
+                                                                                (c) =>
+                                                                                        c.alpha3 ===
+                                                                                        gameState.end
+                                                                        )?.name[0]
+                                                                }!`
+                                                                : "Game Over!"}
+                                                </h2>
+                                                {gameState.status === "won" ? (
+                                                        <p>
+                                                                You reached {
+                                                                        countries.find(
+                                                                                (c) =>
+                                                                                        c.alpha3 ===
+                                                                                        gameState.guesses[
+                                                                                                gameState
+                                                                                                        .guesses
+                                                                                                        .length -
+                                                                                                        1
+                                                                                        ]
+                                                                        )?.name[0]
+                                                                } in {gameState.guesses.length - 1}{" "}
+                                                                guesses without entering {
+                                                                        countries.find(
+                                                                                (c) =>
+                                                                                        c.alpha3 ===
+                                                                                        gameState.end
+                                                                        )?.name[0]
+                                                                }.
+                                                        </p>
+                                                ) : (
+                                                        <p>
+                                                                You found the path in {gameState.guesses.length - 1}{" "}
+                                                                guesses.
+                                                        </p>
+                                                )}
+                                                <p>Shortest possible path was {gameState.shortest}.</p>
 						<button
 							className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
 							onClick={startNewGame}
@@ -516,28 +546,30 @@ const TravleGame = () => {
 						<button
 							className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mt-4 ml-2"
 							onClick={() => {
-								const path = gameState.guesses
-									.map(
-										(g) =>
-											countries.find(
-												(c) => c.alpha3 === g
-											).name[0]
-									)
-									.join(" → ");
-								const summary = `I completed the Travle from ${
-									countries.find(
-										(c) => c.alpha3 === gameState.start
-									).name[0]
-								} to ${
-									countries.find(
-										(c) => c.alpha3 === gameState.end
-									).name[0]
-								} in ${
-									gameState.guesses.length - 1
-								} guesses (shortest ${
-									gameState.shortest
-								}).\n\n${path}`;
-								navigator.clipboard.writeText(summary);
+                                                                const endName = countries.find(
+                                                                        (c) => c.alpha3 === gameState.end
+                                                                ).name[0];
+                                                                const path = `${gameState.guesses
+                                                                        .map(
+                                                                                (g) =>
+                                                                                        countries.find(
+                                                                                                (c) =>
+                                                                                                        c.alpha3 === g
+                                                                                                ).name[0]
+                                                                        )
+                                                                        .join(" → ")} (did not enter ${endName})`;
+                                                                const startName = countries.find(
+                                                                        (c) => c.alpha3 === gameState.start
+                                                                ).name[0];
+                                                                const finalName = countries.find(
+                                                                        (c) =>
+                                                                                c.alpha3 ===
+                                                                                gameState.guesses[
+                                                                                        gameState.guesses.length - 1
+                                                                                ]
+                                                                ).name[0];
+                                                                const summary = `I got within one border of ${endName} by reaching ${finalName} from ${startName} in ${gameState.guesses.length - 1} guesses (shortest ${gameState.shortest}).\nTarget ${endName} was not entered.\n\n${path}`;
+                                                                navigator.clipboard.writeText(summary);
 								setNotification("Results copied to clipboard!");
 								setTimeout(() => setNotification(null), 3000);
 							}}
