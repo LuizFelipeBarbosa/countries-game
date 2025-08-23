@@ -141,16 +141,16 @@ const TravleGame = () => {
 			return;
 		}
 
-                const newGuesses = [...gameState.guesses, iso3];
-                const newRemaining = gameState.remaining - 1;
-                const endNeighbors = adjacencyMap.get(gameState.end) || [];
-                let newStatus = gameState.status;
+		const newGuesses = [...gameState.guesses, iso3];
+		const newRemaining = gameState.remaining - 1;
+		const endNeighbors = adjacencyMap.get(gameState.end) || [];
+		let newStatus = gameState.status;
 
-                if (endNeighbors.includes(iso3)) {
-                        newStatus = "won";
-                } else if (newRemaining === 0) {
-                        newStatus = "lost";
-                }
+		if (endNeighbors.includes(iso3)) {
+			newStatus = "won";
+		} else if (newRemaining === 0) {
+			newStatus = "lost";
+		}
 
 		setGameState((prev) => ({
 			...prev,
@@ -442,7 +442,8 @@ const TravleGame = () => {
 							}
 						</h2>
 						<p className="mt-2">
-							Shortest Path: <strong>{gameState.shortest}</strong>
+							Shortest Path:{" "}
+							<strong>{gameState.shortest - 1}</strong>
 						</p>
 						<p>
 							Guesses Remaining:{" "}
@@ -506,7 +507,9 @@ const TravleGame = () => {
 							You found the path in {gameState.guesses.length - 1}{" "}
 							guesses.
 						</p>
-						<p>Shortest possible path was {gameState.shortest}.</p>
+						<p>
+							Shortest possible path was {gameState.shortest - 1}.
+						</p>
 						<button
 							className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
 							onClick={startNewGame}
