@@ -10,7 +10,7 @@ import EndGameOverlay from "./components/EndGameOverlay";
 import OutlineGame from "./components/OutlineGame";
 import TravleGame from "./components/TravleGame";
 import Home from "./Home";
-import { setItem, getItem } from "./utils/storage";
+import { setItem, getItem, removeItem } from "./utils/storage";
 import { CONTINENTS, TOTAL_COUNTRIES } from "./constants/continents";
 
 const NavBar = ({ onSelect }) => (
@@ -193,16 +193,19 @@ const App = () => {
 		}
 	};
 
-	const handleSelectGame = (mode) => {
-		setGameMode(mode);
-		setIsGameStarted(false);
-		setIsGameEnded(false);
-		setIsPaused(false);
-		setTimeLeft(gameDuration);
-		setCountriesGuessed([0, 0, 0, 0, 0, 0, 0]);
-		setGuessedCountries(new Set());
-		setFeedback(null);
-	};
+        const handleSelectGame = (mode) => {
+                if (mode === "travle") {
+                        removeItem("travleGameState");
+                }
+                setGameMode(mode);
+                setIsGameStarted(false);
+                setIsGameEnded(false);
+                setIsPaused(false);
+                setTimeLeft(gameDuration);
+                setCountriesGuessed([0, 0, 0, 0, 0, 0, 0]);
+                setGuessedCountries(new Set());
+                setFeedback(null);
+        };
 
 	const handleStartGame = () => {
 		setIsGameStarted(true);

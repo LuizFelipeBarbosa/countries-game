@@ -1,6 +1,6 @@
 /* eslint-env jest */
 /* eslint-disable no-undef */
-import { setItem, getItem } from './storage';
+import { setItem, getItem, removeItem } from './storage';
 
 describe('storage helpers', () => {
   afterEach(() => {
@@ -19,5 +19,11 @@ describe('storage helpers', () => {
   it('handles numeric values', () => {
     setItem('number', 42);
     expect(getItem('number')).toBe(42);
+  });
+
+  it('removes a value', () => {
+    setItem('temp', 'data');
+    removeItem('temp');
+    expect(getItem('temp')).toBeNull();
   });
 });
