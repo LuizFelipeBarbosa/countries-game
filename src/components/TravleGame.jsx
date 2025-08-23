@@ -214,30 +214,72 @@ const TravleGame = () => {
 	const containerRef = useRef(null);
 	const [svgLoaded, setSvgLoaded] = useState(false);
 	const coloredCountriesRef = useRef(new Map());
-	const previousGuessesRef = useRef([]);
+        const previousGuessesRef = useRef([]);
 
-	const clearAllColors = () => {
-		const svgDoc = svgObjectRef.current?.contentDocument;
-		if (!svgDoc) return;
-		const colored = Array.from(coloredCountriesRef.current.keys());
-		applyHighlighting(svgDoc, "#d4d4d8", colored);
-		coloredCountriesRef.current.clear();
-		previousGuessesRef.current = [];
-	};
+        const clearAllColors = () => {
+                const svgDoc = svgObjectRef.current?.contentDocument;
+                if (!svgDoc) return;
+                const colored = Array.from(coloredCountriesRef.current.keys());
+                applyHighlighting(svgDoc, "#d4d4d8", colored);
+                coloredCountriesRef.current.clear();
+                previousGuessesRef.current = [];
+        };
+
+        const calculatePanLimits = (containerRect, svgRect, currentZoom) => {
+                const horizontalOverflow = Math.max(
+                        0,
+                        (svgRect.width * currentZoom - containerRect.width) / 2
+                );
+                const verticalOverflow = Math.max(
+                        0,
+                        (svgRect.height * currentZoom - containerRect.height) / 2
+                );
+
+                return {
+                        minX: -horizontalOverflow,
+                        maxX: horizontalOverflow,
+                        minY: -verticalOverflow,
+                        maxY: verticalOverflow,
+                };
+        };
 
 	const handleMouseDown = (e) => {
 		setIsDragging(true);
 		setDragStart({ x: e.clientX, y: e.clientY });
 	};
 
-	const handleMouseMove = (e) => {
-		if (isDragging) {
-			const dx = e.clientX - dragStart.x;
-			const dy = e.clientY - dragStart.y;
-			setPan((prevPan) => ({ x: prevPan.x + dx, y: prevPan.y + dy }));
-			setDragStart({ x: e.clientX, y: e.clientY });
-		}
-	};
+        const handleMouseMove = (e) => {
+                if (isDragging) {
+                        const dx = e.clientX - dragStart.x;
+                        const dy = e.clientY - dragStart.y;
+                        setPan((prevPan) => {
+                                const container = containerRef.current;
+                                const svgObject = svgObjectRef.current;
+                                if (!container || !svgObject) return prevPan;
+
+                                const containerRect = container.getBoundingClientRect();
+                                const svgRect = svgObject.getBoundingClientRect();
+
+                                const { minX, maxX, minY, maxY } = calculatePanLimits(
+                                        containerRect,
+                                        svgRect,
+                                        zoom
+                                );
+
+                                const newX = Math.min(
+                                        Math.max(prevPan.x + dx, minX),
+                                        maxX
+                                );
+                                const newY = Math.min(
+                                        Math.max(prevPan.y + dy, minY),
+                                        maxY
+                                );
+
+                                return { x: newX, y: newY };
+                        });
+                        setDragStart({ x: e.clientX, y: e.clientY });
+                }
+        };
 
 	const handleMouseUp = () => {
 		setIsDragging(false);
@@ -263,27 +305,51 @@ const TravleGame = () => {
 		}
 	};
 
-	const handleTouchMove = (e) => {
-		e.preventDefault();
-		if (e.touches.length === 1 && isDragging) {
-			const touch = e.touches[0];
-			const dx = touch.clientX - dragStart.x;
-			const dy = touch.clientY - dragStart.y;
-			setPan((prevPan) => ({ x: prevPan.x + dx, y: prevPan.y + dy }));
-			setDragStart({ x: touch.clientX, y: touch.clientY });
-		} else if (e.touches.length === 2 && pinchRef.current) {
-			const distance = Math.hypot(
-				e.touches[0].clientX - e.touches[1].clientX,
-				e.touches[0].clientY - e.touches[1].clientY
-			);
-			const scale = distance / pinchRef.current.initialDistance;
-			const newZoom = pinchRef.current.startZoom * scale;
-			const delta = newZoom - zoom;
-			const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-			const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-			handleZoom(delta, midX, midY);
-		}
-	};
+        const handleTouchMove = (e) => {
+                e.preventDefault();
+                if (e.touches.length === 1 && isDragging) {
+                        const touch = e.touches[0];
+                        const dx = touch.clientX - dragStart.x;
+                        const dy = touch.clientY - dragStart.y;
+                        setPan((prevPan) => {
+                                const container = containerRef.current;
+                                const svgObject = svgObjectRef.current;
+                                if (!container || !svgObject) return prevPan;
+
+                                const containerRect = container.getBoundingClientRect();
+                                const svgRect = svgObject.getBoundingClientRect();
+
+                                const { minX, maxX, minY, maxY } = calculatePanLimits(
+                                        containerRect,
+                                        svgRect,
+                                        zoom
+                                );
+
+                                const newX = Math.min(
+                                        Math.max(prevPan.x + dx, minX),
+                                        maxX
+                                );
+                                const newY = Math.min(
+                                        Math.max(prevPan.y + dy, minY),
+                                        maxY
+                                );
+
+                                return { x: newX, y: newY };
+                        });
+                        setDragStart({ x: touch.clientX, y: touch.clientY });
+                } else if (e.touches.length === 2 && pinchRef.current) {
+                        const distance = Math.hypot(
+                                e.touches[0].clientX - e.touches[1].clientX,
+                                e.touches[0].clientY - e.touches[1].clientY
+                        );
+                        const scale = distance / pinchRef.current.initialDistance;
+                        const newZoom = pinchRef.current.startZoom * scale;
+                        const delta = newZoom - zoom;
+                        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                        handleZoom(delta, midX, midY);
+                }
+        };
 
 	const handleTouchEnd = () => {
 		setIsDragging(false);
