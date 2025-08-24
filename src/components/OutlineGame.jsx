@@ -1,23 +1,10 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import CountryInput from "./CountryInput";
 import EndGameOverlay from "./EndGameOverlay";
-import VALID_COUNTRIES from "../assets/countries_with_continents.json";
 import QUALITY_OUTLINE_MAP from "../assets/quality_outline_map.json";
 import { CONTINENTS } from "../constants/continents";
-
-const FeedbackMessage = ({ message, type }) => (
-	<div
-		className={`p-2 font-montserrat rounded ${
-			type === "success"
-				? "bg-green-100 text-green-700"
-				: type === "error"
-				? "bg-red-100 text-red-700"
-				: "bg-blue-100 text-blue-700"
-		}`}
-	>
-		{message}
-	</div>
-);
+import FeedbackMessage from "./ui/FeedbackMessage";
+import { useCountriesData } from "../hooks/useCountriesData";
 
 const OutlineGame = () => {
 	const [attempts, setAttempts] = useState(0);
@@ -28,6 +15,8 @@ const OutlineGame = () => {
 	const [isGameEnded, setIsGameEnded] = useState(false);
 	const [currentCountry, setCurrentCountry] = useState(null);
 	const [hint, setHint] = useState(null);
+
+	const { countryMap, countryNames, VALID_COUNTRIES } = useCountriesData();
 
 	const isGameEndedRef = useRef(isGameEnded);
 	const feedbackTimeoutRef = useRef(null);
@@ -49,12 +38,15 @@ const OutlineGame = () => {
 		}
 	};
 
-	const getRandomCountry = (exclude = guessedCountries) => {
-		const remaining = VALID_COUNTRIES.filter((c) => !exclude.has(c));
-		if (remaining.length === 0) return null;
-		const index = Math.floor(Math.random() * remaining.length);
-		return remaining[index];
-	};
+	const getRandomCountry = useCallback(
+		(exclude = guessedCountries) => {
+			const remaining = VALID_COUNTRIES.filter((c) => !exclude.has(c));
+			if (remaining.length === 0) return null;
+			const index = Math.floor(Math.random() * remaining.length);
+			return remaining[index];
+		},
+		[guessedCountries, VALID_COUNTRIES]
+	);
 
 	// Keep the ref in sync with the state
 	useEffect(() => {
@@ -63,7 +55,7 @@ const OutlineGame = () => {
 
 	useEffect(() => {
 		setCurrentCountry(getRandomCountry());
-	}, []);
+	}, [getRandomCountry]);
 
 	useEffect(() => {
 		setHint(null);
@@ -79,19 +71,7 @@ const OutlineGame = () => {
 		return () => clearInterval(timer);
 	}, []);
 
-	const countryMap = useMemo(() => {
-		const map = {};
-		VALID_COUNTRIES.forEach((c) => {
-			c.name.forEach((n) => {
-				map[n.toLowerCase()] = c;
-			});
-		});
-		return map;
-	}, []);
-
-	const countryNames = useMemo(() => {
-		return VALID_COUNTRIES.flatMap((c) => c.name);
-	}, []);
+	// countryMap and countryNames provided by hook
 
 	const handleGuess = (guess) => {
 		if (isGameEnded) return;
@@ -189,7 +169,7 @@ const OutlineGame = () => {
 
 	const missedCountries = useMemo(() => {
 		return VALID_COUNTRIES.filter((c) => !guessedCountries.has(c));
-	}, [guessedCountries]);
+	}, [guessedCountries, VALID_COUNTRIES]);
 
 	const handlePlayAgain = () => {
 		setAttempts(0);

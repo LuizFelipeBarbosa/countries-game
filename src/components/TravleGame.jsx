@@ -1,14 +1,13 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { CheckCircle, GitCommit } from "lucide-react";
 import CountryInput from "./CountryInput";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
 import countries from "../assets/countries.json";
-import WorldMap from "../assets/map.svg";
+import MapContainer from "./MapContainer";
 import borders from "../assets/borders.json";
 import crossings from "../assets/crossings.json";
 import { generatePuzzle } from "../utils/puzzle";
 import { getItem, setItem } from "../utils/storage";
-import { applyHighlighting } from "../utils/mapColoring";
 
 const TravleGame = () => {
 	const [notification, setNotification] = useState(null);
@@ -114,6 +113,9 @@ const TravleGame = () => {
 	const [distStart, setDistStart] = useState(new Map());
 	const [distEnd, setDistEnd] = useState(new Map());
 
+	const mapApiRef = useRef(null);
+	const [mapReady, setMapReady] = useState(false);
+
 	const handleGuess = (guess) => {
 		const iso3 = aliases[guess.toLowerCase()];
 		const lastGuess = gameState.guesses[gameState.guesses.length - 1];
@@ -160,7 +162,7 @@ const TravleGame = () => {
 		}));
 	};
 
-	const startNewGame = () => {
+	const startNewGame = useCallback(() => {
 		clearAllColors();
 		const { start, end, shortest } = generatePuzzle(
 			adjacencyMap,
@@ -172,8 +174,8 @@ const TravleGame = () => {
 		setDistStart(dStart);
 		setDistEnd(dEnd);
 
-		setGameState({
-			...gameState,
+		setGameState((prev) => ({
+			...prev,
 			start,
 			end,
 			shortest,
@@ -181,287 +183,56 @@ const TravleGame = () => {
 			rejects: [],
 			remaining: shortest + 4,
 			status: "playing",
-		});
-	};
+		}));
+	}, [adjacencyMap, bfs, bfsForPath]);
 
 	useEffect(() => {
 		if (adjacencyMap.size > 0 && !getItem("travleGameState")) {
 			startNewGame();
 		}
-	}, [adjacencyMap]);
+	}, [adjacencyMap, startNewGame]);
 
 	useEffect(() => {
 		setItem("travleGameState", JSON.stringify(gameState));
 	}, [gameState]);
 
-	const getGuessColor = (guess) => {
-		if (distStart.get(guess) + distEnd.get(guess) === gameState.shortest) {
-			return "green";
-		}
-		return "orange";
-	};
+	const getGuessColor = useCallback(
+		(guess) => {
+			if (
+				distStart.get(guess) + distEnd.get(guess) ===
+				gameState.shortest
+			) {
+				return "green";
+			}
+			return "orange";
+		},
+		[distStart, distEnd, gameState.shortest]
+	);
 
 	const countryNames = useMemo(() => {
 		return VALID_COUNTRIES.flatMap((c) => c.name);
 	}, []);
 
-	const [zoom, setZoom] = useState(1);
-	const [pan, setPan] = useState({ x: 0, y: 0 });
-	const [isDragging, setIsDragging] = useState(false);
-	const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-	const pinchRef = useRef(null);
-	const svgObjectRef = useRef(null);
-	const containerRef = useRef(null);
-	const [svgLoaded, setSvgLoaded] = useState(false);
-	const coloredCountriesRef = useRef(new Map());
-        const previousGuessesRef = useRef([]);
-
-        const clearAllColors = () => {
-                const svgDoc = svgObjectRef.current?.contentDocument;
-                if (!svgDoc) return;
-                const colored = Array.from(coloredCountriesRef.current.keys());
-                applyHighlighting(svgDoc, "#d4d4d8", colored);
-                coloredCountriesRef.current.clear();
-                previousGuessesRef.current = [];
-        };
-
-        const calculatePanLimits = (containerRect, svgRect, currentZoom) => {
-                const horizontalOverflow = Math.max(
-                        0,
-                        (svgRect.width * currentZoom - containerRect.width) / 2
-                );
-                const verticalOverflow = Math.max(
-                        0,
-                        (svgRect.height * currentZoom - containerRect.height) / 2
-                );
-
-                return {
-                        minX: -horizontalOverflow,
-                        maxX: horizontalOverflow,
-                        minY: -verticalOverflow,
-                        maxY: verticalOverflow,
-                };
-        };
-
-	const handleMouseDown = (e) => {
-		setIsDragging(true);
-		setDragStart({ x: e.clientX, y: e.clientY });
-	};
-
-        const handleMouseMove = (e) => {
-                if (isDragging) {
-                        const dx = e.clientX - dragStart.x;
-                        const dy = e.clientY - dragStart.y;
-                        setPan((prevPan) => {
-                                const container = containerRef.current;
-                                const svgObject = svgObjectRef.current;
-                                if (!container || !svgObject) return prevPan;
-
-                                const containerRect = container.getBoundingClientRect();
-                                const svgRect = svgObject.getBoundingClientRect();
-
-                                const { minX, maxX, minY, maxY } = calculatePanLimits(
-                                        containerRect,
-                                        svgRect,
-                                        zoom
-                                );
-
-                                const newX = Math.min(
-                                        Math.max(prevPan.x + dx, minX),
-                                        maxX
-                                );
-                                const newY = Math.min(
-                                        Math.max(prevPan.y + dy, minY),
-                                        maxY
-                                );
-
-                                return { x: newX, y: newY };
-                        });
-                        setDragStart({ x: e.clientX, y: e.clientY });
-                }
-        };
-
-	const handleMouseUp = () => {
-		setIsDragging(false);
-	};
-
-	const handleTouchStart = (e) => {
-		e.preventDefault();
-		if (e.touches.length === 1) {
-			setIsDragging(true);
-			setDragStart({
-				x: e.touches[0].clientX,
-				y: e.touches[0].clientY,
-			});
-		} else if (e.touches.length === 2) {
-			const distance = Math.hypot(
-				e.touches[0].clientX - e.touches[1].clientX,
-				e.touches[0].clientY - e.touches[1].clientY
-			);
-			pinchRef.current = {
-				initialDistance: distance,
-				startZoom: zoom,
-			};
-		}
-	};
-
-        const handleTouchMove = (e) => {
-                e.preventDefault();
-                if (e.touches.length === 1 && isDragging) {
-                        const touch = e.touches[0];
-                        const dx = touch.clientX - dragStart.x;
-                        const dy = touch.clientY - dragStart.y;
-                        setPan((prevPan) => {
-                                const container = containerRef.current;
-                                const svgObject = svgObjectRef.current;
-                                if (!container || !svgObject) return prevPan;
-
-                                const containerRect = container.getBoundingClientRect();
-                                const svgRect = svgObject.getBoundingClientRect();
-
-                                const { minX, maxX, minY, maxY } = calculatePanLimits(
-                                        containerRect,
-                                        svgRect,
-                                        zoom
-                                );
-
-                                const newX = Math.min(
-                                        Math.max(prevPan.x + dx, minX),
-                                        maxX
-                                );
-                                const newY = Math.min(
-                                        Math.max(prevPan.y + dy, minY),
-                                        maxY
-                                );
-
-                                return { x: newX, y: newY };
-                        });
-                        setDragStart({ x: touch.clientX, y: touch.clientY });
-                } else if (e.touches.length === 2 && pinchRef.current) {
-                        const distance = Math.hypot(
-                                e.touches[0].clientX - e.touches[1].clientX,
-                                e.touches[0].clientY - e.touches[1].clientY
-                        );
-                        const scale = distance / pinchRef.current.initialDistance;
-                        const newZoom = pinchRef.current.startZoom * scale;
-                        const delta = newZoom - zoom;
-                        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                        handleZoom(delta, midX, midY);
-                }
-        };
-
-	const handleTouchEnd = () => {
-		setIsDragging(false);
-		pinchRef.current = null;
-	};
-
-	const handleWheel = (e) => {
-		e.preventDefault();
-		const delta = e.deltaY * -0.001;
-		handleZoom(delta, e.clientX, e.clientY);
-	};
-
-	const handleZoom = (delta, clientX, clientY) => {
-		setZoom((prevZoom) => {
-			const container = containerRef.current;
-			const svgObject = svgObjectRef.current;
-			if (!container || !svgObject) return prevZoom;
-
-                        const containerRect = container.getBoundingClientRect();
-                        const svgRect = svgObject.getBoundingClientRect();
-
-                        const x = clientX - containerRect.left;
-                        const y = clientY - containerRect.top;
-
-                        const contentX = (x - pan.x) / prevZoom;
-                        const contentY = (y - pan.y) / prevZoom;
-
-                        const newZoom = Math.max(1, Math.min(prevZoom + delta, 8));
-
-                        let newPanX = x - contentX * newZoom;
-                        let newPanY = y - contentY * newZoom;
-
-                        const { minX, maxX, minY, maxY } = calculatePanLimits(
-                                containerRect,
-                                svgRect,
-                                newZoom
-                        );
-                        newPanX = Math.min(Math.max(newPanX, minX), maxX);
-                        newPanY = Math.min(Math.max(newPanY, minY), maxY);
-
-                        setPan({ x: newPanX, y: newPanY });
-
-                        return newZoom;
-                });
-        };
-
-	useEffect(() => {
-		const container = containerRef.current;
-		if (!container) return;
-
-		const opts = { passive: false };
-		container.addEventListener("touchstart", handleTouchStart, opts);
-		container.addEventListener("touchmove", handleTouchMove, opts);
-		container.addEventListener("touchend", handleTouchEnd);
-		container.addEventListener("touchcancel", handleTouchEnd);
-
-		return () => {
-			if (!container) return;
-			container.removeEventListener("touchstart", handleTouchStart);
-			container.removeEventListener("touchmove", handleTouchMove);
-			container.removeEventListener("touchend", handleTouchEnd);
-			container.removeEventListener("touchcancel", handleTouchEnd);
-		};
-	}, [handleTouchStart, handleTouchMove, handleTouchEnd]);
-
-	useEffect(() => {
-		if (!svgLoaded) return;
-		const svgDoc = svgObjectRef.current?.contentDocument;
-		if (!svgDoc) return;
+	const clearAllColors = () => {
+		const api = mapApiRef.current;
+		if (!api) return;
 		const allAlpha2 = countries.map((c) => c.alpha2);
-		applyHighlighting(svgDoc, "#d4d4d8", allAlpha2);
-		coloredCountriesRef.current.clear();
-		previousGuessesRef.current = [];
-	}, [svgLoaded]);
+		api.resetColors(allAlpha2, "#d4d4d8");
+	};
 
 	useEffect(() => {
-		if (!svgLoaded) return;
-		const svgDoc = svgObjectRef.current?.contentDocument;
-		if (!svgDoc) return;
-
-		const highlight = (alpha2Codes, color) => {
-			applyHighlighting(svgDoc, color, alpha2Codes);
-			alpha2Codes.forEach((code) =>
-				coloredCountriesRef.current.set(code, color)
-			);
-		};
-
-		const prevGuesses = previousGuessesRef.current;
-		const newGuesses = gameState.guesses.slice(prevGuesses.length);
-		newGuesses.forEach((guess) => {
-			const alpha2 = iso3ToAlpha2.get(guess);
-			if (alpha2) {
-				const color =
-					getGuessColor(guess) === "green" ? "#4ade80" : "#facc15";
-				highlight([alpha2], color);
-			}
-		});
-
+		if (!mapReady) return;
+		if (!gameState.start || !gameState.end) return;
+		const api = mapApiRef.current;
+		if (!api) return;
+		const allAlpha2 = countries.map((c) => c.alpha2);
+		api.resetColors(allAlpha2, "#d4d4d8");
+		// Immediately color start and end on load
 		const alpha2Start = iso3ToAlpha2.get(gameState.start);
-		if (alpha2Start) highlight([alpha2Start], "#faa78b");
+		if (alpha2Start) api.colorCountries("#faa78b", [alpha2Start]);
 		const alpha2End = iso3ToAlpha2.get(gameState.end);
-		if (alpha2End) highlight([alpha2End], "#a78bfa");
-
-		previousGuessesRef.current = gameState.guesses;
-	}, [
-		gameState.guesses,
-		gameState.start,
-		gameState.end,
-		getGuessColor,
-		svgLoaded,
-		iso3ToAlpha2,
-	]);
+		if (alpha2End) api.colorCountries("#a78bfa", [alpha2End]);
+	}, [mapReady, gameState.start, gameState.end, iso3ToAlpha2]);
 
 	return (
 		<div className="p-4 flex flex-col items-center text-center">
@@ -472,33 +243,13 @@ const TravleGame = () => {
 			)}
 			<h1 className="text-2xl font-bold mb-4">Travle Game</h1>
 			<div className="flex flex-col md:flex-row gap-4 w-full">
-				<div
-					className="w-full md:w-2/3 h-96 bg-gray-300 rounded-lg overflow-hidden"
-					ref={containerRef}
-					onMouseDown={handleMouseDown}
-					onMouseMove={handleMouseMove}
-					onMouseUp={handleMouseUp}
-					onMouseLeave={handleMouseUp}
-					onWheel={handleWheel}
-					style={{ cursor: isDragging ? "grabbing" : "grab" }}
-				>
-					<div
-						style={{
-							transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-							transformOrigin: "0 0",
-						}}
-					>
-						<object
-							ref={svgObjectRef}
-							type="image/svg+xml"
-							data={WorldMap}
-							aria-label="World Map"
-							className="w-full h-full"
-							onLoad={() => setSvgLoaded(true)}
-						/>
-					</div>
-				</div>
-				<div className="w-full md:w-1/3">
+				<MapContainer
+					className="w-full md:w-3/4 lg:w-4/5 h-[70vh] bg-gray-300 rounded-lg"
+					ariaLabel="World Map"
+					apiRef={mapApiRef}
+					onSvgLoad={() => setMapReady(true)}
+				/>
+				<div className="w-full md:w-1/4 lg:w-1/5">
 					<div className="bg-white p-4 rounded-lg shadow">
 						<h2 className="text-xl font-bold">
 							From:{" "}

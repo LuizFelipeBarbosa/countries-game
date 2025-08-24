@@ -1,17 +1,17 @@
 import { useRef, useState } from "react";
 
 const CountryInput = ({ onSubmit, disabled, suggestions = [] }) => {
-        const [inputValue, setInputValue] = useState("");
-        const inputRef = useRef(null);
+	const [inputValue, setInputValue] = useState("");
+	const inputRef = useRef(null);
 
-        const handleFocus = () => {
-                setTimeout(() => {
-                        inputRef.current?.scrollIntoView({
-                                block: "center",
-                                behavior: "smooth",
-                        });
-                }, 300);
-        };
+	const handleFocus = () => {
+		setTimeout(() => {
+			inputRef.current?.scrollIntoView({
+				block: "center",
+				behavior: "smooth",
+			});
+		}, 300);
+	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -25,18 +25,27 @@ const CountryInput = ({ onSubmit, disabled, suggestions = [] }) => {
 		<form
 			onSubmit={handleSubmit}
 			className="mt-4 flex flex-col sm:flex-row gap-2 sm:gap-0"
+			role="search"
+			aria-label="Country guess form"
 		>
+			<label htmlFor="country-input" className="sr-only">
+				Country name
+			</label>
 			<input
-                                type="text"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                placeholder="Enter a country name"
-                                className="flex-grow p-2 border border-gray-300 rounded-md sm:rounded-l-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-blue-500 font-montserrat"
-                                disabled={disabled}
-                                list="country-suggestions"
-                                ref={inputRef}
-                                onFocus={handleFocus}
-                        />
+				id="country-input"
+				type="text"
+				value={inputValue}
+				onChange={(e) => setInputValue(e.target.value)}
+				placeholder="Enter a country name"
+				className="flex-grow p-2 border border-gray-300 rounded-md sm:rounded-l-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-blue-500 font-montserrat"
+				disabled={disabled}
+				list="country-suggestions"
+				ref={inputRef}
+				onFocus={handleFocus}
+				autoComplete="off"
+				aria-autocomplete="list"
+				aria-controls="country-suggestions"
+			/>
 			<datalist id="country-suggestions">
 				{suggestions.map((name) => (
 					<option value={name} key={name} />

@@ -1,209 +1,145 @@
-import { useEffect, useRef, useState } from "react";
-import WorldMap from "../assets/map.svg";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import MapContainer from "./MapContainer";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
-import { applyHighlighting } from "../utils/mapColoring";
 
 const GameBoard = ({
-        guessedCountries,
-        isBlurred,
-        isGameEnded,
-        isGameStarted,
+	guessedCountries,
+	isBlurred,
+	isGameEnded,
+	isGameStarted,
 }) => {
-        const [zoom, setZoom] = useState(1);
-        const [pan, setPan] = useState({ x: 0, y: 0 });
-        const [isDragging, setIsDragging] = useState(false);
-        const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-        const [svgLoaded, setSvgLoaded] = useState(false);
-        const [boardHeight, setBoardHeight] = useState(0);
-        const pinchRef = useRef(null);
+	const [boardHeight, setBoardHeight] = useState(0);
+	const apiRef = useRef(null);
+	const [mapTransform, setMapTransform] = useState({
+		zoom: 1,
+		pan: { x: 0, y: 0 },
+	});
+	const zoom = mapTransform.zoom;
 
-        const svgObjectRef = useRef(null);
-        const containerRef = useRef(null);
-
-        let highlightedCountries = [...guessedCountries].map(
-                (country) => country.alpha2
-        );
-
-        useEffect(() => {
-                const updateHeight = () => {
-                        const height = window.visualViewport
-                                ? window.visualViewport.height
-                                : window.innerHeight;
-                        const ratio = window.innerWidth >= 640 ? 0.7 : 0.6;
-                        setBoardHeight(height * ratio);
-                };
-
-                updateHeight();
-                window.addEventListener("resize", updateHeight);
-                window.visualViewport?.addEventListener("resize", updateHeight);
-
-                return () => {
-                        window.removeEventListener("resize", updateHeight);
-                        window.visualViewport?.removeEventListener(
-                                "resize",
-                                updateHeight
-                        );
-                };
-        }, []);
-
-        useEffect(() => {
-                const svgObject = svgObjectRef.current;
-
-                const onLoad = () => {
-                        setSvgLoaded(true);
-                };
-
-                if (svgObject) {
-                        if (svgObject.contentDocument) {
-                                setSvgLoaded(true);
-                                const svgDoc = svgObject.contentDocument;
-
-                                if (isGameEnded) {
-                                        const allCountryCodes = VALID_COUNTRIES.map(
-                                                (country) => country.alpha2
-                                        );
-                                        const unHighlightedCountries = allCountryCodes.filter(
-                                                (code) => !highlightedCountries.includes(code)
-                                        );
-                                        applyHighlighting(
-                                                svgDoc,
-                                                "#f87171",
-                                                unHighlightedCountries
-                                        );
-                                        highlightedCountries = [];
-                                }
-
-                                if (isGameStarted && highlightedCountries.length === 0) {
-                                        const allCountryCodes = VALID_COUNTRIES.map(
-                                                (country) => country.alpha2
-                                        );
-                                        applyHighlighting(svgDoc, "#fed7aa", allCountryCodes);
-                                }
-
-                                applyHighlighting(
-                                        svgDoc,
-                                        "#4ade80",
-                                        highlightedCountries
-                                );
-                        } else {
-                                svgObject.addEventListener("load", onLoad);
-                                return () => {
-                                        svgObject.removeEventListener("load", onLoad);
-                                };
-                        }
-                }
-        }, [highlightedCountries, isGameEnded, isGameStarted]);
+	const allAlpha2 = useMemo(
+		() => VALID_COUNTRIES.map((country) => country.alpha2),
+		[]
+	);
 
 	useEffect(() => {
-		if (svgLoaded) {
-			const svgObject = svgObjectRef.current;
-			if (svgObject && svgObject.contentDocument) {
-				const svgDoc = svgObject.contentDocument;
+		const updateHeight = () => {
+			const height = window.visualViewport
+				? window.visualViewport.height
+				: window.innerHeight;
+			const ratio = window.innerWidth >= 640 ? 0.7 : 0.6;
+			setBoardHeight(height * ratio);
+		};
 
-				// Remove existing country name text elements
-				const existingTextElements = svgDoc.querySelectorAll(
-					'text[data-country-name="true"]'
-				);
-				existingTextElements.forEach((textElement) => {
-					textElement.parentNode.removeChild(textElement);
-				});
+		updateHeight();
+		window.addEventListener("resize", updateHeight);
+		window.visualViewport?.addEventListener("resize", updateHeight);
 
-				// Determine which countries to render names for
-				const countriesToRender = isGameEnded
-					? VALID_COUNTRIES
-					: guessedCountries;
-
-				countriesToRender.forEach((country) => {
-					let alpha2Code = country.alpha2;
-
-					// Handle special cases for country IDs in the SVG
-					const specialCases = {
-						fr: "frx",
-						nl: "nlx",
-						us: "United_States_lower_48",
-						ru: "path2924",
-						ki: "ki_",
-						cl: "path6470",
-						dk: "Denmark_mainland",
-						pt: "Portugal_mainland",
-						es: "Spain_mainland",
-						au: "Australia_mainland",
-						ec: "Ecuador_mainland",
-						cr: "Costa_Rica_mainland",
-						it: "Italy_mainland",
-						ca: "Canada_mainland",
-					};
-
-					alpha2Code = specialCases[alpha2Code] || alpha2Code;
-
-					const path = svgDoc.getElementById(alpha2Code);
-					if (path) {
-						let countryName = "";
-
-						// Use the country name from VALID_COUNTRIES
-						const countryData = VALID_COUNTRIES.find(
-							(countryData) =>
-								countryData.alpha2 === country.alpha2
-						);
-						countryName = countryData
-							? countryData.name[0]
-							: alpha2Code.toUpperCase();
-
-						const bbox = path.getBBox();
-
-						// Create text element
-						const textElement = svgDoc.createElementNS(
-							"http://www.w3.org/2000/svg",
-							"text"
-						);
-						textElement.setAttribute("x", bbox.x + bbox.width / 2);
-						textElement.setAttribute("y", bbox.y + bbox.height / 2);
-						textElement.setAttribute("text-anchor", "middle");
-						textElement.setAttribute(
-							"alignment-baseline",
-							"central"
-						);
-						textElement.setAttribute("font-family", "Arial");
-						if (zoom < 1.5) {
-							textElement.setAttribute("font-size", "20");
-						} else if (zoom < 2) {
-							textElement.setAttribute("font-size", "16");
-						} else if (zoom < 3) {
-							textElement.setAttribute("font-size", "12");
-						} else if (zoom < 4) {
-							textElement.setAttribute("font-size", "8");
-						} else {
-							textElement.setAttribute("font-size", "4");
-						}
-						textElement.setAttribute("fill", "black");
-						textElement.setAttribute("pointer-events", "none");
-						textElement.setAttribute("data-country-name", "true");
-						textElement.textContent = countryName;
-
-						svgDoc.documentElement.appendChild(textElement);
-					} else {
-						console.warn(
-							`Country path with id '${alpha2Code}' not found in the SVG.`
-						);
-					}
-				});
-			}
-		}
-	}, [guessedCountries, isGameEnded, svgLoaded]);
+		return () => {
+			window.removeEventListener("resize", updateHeight);
+			window.visualViewport?.removeEventListener("resize", updateHeight);
+		};
+	}, []);
 
 	useEffect(() => {
-		// Update font size based on zoom level
-		if (
-			svgLoaded &&
-			svgObjectRef.current &&
-			svgObjectRef.current.contentDocument
-		) {
-			const svgDoc = svgObjectRef.current.contentDocument;
-			const textElements = svgDoc.querySelectorAll(
-				'text[data-country-name="true"]'
+		const api = apiRef.current;
+		if (!api) return;
+
+		const guessedList = Array.isArray(guessedCountries)
+			? guessedCountries
+			: Array.from(guessedCountries || []);
+		const guessedAlpha2 = guessedList
+			.map((c) => (typeof c === "string" ? c : c?.alpha2))
+			.filter(Boolean);
+
+		if (isGameEnded) {
+			const unHighlighted = allAlpha2.filter(
+				(code) => !guessedAlpha2.includes(code)
 			);
+			api.colorCountries("#f87171", unHighlighted);
+			if (guessedAlpha2.length > 0)
+				api.colorCountries("#4ade80", guessedAlpha2);
+			return;
+		}
 
-			textElements.forEach((textElement) => {
+		// At game start (no guesses), set ambient amber once
+		if (isGameStarted && guessedAlpha2.length === 0) {
+			api.colorCountries("#fed7aa", allAlpha2);
+			return;
+		}
+
+		// After first guess onward, only color guessed green; do not reset others to gray
+		if (guessedAlpha2.length > 0) {
+			api.colorCountries("#4ade80", guessedAlpha2);
+		}
+	}, [guessedCountries, isGameEnded, isGameStarted, allAlpha2]);
+
+	useEffect(() => {
+		const svgDoc = apiRef.current?.getSvgDocument();
+		if (!svgDoc) return;
+
+		// Remove existing country name text elements
+		const existingTextElements = svgDoc.querySelectorAll(
+			'text[data-country-name="true"]'
+		);
+		existingTextElements.forEach((textElement) => {
+			textElement.parentNode.removeChild(textElement);
+		});
+
+		const guessedList = Array.isArray(guessedCountries)
+			? guessedCountries
+			: Array.from(guessedCountries || []);
+		const countriesToRender = isGameEnded
+			? VALID_COUNTRIES
+			: guessedList
+					.map((c) =>
+						typeof c === "string"
+							? VALID_COUNTRIES.find((v) => v.alpha2 === c)
+							: c
+					)
+					.filter(Boolean);
+
+		countriesToRender.forEach((country) => {
+			let alpha2Code = country.alpha2;
+
+			const specialCases = {
+				fr: "frx",
+				nl: "nlx",
+				us: "United_States_lower_48",
+				ru: "path2924",
+				ki: "ki_",
+				cl: "path6470",
+				dk: "Denmark_mainland",
+				pt: "Portugal_mainland",
+				es: "Spain_mainland",
+				au: "Australia_mainland",
+				ec: "Ecuador_mainland",
+				cr: "Costa_Rica_mainland",
+				it: "Italy_mainland",
+				ca: "Canada_mainland",
+			};
+
+			alpha2Code = specialCases[alpha2Code] || alpha2Code;
+
+			const path = svgDoc.getElementById(alpha2Code);
+			if (path) {
+				let countryName = "";
+				const countryData = VALID_COUNTRIES.find(
+					(countryData) => countryData.alpha2 === country.alpha2
+				);
+				countryName = countryData
+					? countryData.name[0]
+					: alpha2Code.toUpperCase();
+
+				const bbox = path.getBBox();
+				const textElement = svgDoc.createElementNS(
+					"http://www.w3.org/2000/svg",
+					"text"
+				);
+				textElement.setAttribute("x", bbox.x + bbox.width / 2);
+				textElement.setAttribute("y", bbox.y + bbox.height / 2);
+				textElement.setAttribute("text-anchor", "middle");
+				textElement.setAttribute("alignment-baseline", "central");
+				textElement.setAttribute("font-family", "Arial");
 				if (zoom < 1.5) {
 					textElement.setAttribute("font-size", "20");
 				} else if (zoom < 2) {
@@ -215,246 +151,56 @@ const GameBoard = ({
 				} else {
 					textElement.setAttribute("font-size", "4");
 				}
-			});
-		}
-	}, [zoom, svgLoaded]);
+				textElement.setAttribute("fill", "black");
+				textElement.setAttribute("pointer-events", "none");
+				textElement.setAttribute("data-country-name", "true");
+				textElement.textContent = countryName;
+
+				svgDoc.documentElement.appendChild(textElement);
+			} else {
+				console.warn(
+					`Country path with id '${alpha2Code}' not found in the SVG.`
+				);
+			}
+		});
+	}, [guessedCountries, isGameEnded, zoom]);
 
 	useEffect(() => {
-		const container = containerRef.current;
-		if (container) {
-			const preventDefaultScroll = (e) => {
-				e.preventDefault();
-			};
-
-			container.addEventListener("wheel", preventDefaultScroll, {
-				passive: false,
-			});
-
-			return () => {
-				container.removeEventListener("wheel", preventDefaultScroll);
-			};
-		}
-	}, []);
-
-	const handleMouseDown = (e) => {
-		setIsDragging(true);
-		setDragStart({ x: e.clientX, y: e.clientY });
-	};
-
-        const handleTouchStart = (e) => {
-                e.preventDefault();
-                if (e.touches.length === 1) {
-                        setIsDragging(true);
-                        setDragStart({
-                                x: e.touches[0].clientX,
-                                y: e.touches[0].clientY,
-                        });
-                } else if (e.touches.length === 2) {
-                        const distance = Math.hypot(
-                                e.touches[0].clientX - e.touches[1].clientX,
-                                e.touches[0].clientY - e.touches[1].clientY
-                        );
-                        pinchRef.current = {
-                                initialDistance: distance,
-                                startZoom: zoom,
-                        };
-                }
-        };
-
-	const calculatePanLimits = (containerRect, svgRect, currentZoom) => {
-		const horizontalOverflow = Math.max(
-			0,
-			(svgRect.width * currentZoom - containerRect.width) / 2
+		const svgDoc = apiRef.current?.getSvgDocument();
+		if (!svgDoc) return;
+		const textElements = svgDoc.querySelectorAll(
+			'text[data-country-name="true"]'
 		);
-		const verticalOverflow = Math.max(
-			0,
-			(svgRect.height * currentZoom - containerRect.height) / 2
-		);
-
-		return {
-			minX: -horizontalOverflow,
-			maxX: horizontalOverflow,
-			minY: -verticalOverflow,
-			maxY: verticalOverflow,
-		};
-	};
-
-	const handleMouseMove = (e) => {
-		if (isDragging) {
-			const dx = e.clientX - dragStart.x;
-			const dy = e.clientY - dragStart.y;
-			setPan((prevPan) => {
-				const container = containerRef.current;
-				const svgObject = svgObjectRef.current;
-				if (!container || !svgObject) return prevPan;
-
-				const containerRect = container.getBoundingClientRect();
-				const svgRect = svgObject.getBoundingClientRect();
-
-				const { minX, maxX, minY, maxY } = calculatePanLimits(
-					containerRect,
-					svgRect,
-					zoom
-				);
-
-				const newX = Math.min(Math.max(prevPan.x + dx, minX), maxX);
-				const newY = Math.min(Math.max(prevPan.y + dy, minY), maxY);
-
-				return { x: newX, y: newY };
-			});
-			setDragStart({ x: e.clientX, y: e.clientY });
-		}
-	};
-
-        const handleTouchMove = (e) => {
-                e.preventDefault();
-                if (e.touches.length === 1 && isDragging) {
-                        const touch = e.touches[0];
-                        const dx = touch.clientX - dragStart.x;
-                        const dy = touch.clientY - dragStart.y;
-                        setPan((prevPan) => {
-                                const container = containerRef.current;
-                                const svgObject = svgObjectRef.current;
-                                if (!container || !svgObject) return prevPan;
-
-                                const containerRect = container.getBoundingClientRect();
-                                const svgRect = svgObject.getBoundingClientRect();
-
-                                const { minX, maxX, minY, maxY } = calculatePanLimits(
-                                        containerRect,
-                                        svgRect,
-                                        zoom
-                                );
-
-                                const newX = Math.min(Math.max(prevPan.x + dx, minX), maxX);
-                                const newY = Math.min(Math.max(prevPan.y + dy, minY), maxY);
-
-                                return { x: newX, y: newY };
-                        });
-                        setDragStart({ x: touch.clientX, y: touch.clientY });
-                } else if (e.touches.length === 2 && pinchRef.current) {
-                        const distance = Math.hypot(
-                                e.touches[0].clientX - e.touches[1].clientX,
-                                e.touches[0].clientY - e.touches[1].clientY
-                        );
-                        const scale = distance / pinchRef.current.initialDistance;
-                        const newZoom = pinchRef.current.startZoom * scale;
-                        const delta = newZoom - zoom;
-                        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                        handleZoom(delta, midX, midY);
-                }
-        };
-
-	const handleZoom = (delta, clientX, clientY) => {
-		setZoom((prevZoom) => {
-			const container = containerRef.current;
-			const svgObject = svgObjectRef.current;
-			if (!container || !svgObject) return prevZoom;
-
-			const containerRect = container.getBoundingClientRect();
-			const svgRect = svgObject.getBoundingClientRect();
-
-			// Calculate cursor position relative to the container
-			const x = clientX - containerRect.left;
-			const y = clientY - containerRect.top;
-
-			// Calculate cursor position relative to the content (considering current pan and zoom)
-			const contentX = (x - pan.x) / prevZoom;
-			const contentY = (y - pan.y) / prevZoom;
-
-			const newZoom = Math.max(1, Math.min(prevZoom + delta, 8));
-
-			// Calculate new pan position to keep the point under cursor in the same place
-			let newPanX = x - contentX * newZoom;
-			let newPanY = y - contentY * newZoom;
-
-			// Adjust pan to respect the new limits
-			const { minX, maxX, minY, maxY } = calculatePanLimits(
-				containerRect,
-				svgRect,
-				newZoom
-			);
-			newPanX = Math.min(Math.max(newPanX, minX), maxX);
-			newPanY = Math.min(Math.max(newPanY, minY), maxY);
-
-			setPan({ x: newPanX, y: newPanY });
-
-			return newZoom;
+		textElements.forEach((textElement) => {
+			if (zoom < 1.5) {
+				textElement.setAttribute("font-size", "20");
+			} else if (zoom < 2) {
+				textElement.setAttribute("font-size", "16");
+			} else if (zoom < 3) {
+				textElement.setAttribute("font-size", "12");
+			} else if (zoom < 4) {
+				textElement.setAttribute("font-size", "8");
+			} else {
+				textElement.setAttribute("font-size", "4");
+			}
 		});
-	};
+	}, [zoom]);
 
-	const handleMouseUp = () => {
-		setIsDragging(false);
-	};
-
-	const handleTouchEnd = () => {
-		setIsDragging(false);
-		pinchRef.current = null;
-	};
-
-        const handleWheel = (e) => {
-                e.preventDefault();
-                const delta = e.deltaY * -0.001;
-                handleZoom(delta, e.clientX, e.clientY);
-        };
-
-        useEffect(() => {
-                const container = containerRef.current;
-                if (!container) return;
-
-                if (!isBlurred) {
-                        const opts = { passive: false };
-                        container.addEventListener("touchstart", handleTouchStart, opts);
-                        container.addEventListener("touchmove", handleTouchMove, opts);
-                        container.addEventListener("touchend", handleTouchEnd);
-                        container.addEventListener("touchcancel", handleTouchEnd);
-                }
-
-                return () => {
-                        if (!container) return;
-                        container.removeEventListener("touchstart", handleTouchStart);
-                        container.removeEventListener("touchmove", handleTouchMove);
-                        container.removeEventListener("touchend", handleTouchEnd);
-                        container.removeEventListener("touchcancel", handleTouchEnd);
-                };
-        }, [isBlurred, handleTouchStart, handleTouchMove, handleTouchEnd]);
-
-        return (
-                <div className="relative w-full" style={{ height: boardHeight }}>
+	return (
+		<div className="relative w-full" style={{ height: boardHeight }}>
 			<div
 				className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
 					isBlurred ? "opacity-50" : "opacity-100"
 				}`}
-				ref={containerRef}
-				onMouseDown={!isBlurred ? handleMouseDown : undefined}
-				onMouseMove={!isBlurred ? handleMouseMove : undefined}
-				onMouseUp={!isBlurred ? handleMouseUp : undefined}
-				onMouseLeave={!isBlurred ? handleMouseUp : undefined}
-				onWheel={!isBlurred ? handleWheel : undefined}
-                                style={{
-                                        cursor: isDragging ? "grabbing" : "grab",
-                                        touchAction: "none",
-                                }}
 			>
-				<div
-					className="bg-blue-400 rounded-md relative select-none"
-					style={{
-						transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-						transformOrigin: "0 0",
-						cursor: isDragging ? "grabbing" : "grab",
-					}}
-				>
-					<object
-						ref={svgObjectRef}
-						type="image/svg+xml"
-						className="preserve-aspect-ratio w-full h-full pointer-events-none"
-						data={WorldMap}
-						aria-label="World Map"
-					>
-						Your browser does not support SVG
-					</object>
-				</div>
+				<MapContainer
+					apiRef={apiRef}
+					className="bg-blue-400 rounded-md relative select-none w-full h-full"
+					ariaLabel="World Map"
+					isDisabled={isBlurred}
+					onSvgLoad={() => {}}
+					onTransformChange={setMapTransform}
+				/>
 			</div>
 			{isBlurred && (
 				<div className="absolute top-0 left-0 rounded-lg w-full h-full bg-opacity-50 backdrop-blur-3xl select-none transition-opacity duration-500"></div>

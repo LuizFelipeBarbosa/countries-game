@@ -1,7 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
-import { Pause, Play } from "lucide-react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
-import VALID_COUNTRIES from "./assets/countries_with_continents.json";
 import GameBoard from "./components/GameBoard";
 import StartOverlay from "./components/StartOverlay";
 import CountryInput from "./components/CountryInput";
@@ -12,78 +10,11 @@ import TravleGame from "./components/TravleGame";
 import Home from "./Home";
 import { setItem, getItem, removeItem } from "./utils/storage";
 import { CONTINENTS, TOTAL_COUNTRIES } from "./constants/continents";
-
-const NavBar = ({ onSelect }) => (
-	<nav className="bg-blue-600 p-4 text-white">
-		<div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
-			<h1
-				className="text-xl sm:text-2xl font-bold font-montserrat tracking-wide cursor-pointer"
-				onClick={() => onSelect(null)}
-			>
-				Countries of the World
-			</h1>
-			<div className="flex space-x-4 mt-4 sm:mt-0">
-				<button
-					className="p-2 hover:bg-blue-700 rounded font-montserrat"
-					onClick={() => onSelect("world")}
-				>
-					World Map Game
-				</button>
-				<button
-					className="p-2 hover:bg-blue-700 rounded font-montserrat"
-					onClick={() => onSelect("outline")}
-				>
-					Outline Quiz
-				</button>
-				<button
-					className="p-2 hover:bg-blue-700 rounded font-montserrat"
-					onClick={() => onSelect("travle")}
-				>
-					Travle Game
-				</button>
-			</div>
-		</div>
-	</nav>
-);
-
-const GameTimer = ({ timeLeft }) => (
-	<div className="bg-white p-2 rounded shadow">
-		<p className="font-bold font-montserrat">
-			{Math.floor(timeLeft / 60)}:
-			{(timeLeft % 60).toString().padStart(2, "0")}
-		</p>
-	</div>
-);
-
-const GiveUpButton = ({ onGiveUp }) => (
-	<button
-		onClick={onGiveUp}
-		className="bg-red-500 hover:bg-red-600 text-white p-1 rounded shadow mt-2 w-full font-medium font-montserrat"
-	>
-		Give Up
-	</button>
-);
-
-const PauseButton = ({ isPaused, onTogglePause }) => (
-	<button
-		onClick={onTogglePause}
-		className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded shadow ml-2"
-	>
-		{isPaused ? <Play size={24} /> : <Pause size={24} />}
-	</button>
-);
-
-const FeedbackMessage = ({ message, type }) => (
-	<div
-		className={`mt-2 p-2 font-montserrat rounded ${
-			type === "success"
-				? "bg-green-100 text-green-700"
-				: "bg-red-100 text-red-700"
-		}`}
-	>
-		{message}
-	</div>
-);
+import NavBar from "./components/ui/NavBar";
+import GameTimer from "./components/ui/GameTimer";
+import { GiveUpButton, PauseButton } from "./components/ui/Buttons";
+import FeedbackMessage from "./components/ui/FeedbackMessage";
+import { useCountriesData } from "./hooks/useCountriesData";
 
 const BestScoreDisplay = ({ bestScore, bestTime }) => (
 	<div className="bg-white p-2 rounded shadow mt-4">
@@ -118,25 +49,27 @@ const App = () => {
 	const [bestScore, setBestScore] = useState(null);
 	const [bestTime, setBestTime] = useState(null);
 
-	const countryMap = useMemo(() => {
-		const map = {};
-		VALID_COUNTRIES.forEach((c) => {
-			c.name.forEach((n) => {
-				map[n.toLowerCase()] = c;
-			});
-		});
-		return map;
-	}, []);
+	const { countryMap, countryNames, VALID_COUNTRIES } = useCountriesData();
 
-	const countryNames = useMemo(
-		() => VALID_COUNTRIES.flatMap((c) => c.name),
-		[]
-	);
+	const updateBestScore = useCallback(() => {
+		const currentScore = countriesGuessed[0];
+		const currentTime = gameDuration - timeLeft; // Time spent in seconds
+		if (
+			!bestScore ||
+			currentScore > bestScore ||
+			(currentScore === bestScore && currentTime < bestTime)
+		) {
+			setBestScore(currentScore);
+			setBestTime(currentTime);
+			setItem("bestScore", currentScore);
+			setItem("bestTime", currentTime);
+		}
+	}, [countriesGuessed, gameDuration, timeLeft, bestScore, bestTime]);
 
 	const missedCountries = useMemo(
 		() =>
 			VALID_COUNTRIES.filter((country) => !guessedCountries.has(country)),
-		[guessedCountries]
+		[guessedCountries, VALID_COUNTRIES]
 	);
 
 	useEffect(() => {
@@ -168,7 +101,7 @@ const App = () => {
 			updateBestScore();
 		}
 		return () => clearInterval(timer);
-	}, [isGameStarted, isPaused, timeLeft]);
+	}, [isGameStarted, isPaused, timeLeft, updateBestScore]);
 
 	useEffect(() => {
 		if (countriesGuessed[0] >= TOTAL_COUNTRIES) {
@@ -176,36 +109,21 @@ const App = () => {
 			setIsGameStarted(false);
 			updateBestScore();
 		}
-	}, [countriesGuessed]);
+	}, [countriesGuessed, updateBestScore]);
 
-	const updateBestScore = () => {
-		const currentScore = countriesGuessed[0];
-		const currentTime = gameDuration - timeLeft; // Time spent in seconds
-		if (
-			!bestScore ||
-			currentScore > bestScore ||
-			(currentScore === bestScore && currentTime < bestTime)
-		) {
-			setBestScore(currentScore);
-			setBestTime(currentTime);
-			setItem("bestScore", currentScore);
-			setItem("bestTime", currentTime);
+	const handleSelectGame = (mode) => {
+		if (mode === "travle") {
+			removeItem("travleGameState");
 		}
+		setGameMode(mode);
+		setIsGameStarted(false);
+		setIsGameEnded(false);
+		setIsPaused(false);
+		setTimeLeft(gameDuration);
+		setCountriesGuessed([0, 0, 0, 0, 0, 0, 0]);
+		setGuessedCountries(new Set());
+		setFeedback(null);
 	};
-
-        const handleSelectGame = (mode) => {
-                if (mode === "travle") {
-                        removeItem("travleGameState");
-                }
-                setGameMode(mode);
-                setIsGameStarted(false);
-                setIsGameEnded(false);
-                setIsPaused(false);
-                setTimeLeft(gameDuration);
-                setCountriesGuessed([0, 0, 0, 0, 0, 0, 0]);
-                setGuessedCountries(new Set());
-                setFeedback(null);
-        };
 
 	const handleStartGame = () => {
 		setIsGameStarted(true);
