@@ -472,16 +472,19 @@ const TravleGame = () => {
 			)}
 			<h1 className="text-2xl font-bold mb-4">Travle Game</h1>
 			<div className="flex flex-col md:flex-row gap-4 w-full">
-				<div
-					className="w-full md:w-2/3 h-96 bg-gray-300 rounded-lg overflow-hidden"
-					ref={containerRef}
-					onMouseDown={handleMouseDown}
-					onMouseMove={handleMouseMove}
-					onMouseUp={handleMouseUp}
-					onMouseLeave={handleMouseUp}
-					onWheel={handleWheel}
-					style={{ cursor: isDragging ? "grabbing" : "grab" }}
-				>
+                                <div
+                                        className="w-full md:w-2/3 h-96 bg-gray-300 rounded-lg overflow-hidden select-none"
+                                        ref={containerRef}
+                                        onMouseDown={handleMouseDown}
+                                        onMouseMove={handleMouseMove}
+                                        onMouseUp={handleMouseUp}
+                                        onMouseLeave={handleMouseUp}
+                                        onWheel={handleWheel}
+                                        style={{
+                                                cursor: isDragging ? "grabbing" : "grab",
+                                                touchAction: "none",
+                                        }}
+                                >
 					<div
 						style={{
 							transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
