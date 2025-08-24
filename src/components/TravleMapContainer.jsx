@@ -13,6 +13,14 @@ const TravleMapContainer = forwardRef(({ disabled, onTransformChange }, ref) => 
         const transformRef = useRef(d3.zoomIdentity);
         const zoomBehaviorRef = useRef(null);
 
+        const forwardPointerEvent = (event) => {
+                if (svgRef.current) {
+                        svgRef.current.dispatchEvent(
+                                new PointerEvent(event.type, event.nativeEvent)
+                        );
+                }
+        };
+
         useEffect(() => {
                 if (!svgRef.current || !gRef.current) return;
 
@@ -60,7 +68,11 @@ const TravleMapContainer = forwardRef(({ disabled, onTransformChange }, ref) => 
                         ref={svgRef}
                         width="100%"
                         height="100%"
-                        className={disabled ? "pointer-events-none" : undefined}
+                        style={{ pointerEvents: disabled ? "none" : "auto" }}
+                        onPointerDown={forwardPointerEvent}
+                        onPointerMove={forwardPointerEvent}
+                        onPointerUp={forwardPointerEvent}
+                        onPointerCancel={forwardPointerEvent}
                 >
                         <g ref={gRef}>
                                 <WorldMap />
@@ -68,5 +80,7 @@ const TravleMapContainer = forwardRef(({ disabled, onTransformChange }, ref) => 
                 </svg>
         );
 });
+
+TravleMapContainer.displayName = "TravleMapContainer";
 
 export default TravleMapContainer;
