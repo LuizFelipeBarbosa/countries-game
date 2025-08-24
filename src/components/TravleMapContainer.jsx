@@ -33,12 +33,25 @@ const TravleMapContainer = ({ disabled, onTransformChange }) => {
                 };
         }, [onTransformChange]);
 
+        const forwardEvent = (e) => {
+                if (svgRef.current) {
+                        svgRef.current.dispatchEvent(
+                                new e.nativeEvent.constructor(e.type, e.nativeEvent)
+                        );
+                }
+        };
+
         return (
                 <svg
                         ref={svgRef}
                         width="100%"
                         height="100%"
-                        className={disabled ? "pointer-events-none" : undefined}
+                        style={{ pointerEvents: disabled ? "none" : "auto" }}
+                        onPointerDown={forwardEvent}
+                        onPointerMove={forwardEvent}
+                        onPointerUp={forwardEvent}
+                        onPointerLeave={forwardEvent}
+                        onWheel={forwardEvent}
                 >
                         <g ref={gRef}>
                                 <WorldMap />
