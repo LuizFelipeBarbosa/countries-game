@@ -3,6 +3,7 @@ import {
         useEffect,
         useImperativeHandle,
         forwardRef,
+        useState,
 } from "react";
 import * as d3 from "d3";
 import { ReactComponent as WorldMap } from "../assets/map.svg";
@@ -10,8 +11,10 @@ import { ReactComponent as WorldMap } from "../assets/map.svg";
 const TravleMapContainer = forwardRef(({ disabled, onTransformChange }, ref) => {
         const svgRef = useRef(null);
         const gRef = useRef(null);
+        const mapRef = useRef(null);
         const transformRef = useRef(d3.zoomIdentity);
         const zoomBehaviorRef = useRef(null);
+        const [viewBox, setViewBox] = useState("0 0 0 0");
 
         const forwardPointerEvent = (event) => {
                 if (svgRef.current) {
@@ -39,8 +42,29 @@ const TravleMapContainer = forwardRef(({ disabled, onTransformChange }, ref) => 
                 svgSelection.call(zoomBehavior);
                 zoomBehaviorRef.current = zoomBehavior;
 
+                const updateViewBox = () => {
+                        if (!mapRef.current) return;
+                        const { width, height } = mapRef.current.getBBox();
+                        setViewBox(`0 0 ${width} ${height}`);
+                };
+
+                updateViewBox();
+
+                let resizeObserver;
+                if (typeof ResizeObserver !== "undefined") {
+                        resizeObserver = new ResizeObserver(updateViewBox);
+                        resizeObserver.observe(svgRef.current);
+                } else {
+                        window.addEventListener("resize", updateViewBox);
+                }
+
                 return () => {
                         svgSelection.on(".zoom", null);
+                        if (resizeObserver) {
+                                resizeObserver.disconnect();
+                        } else {
+                                window.removeEventListener("resize", updateViewBox);
+                        }
                 };
         }, [onTransformChange]);
 
@@ -68,6 +92,7 @@ const TravleMapContainer = forwardRef(({ disabled, onTransformChange }, ref) => 
                         ref={svgRef}
                         width="100%"
                         height="100%"
+                        viewBox={viewBox}
                         style={{ pointerEvents: disabled ? "none" : "auto" }}
                         onPointerDown={forwardPointerEvent}
                         onPointerMove={forwardPointerEvent}
@@ -75,7 +100,7 @@ const TravleMapContainer = forwardRef(({ disabled, onTransformChange }, ref) => 
                         onPointerCancel={forwardPointerEvent}
                 >
                         <g ref={gRef}>
-                                <WorldMap />
+                                <WorldMap ref={mapRef} />
                         </g>
                 </svg>
         );
