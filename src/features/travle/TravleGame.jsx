@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { CheckCircle, GitCommit } from "lucide-react";
-import CountryInput from "./CountryInput";
-import VALID_COUNTRIES from "../assets/countries_with_continents.json";
-import countries from "../assets/countries.json";
-import MapContainer from "./MapContainer";
-import borders from "../assets/borders.json";
-import crossings from "../assets/crossings.json";
-import { generatePuzzle } from "../utils/puzzle";
-import { getItem, setItem } from "../utils/storage";
+import CountryInput from "../../components/CountryInput";
+import VALID_COUNTRIES from "../../assets/countries_with_continents.json";
+import countries from "../../assets/countries.json";
+import MapContainer from "../../components/MapContainer";
+import borders from "../../assets/borders.json";
+import crossings from "../../assets/crossings.json";
+import { generatePuzzle } from "../../utils/puzzle";
+import { getItem, setItem } from "../../utils/storage";
 
 const TravleGame = () => {
 	const [notification, setNotification] = useState(null);

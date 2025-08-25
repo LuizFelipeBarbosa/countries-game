@@ -6,7 +6,7 @@ import {
 	useState,
 } from "react";
 import * as d3 from "d3";
-import { ReactComponent as WorldMap } from "../assets/map.svg";
+import { ReactComponent as WorldMap } from "../../assets/map.svg";
 
 const TravleMapContainer = forwardRef(
 	({ disabled, onTransformChange }, ref) => {

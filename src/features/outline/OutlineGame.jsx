@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import CountryInput from "./CountryInput";
-import EndGameOverlay from "./EndGameOverlay";
-import QUALITY_OUTLINE_MAP from "../assets/quality_outline_map.json";
-import { CONTINENTS } from "../constants/continents";
-import FeedbackMessage from "./ui/FeedbackMessage";
-import { useCountriesData } from "../hooks/useCountriesData";
+import CountryInput from "../../components/CountryInput";
+import EndGameOverlay from "../../components/EndGameOverlay";
+import QUALITY_OUTLINE_MAP from "../../assets/quality_outline_map.json";
+import { CONTINENTS } from "../../constants/continents";
+import FeedbackMessage from "../../components/ui/FeedbackMessage";
+import { useCountriesData } from "../../hooks/useCountriesData";
 
 const OutlineGame = () => {
 	const [attempts, setAttempts] = useState(0);
