@@ -234,6 +234,47 @@ const TravleGame = () => {
 		if (alpha2End) api.colorCountries("#a78bfa", [alpha2End]);
 	}, [mapReady, gameState.start, gameState.end, iso3ToAlpha2]);
 
+	// Color guessed countries: green if on a shortest path, yellow otherwise
+	useEffect(() => {
+		if (!mapReady) return;
+		const api = mapApiRef.current;
+		if (!api) return;
+		if (!gameState.guesses || gameState.guesses.length === 0) return;
+
+		const greenAlpha2 = [];
+		const yellowAlpha2 = [];
+
+		for (const iso3 of gameState.guesses) {
+			// Skip recoloring the starting country so it retains its dedicated color
+			if (iso3 === gameState.start) continue;
+			const alpha2 = iso3ToAlpha2.get(iso3);
+			if (!alpha2) continue;
+			const isOnShortestPath =
+				(distStart.get(iso3) ?? Infinity) +
+					(distEnd.get(iso3) ?? Infinity) ===
+				gameState.shortest;
+			if (isOnShortestPath) {
+				greenAlpha2.push(alpha2);
+			} else {
+				yellowAlpha2.push(alpha2);
+			}
+		}
+
+		if (greenAlpha2.length > 0) {
+			api.colorCountries("#4ade80", greenAlpha2);
+		}
+		if (yellowAlpha2.length > 0) {
+			api.colorCountries("#facc15", yellowAlpha2);
+		}
+	}, [
+		mapReady,
+		gameState.guesses,
+		gameState.shortest,
+		distStart,
+		distEnd,
+		iso3ToAlpha2,
+	]);
+
 	return (
 		<div className="p-4 flex flex-col items-center text-center">
 			{notification && (
