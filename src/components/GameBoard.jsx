@@ -187,7 +187,7 @@ const GameBoard = ({
 	}, [zoom]);
 
 	return (
-		<div className="relative w-full" style={{ height: boardHeight }}>
+		<div className="relative w-full">
 			<div
 				className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
 					isBlurred ? "opacity-50" : "opacity-100"
