@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { CheckCircle, GitCommit } from "lucide-react";
+import { CheckCircle, GitCommit, Share2 } from "lucide-react";
 import CountryInput from "../../components/CountryInput";
 import VALID_COUNTRIES from "../../assets/countries_with_continents.json";
 import countries from "../../assets/countries.json";
@@ -217,7 +217,7 @@ const TravleGame = () => {
 		const api = mapApiRef.current;
 		if (!api) return;
 		const allAlpha2 = countries.map((c) => c.alpha2);
-		api.resetColors(allAlpha2, "#d4d4d8");
+		api.resetColors(allAlpha2, "#e5e5e5");
 	};
 
 	useEffect(() => {
@@ -226,12 +226,12 @@ const TravleGame = () => {
 		const api = mapApiRef.current;
 		if (!api) return;
 		const allAlpha2 = countries.map((c) => c.alpha2);
-		api.resetColors(allAlpha2, "#d4d4d8");
+		api.resetColors(allAlpha2, "#e5e5e5");
 		// Immediately color start and end on load
 		const alpha2Start = iso3ToAlpha2.get(gameState.start);
-		if (alpha2Start) api.colorCountries("#faa78b", [alpha2Start]);
+		if (alpha2Start) api.colorCountries("#a78bfa", [alpha2Start]); // secondary-dark
 		const alpha2End = iso3ToAlpha2.get(gameState.end);
-		if (alpha2End) api.colorCountries("#a78bfa", [alpha2End]);
+		if (alpha2End) api.colorCountries("#faa78b", [alpha2End]); // some orange
 	}, [mapReady, gameState.start, gameState.end, iso3ToAlpha2]);
 
 	// Color guessed countries: green if on a shortest path, yellow otherwise
@@ -261,10 +261,10 @@ const TravleGame = () => {
 		}
 
 		if (greenAlpha2.length > 0) {
-			api.colorCountries("#4ade80", greenAlpha2);
+			api.colorCountries("#4ade80", greenAlpha2); // green-400
 		}
 		if (yellowAlpha2.length > 0) {
-			api.colorCountries("#facc15", yellowAlpha2);
+			api.colorCountries("#facc15", yellowAlpha2); // yellow-400
 		}
 	}, [
 		mapReady,
@@ -275,74 +275,68 @@ const TravleGame = () => {
 		iso3ToAlpha2,
 	]);
 
+    const GameInfoPanel = () => (
+        <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
+            <div>
+                <h2 className="text-lg font-bold text-neutral-700">From:</h2>
+                <p className="text-neutral-600">{countries.find(c => c.alpha3 === gameState.start)?.name[0]}</p>
+            </div>
+            <div>
+                <h2 className="text-lg font-bold text-neutral-700">To:</h2>
+                <p className="text-neutral-600">{countries.find(c => c.alpha3 === gameState.end)?.name[0]}</p>
+            </div>
+            <div className="pt-2">
+                <p className="text-neutral-600">Shortest Path: <strong className="text-primary">{gameState.shortest - 1}</strong></p>
+                <p className="text-neutral-600">Guesses Remaining: <strong className="text-primary">{gameState.remaining}</strong></p>
+            </div>
+        </div>
+    );
+
+    const GuessesPanel = () => (
+        <div className="bg-white p-4 rounded-lg shadow-md mt-4">
+            <h2 className="text-xl font-bold text-neutral-700 mb-2">Guesses</h2>
+            <ul className="space-y-2">
+                {gameState.guesses.map((guess) => (
+                    <li
+                        key={guess}
+                        className={`flex items-center p-2 rounded-md ${
+                            getGuessColor(guess) === "green"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                        }`}
+                    >
+                        {getGuessColor(guess) === "green" ? (
+                            <CheckCircle className="text-green-500 mr-2" />
+                        ) : (
+                            <GitCommit className="text-yellow-500 mr-2" />
+                        )}
+                        {countries.find(c => c.alpha3 === guess)?.name[0]}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+
 	return (
-		<div className="p-4 flex flex-col items-center text-center">
+		<div className="flex flex-col items-center text-center">
 			{notification && (
 				<div className="bg-blue-100 text-blue-700 p-2 rounded mb-4">
 					{notification}
 				</div>
 			)}
-			<h1 className="text-2xl font-bold mb-4">Travle Game</h1>
-			<div className="flex flex-col md:flex-row gap-4 w-full">
-				<MapContainer
-					className="w-full md:w-3/4 lg:w-4/5 h-[70vh] bg-gray-300 rounded-lg"
-					ariaLabel="World Map"
-					apiRef={mapApiRef}
-					onSvgLoad={() => setMapReady(true)}
-				/>
-				<div className="w-full md:w-1/4 lg:w-1/5">
-					<div className="bg-white p-4 rounded-lg shadow">
-						<h2 className="text-xl font-bold">
-							From:{" "}
-							{
-								countries.find(
-									(c) => c.alpha3 === gameState.start
-								)?.name[0]
-							}
-						</h2>
-						<h2 className="text-xl font-bold">
-							To:{" "}
-							{
-								countries.find(
-									(c) => c.alpha3 === gameState.end
-								)?.name[0]
-							}
-						</h2>
-						<p className="mt-2">
-							Shortest Path:{" "}
-							<strong>{gameState.shortest - 1}</strong>
-						</p>
-						<p>
-							Guesses Remaining:{" "}
-							<strong>{gameState.remaining}</strong>
-						</p>
-					</div>
-					<div className="bg-white p-4 rounded-lg shadow mt-4">
-						<h2 className="text-xl font-bold">Guesses</h2>
-						<ul>
-							{gameState.guesses.map((guess) => (
-								<li
-									key={guess}
-									className={`flex items-center p-1 rounded ${
-										getGuessColor(guess) === "green"
-											? "bg-green-100"
-											: "bg-yellow-100"
-									}`}
-								>
-									{getGuessColor(guess) === "green" ? (
-										<CheckCircle className="text-green-500 mr-2" />
-									) : (
-										<GitCommit className="text-yellow-500 mr-2" />
-									)}
-									{
-										countries.find(
-											(c) => c.alpha3 === guess
-										)?.name[0]
-									}
-								</li>
-							))}
-						</ul>
-					</div>
+			<h1 className="text-3xl font-bold mb-4 text-neutral-800">Travle Game</h1>
+			<div className="flex flex-col lg:flex-row gap-8 w-full">
+				<div className="w-full lg:w-3/4">
+                    <MapContainer
+                        className="w-full h-[60vh] lg:h-full bg-neutral-200 rounded-lg shadow-md"
+                        ariaLabel="World Map"
+                        apiRef={mapApiRef}
+                        onSvgLoad={() => setMapReady(true)}
+                    />
+                </div>
+				<div className="w-full lg:w-1/4">
+					<GameInfoPanel />
+                    <GuessesPanel />
 				</div>
 			</div>
 			<div className="w-full max-w-md mt-4">
@@ -353,9 +347,9 @@ const TravleGame = () => {
 				/>
 			</div>
 			{gameState.rejects.length > 0 && (
-				<div className="bg-red-100 text-red-700 p-2 rounded mt-4">
-					<h3 className="font-bold">Invalid Guesses</h3>
-					<ul>
+				<div className="bg-red-100 text-red-700 p-3 rounded-lg mt-4 shadow-md">
+					<h3 className="font-bold mb-2">Invalid Guesses</h3>
+					<ul className="list-disc list-inside">
 						{gameState.rejects.map((reject, i) => (
 							<li key={i}>{reject}</li>
 						))}
@@ -363,57 +357,60 @@ const TravleGame = () => {
 				</div>
 			)}
 			{gameState.status !== "playing" && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-					<div className="bg-white p-8 rounded-lg shadow-lg text-center">
-						<h2 className="text-2xl font-bold mb-4">
+				<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+					<div className="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm w-full mx-4">
+						<h2 className="text-3xl font-bold mb-4 text-primary">
 							{gameState.status === "won"
 								? "You Won!"
 								: "Game Over!"}
 						</h2>
-						<p>
+						<p className="text-neutral-600">
 							You found the path in {gameState.guesses.length - 1}{" "}
 							guesses.
 						</p>
-						<p>
+						<p className="text-neutral-600">
 							Shortest possible path was {gameState.shortest - 1}.
 						</p>
-						<button
-							className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
-							onClick={startNewGame}
-						>
-							Play Again
-						</button>
-						<button
-							className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mt-4 ml-2"
-							onClick={() => {
-								const path = gameState.guesses
-									.map(
-										(g) =>
-											countries.find(
-												(c) => c.alpha3 === g
-											).name[0]
-									)
-									.join(" → ");
-								const summary = `I completed the Travle from ${
-									countries.find(
-										(c) => c.alpha3 === gameState.start
-									).name[0]
-								} to ${
-									countries.find(
-										(c) => c.alpha3 === gameState.end
-									).name[0]
-								} in ${
-									gameState.guesses.length - 1
-								} guesses (shortest ${
-									gameState.shortest
-								}).\n\n${path}`;
-								navigator.clipboard.writeText(summary);
-								setNotification("Results copied to clipboard!");
-								setTimeout(() => setNotification(null), 3000);
-							}}
-						>
-							Share
-						</button>
+						<div className="flex justify-center gap-4 mt-6">
+                            <button
+                                className="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
+                                onClick={startNewGame}
+                            >
+                                Play Again
+                            </button>
+                            <button
+                                className="bg-accent hover:bg-accent-dark text-white font-bold py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 flex items-center"
+                                onClick={() => {
+                                    const path = gameState.guesses
+                                        .map(
+                                            (g) =>
+                                                countries.find(
+                                                    (c) => c.alpha3 === g
+                                                ).name[0]
+                                        )
+                                        .join(" → ");
+                                    const summary = `I completed the Travle from ${
+                                        countries.find(
+                                            (c) => c.alpha3 === gameState.start
+                                        ).name[0]
+                                    } to ${
+                                        countries.find(
+                                            (c) => c.alpha3 === gameState.end
+                                        ).name[0]
+                                    } in ${
+                                        gameState.guesses.length - 1
+                                    } guesses (shortest ${
+                                        gameState.shortest
+                                    }).\n\n${path}`;
+                                    navigator.clipboard.writeText(summary);
+                                    setNotification("Results copied to clipboard!");
+                                    setTimeout(() => setNotification(null), 3000);
+                                }}
+                            >
+                                <Share2 size={20} className="mr-2"/>
+                                Share
+                            </button>
+                        </div>
 					</div>
 				</div>
 			)}

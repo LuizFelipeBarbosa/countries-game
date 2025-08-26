@@ -10,24 +10,24 @@ import TravleGame from "./features/travle/TravleGame";
 import Home from "./pages/Home";
 import { setItem, getItem, removeItem } from "./utils/storage";
 import { CONTINENTS, TOTAL_COUNTRIES } from "./constants/continents";
-import NavBar from "./components/ui/NavBar";
+import Layout from "./components/Layout";
 import GameTimer from "./components/ui/GameTimer";
 import { GiveUpButton, PauseButton } from "./components/ui/Buttons";
 import FeedbackMessage from "./components/ui/FeedbackMessage";
 import { useCountriesData } from "./hooks/useCountriesData";
 
 const BestScoreDisplay = ({ bestScore, bestTime }) => (
-	<div className="bg-white p-2 rounded shadow mt-4">
-		<p className="font-bold font-montserrat">
-			Best Score: {bestScore !== null ? bestScore : "N/A"}
+	<div className="bg-white p-4 rounded-lg shadow-md mt-4">
+		<h3 className="text-lg font-bold text-neutral-700 mb-2">Best Score</h3>
+		<p className="font-semibold font-montserrat text-neutral-600">
+			<span className="font-bold">{bestScore !== null ? bestScore : "N/A"}</span> countries
 		</p>
-		<p className="font-bold font-montserrat">
-			Best Time:
-			{bestTime !== null
+		<p className="font-semibold font-montserrat text-neutral-600">
+			in <span className="font-bold">{bestTime !== null
 				? `${Math.floor(bestTime / 60)}:${(bestTime % 60)
 						.toString()
 						.padStart(2, "0")}`
-				: "N/A"}
+				: "N/A"}</span>
 		</p>
 	</div>
 );
@@ -192,39 +192,51 @@ const App = () => {
 		return <Home onSelect={handleSelectGame} />;
 	}
 
-	if (gameMode === "outline") {
-		return (
-			<div className="min-h-screen bg-gray-200">
-				<NavBar onSelect={handleSelectGame} />
-				<div className="container mx-auto mt-8 relative px-4">
-					<OutlineGame onReturn={() => setGameMode(null)} />
-				</div>
-			</div>
-		);
-	}
-
-	if (gameMode === "travle") {
-		return (
-			<div className="min-h-screen bg-gray-200">
-				<NavBar onSelect={handleSelectGame} />
-				<div className="container mx-auto mt-8 relative px-4">
-					<TravleGame onReturn={() => setGameMode(null)} />
-				</div>
-			</div>
-		);
-	}
-
 	return (
-		<div className="min-h-screen bg-gray-200">
-			<NavBar onSelect={handleSelectGame} />
-			<div className="container mx-auto mt-8 relative px-4">
-				<div className="flex flex-col md:flex-row gap-4">
-					<GameBoard
-						isBlurred={isPaused}
-						guessedCountries={guessedCountries}
-						isGameEnded={isGameEnded}
-						isGameStarted={isGameStarted}
-					/>
+		<Layout onSelectGame={handleSelectGame}>
+			{gameMode === "outline" && <OutlineGame onReturn={() => setGameMode(null)} />}
+			{gameMode === "travle" && <TravleGame onReturn={() => setGameMode(null)} />}
+			{gameMode === "world" && (
+				<div className="relative">
+					<div className="flex flex-col lg:flex-row gap-8">
+						<div className="w-full lg:w-3/4">
+							<GameBoard
+								isBlurred={isPaused}
+								guessedCountries={guessedCountries}
+								isGameEnded={isGameEnded}
+								isGameStarted={isGameStarted}
+							/>
+						</div>
+						<div className="w-full lg:w-1/4">
+							{isGameStarted && (
+								<div className="bg-white p-4 rounded-lg shadow-md">
+									<div className="flex justify-between items-center mb-4">
+										<GameTimer timeLeft={timeLeft} />
+										<PauseButton
+											isPaused={isPaused}
+											onTogglePause={handleTogglePause}
+										/>
+									</div>
+									<GiveUpButton onGiveUp={handleGiveUp} />
+								</div>
+							)}
+							<CountryCounter
+								onToggleMenu={handleToggleMenu}
+								isMenuDown={isMenuDown}
+								count={countriesGuessed}
+							/>
+							<BestScoreDisplay bestScore={bestScore} bestTime={bestTime} />
+						</div>
+					</div>
+
+					{!isGameStarted && !isGameEnded && (
+						<StartOverlay
+							onStart={handleStartGame}
+							gameDuration={gameDuration}
+							onDurationChange={setGameDuration}
+						/>
+					)}
+
 					{isGameEnded && (
 						<EndGameOverlay
 							missedCountries={missedCountries}
@@ -233,59 +245,24 @@ const App = () => {
 							timeTaken={gameDuration - timeLeft}
 						/>
 					)}
+
+					<div className="mt-4">
+						<CountryInput
+							onSubmit={handleCountrySubmit}
+							disabled={!isGameStarted || isPaused || timeLeft === 0}
+							suggestions={countryNames}
+						/>
+					</div>
+
+					{feedback && (
+						<FeedbackMessage
+							message={feedback.message}
+							type={feedback.type}
+						/>
+					)}
 				</div>
-				{isGameEnded && (
-					<>
-						<CountryCounter
-							onToggleMenu={handleToggleMenu}
-							isMenuDown={isMenuDown}
-							count={countriesGuessed}
-						/>
-						<div className="absolute top-4 right-8 flex items-center">
-							<GameTimer timeLeft={timeLeft} />
-						</div>
-					</>
-				)}
-				{isGameStarted && (
-					<>
-						<CountryCounter
-							onToggleMenu={handleToggleMenu}
-							isMenuDown={isMenuDown}
-							count={countriesGuessed}
-						/>
-						<div className="absolute top-4 right-8">
-							<div className="flex items-center">
-								<GameTimer timeLeft={timeLeft} />
-								<PauseButton
-									isPaused={isPaused}
-									onTogglePause={handleTogglePause}
-								/>
-							</div>
-							<GiveUpButton onGiveUp={handleGiveUp} />
-						</div>
-					</>
-				)}
-				{!isGameStarted && !isGameEnded && (
-					<StartOverlay
-						onStart={handleStartGame}
-						gameDuration={gameDuration}
-						onDurationChange={setGameDuration}
-					/>
-				)}
-				<CountryInput
-					onSubmit={handleCountrySubmit}
-					disabled={!isGameStarted || isPaused || timeLeft === 0}
-					suggestions={countryNames}
-				/>
-				{feedback && (
-					<FeedbackMessage
-						message={feedback.message}
-						type={feedback.type}
-					/>
-				)}
-				<BestScoreDisplay bestScore={bestScore} bestTime={bestTime} />
-			</div>
-		</div>
+			)}
+		</Layout>
 	);
 };
 

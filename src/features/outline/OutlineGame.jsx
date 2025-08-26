@@ -185,7 +185,7 @@ const OutlineGame = () => {
 	const seconds = (elapsedTime % 60).toString().padStart(2, "0");
 
 	return (
-		<div className="p-4 flex flex-col items-center text-center">
+		<div className="flex flex-col items-center text-center">
 			{feedback && (
 				<FeedbackMessage
 					message={feedback.message}
@@ -193,65 +193,70 @@ const OutlineGame = () => {
 				/>
 			)}
 			{hint && <FeedbackMessage message={hint} type="hint" />}
-			{isGameEnded ? (
-				<div className="flex flex-col md:flex-row justify-center my-6 gap-4">
-					{currentCountry && (
-						<object
-							data={`/quality_outlines/${
-								QUALITY_OUTLINE_MAP[currentCountry.alpha2]
-							}`}
-							type="image/svg+xml"
-							role="img"
-							aria-label="Country outline"
-							ref={svgObjectRef}
-							onLoad={handleSvgLoad}
-							className="w-96 h-96 drop-shadow-lg"
-						/>
-					)}
-					<EndGameOverlay
-						missedCountries={missedCountries}
-						onPlayAgain={handlePlayAgain}
-						countriesGuessed={correct}
-						timeTaken={elapsedTime}
-					/>
-				</div>
-			) : (
-				currentCountry && (
-					<div className="flex justify-center my-6">
-						<object
-							data={`/quality_outlines/${
-								QUALITY_OUTLINE_MAP[currentCountry.alpha2]
-							}`}
-							type="image/svg+xml"
-							role="img"
-							aria-label="Country outline"
-							ref={svgObjectRef}
-							onLoad={handleSvgLoad}
-							className="w-96 h-96 drop-shadow-lg"
+
+			<div className="w-full max-w-md mx-auto">
+				{isGameEnded ? (
+					<div className="flex flex-col md:flex-row justify-center my-6 gap-4 items-center">
+						{currentCountry && (
+							<div className="w-full h-auto drop-shadow-lg p-4 bg-white rounded-lg">
+								<object
+									data={`/quality_outlines/${
+										QUALITY_OUTLINE_MAP[currentCountry.alpha2]
+									}`}
+									type="image/svg+xml"
+									role="img"
+									aria-label="Country outline"
+									ref={svgObjectRef}
+									onLoad={handleSvgLoad}
+									className="w-full h-full"
+								/>
+							</div>
+						)}
+						<EndGameOverlay
+							missedCountries={missedCountries}
+							onPlayAgain={handlePlayAgain}
+							countriesGuessed={correct}
+							timeTaken={elapsedTime}
 						/>
 					</div>
-				)
-			)}
-			<div className="font-montserrat mb-4 text-lg">
-				Attempts: {attempts} | Correct: {correct} | Time: {minutes}:
-				{seconds}
+				) : (
+					currentCountry && (
+						<div className="my-6 bg-white p-4 rounded-lg shadow-md">
+							<object
+								data={`/quality_outlines/${
+									QUALITY_OUTLINE_MAP[currentCountry.alpha2]
+								}`}
+								type="image/svg+xml"
+								role="img"
+								aria-label="Country outline"
+								ref={svgObjectRef}
+								onLoad={handleSvgLoad}
+								className="w-full h-auto drop-shadow-lg"
+							/>
+						</div>
+					)
+				)}
 			</div>
-			<div className="flex space-x-4">
+
+			<div data-testid="score-container" className="font-montserrat mb-4 text-lg bg-white px-4 py-2 rounded-lg shadow-md">
+				<span className="font-bold">Attempts:</span> {attempts} | <span className="font-bold">Correct:</span> {correct} | <span className="font-bold">Time:</span> {minutes}:{seconds}
+			</div>
+			<div className="flex space-x-4 mb-4">
 				<button
 					onClick={handleHint}
-					className="bg-yellow-500 hover:bg-yellow-600 text-white font-montserrat py-2 px-4 rounded shadow"
+					className="bg-accent hover:bg-accent-dark text-white font-montserrat py-2 px-6 rounded-lg shadow-md transition-all duration-200"
 				>
 					Hint
 				</button>
 				<button
 					onClick={handleSkip}
-					className="bg-gray-500 hover:bg-gray-600 text-white font-montserrat py-2 px-4 rounded shadow"
+					className="bg-secondary hover:bg-secondary-dark text-white font-montserrat py-2 px-6 rounded-lg shadow-md transition-all duration-200"
 				>
 					Skip
 				</button>
 				<button
 					onClick={handleEndRound}
-					className="bg-blue-500 hover:bg-blue-600 text-white font-montserrat py-2 px-4 rounded shadow"
+					className="bg-primary hover:bg-primary-dark text-white font-montserrat py-2 px-6 rounded-lg shadow-md transition-all duration-200"
 				>
 					End Round
 				</button>
