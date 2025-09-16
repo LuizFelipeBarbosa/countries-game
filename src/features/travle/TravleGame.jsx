@@ -68,53 +68,64 @@ const TravleGame = () => {
 		return new Map(countries.map((c) => [c.alpha3, c.alpha2]));
 	}, []);
 
-	const bfs = (startNode) => {
-		const distances = new Map();
-		const queue = [[startNode, 0]];
-		distances.set(startNode, 0);
+        const bfs = useCallback(
+                (startNode) => {
+                        const distances = new Map();
+                        const queue = [[startNode, 0]];
+                        distances.set(startNode, 0);
 
-		while (queue.length > 0) {
-			const [currentNode, distance] = queue.shift();
-			const neighbors = adjacencyMap.get(currentNode) || [];
+                        while (queue.length > 0) {
+                                const [currentNode, distance] = queue.shift();
+                                const neighbors = adjacencyMap.get(currentNode) || [];
 
-			for (const neighbor of neighbors) {
-				if (!distances.has(neighbor)) {
-					distances.set(neighbor, distance + 1);
-					queue.push([neighbor, distance + 1]);
-				}
-			}
-		}
-		return distances;
-	};
+                                for (const neighbor of neighbors) {
+                                        if (!distances.has(neighbor)) {
+                                                distances.set(neighbor, distance + 1);
+                                                queue.push([neighbor, distance + 1]);
+                                        }
+                                }
+                        }
+                        return distances;
+                },
+                [adjacencyMap]
+        );
 
-	const bfsForPath = (startNode, endNode) => {
-		const queue = [[startNode, [startNode]]];
-		const visited = new Set([startNode]);
+        const bfsForPath = useCallback(
+                (startNode, endNode) => {
+                        const queue = [[startNode, [startNode]]];
+                        const visited = new Set([startNode]);
 
-		while (queue.length > 0) {
-			const [currentNode, currentPath] = queue.shift();
+                        while (queue.length > 0) {
+                                const [currentNode, currentPath] = queue.shift();
 
-			if (currentNode === endNode) {
-				return currentPath;
-			}
+                                if (currentNode === endNode) {
+                                        return currentPath;
+                                }
 
-			const neighbors = adjacencyMap.get(currentNode) || [];
-			for (const neighbor of neighbors) {
-				if (!visited.has(neighbor)) {
-					visited.add(neighbor);
-					const newPath = [...currentPath, neighbor];
-					queue.push([neighbor, newPath]);
-				}
-			}
-		}
-		return null; // No path found
-	};
+                                const neighbors = adjacencyMap.get(currentNode) || [];
+                                for (const neighbor of neighbors) {
+                                        if (!visited.has(neighbor)) {
+                                                visited.add(neighbor);
+                                                const newPath = [...currentPath, neighbor];
+                                                queue.push([neighbor, newPath]);
+                                        }
+                                }
+                        }
+                        return null; // No path found
+                },
+                [adjacencyMap]
+        );
 
 	const [distStart, setDistStart] = useState(new Map());
 	const [distEnd, setDistEnd] = useState(new Map());
 
-	const mapApiRef = useRef(null);
-	const [mapReady, setMapReady] = useState(false);
+        const mapApiRef = useRef(null);
+        const [mapReady, setMapReady] = useState(false);
+        const [mapApiReady, setMapApiReady] = useState(false);
+
+        const handleMapApiReady = useCallback((api) => {
+                setMapApiReady(Boolean(api));
+        }, []);
 
 	const handleGuess = (guess) => {
 		const iso3 = aliases[guess.toLowerCase()];
@@ -220,26 +231,26 @@ const TravleGame = () => {
 		api.resetColors(allAlpha2, "#d4d4d8");
 	};
 
-	useEffect(() => {
-		if (!mapReady) return;
-		if (!gameState.start || !gameState.end) return;
-		const api = mapApiRef.current;
-		if (!api) return;
-		const allAlpha2 = countries.map((c) => c.alpha2);
-		api.resetColors(allAlpha2, "#d4d4d8");
-		// Immediately color start and end on load
-		const alpha2Start = iso3ToAlpha2.get(gameState.start);
-		if (alpha2Start) api.colorCountries("#faa78b", [alpha2Start]);
-		const alpha2End = iso3ToAlpha2.get(gameState.end);
-		if (alpha2End) api.colorCountries("#a78bfa", [alpha2End]);
-	}, [mapReady, gameState.start, gameState.end, iso3ToAlpha2]);
+        useEffect(() => {
+                if (!mapReady || !mapApiReady) return;
+                if (!gameState.start || !gameState.end) return;
+                const api = mapApiRef.current;
+                if (!api) return;
+                const allAlpha2 = countries.map((c) => c.alpha2);
+                api.resetColors(allAlpha2, "#d4d4d8");
+                // Immediately color start and end on load
+                const alpha2Start = iso3ToAlpha2.get(gameState.start);
+                if (alpha2Start) api.colorCountries("#faa78b", [alpha2Start]);
+                const alpha2End = iso3ToAlpha2.get(gameState.end);
+                if (alpha2End) api.colorCountries("#a78bfa", [alpha2End]);
+        }, [mapReady, mapApiReady, gameState.start, gameState.end, iso3ToAlpha2]);
 
 	// Color guessed countries: green if on a shortest path, yellow otherwise
-	useEffect(() => {
-		if (!mapReady) return;
-		const api = mapApiRef.current;
-		if (!api) return;
-		if (!gameState.guesses || gameState.guesses.length === 0) return;
+        useEffect(() => {
+                if (!mapReady || !mapApiReady) return;
+                const api = mapApiRef.current;
+                if (!api) return;
+                if (!gameState.guesses || gameState.guesses.length === 0) return;
 
 		const greenAlpha2 = [];
 		const yellowAlpha2 = [];
@@ -266,14 +277,16 @@ const TravleGame = () => {
 		if (yellowAlpha2.length > 0) {
 			api.colorCountries("#facc15", yellowAlpha2);
 		}
-	}, [
-		mapReady,
-		gameState.guesses,
-		gameState.shortest,
-		distStart,
-		distEnd,
-		iso3ToAlpha2,
-	]);
+        }, [
+                mapReady,
+                mapApiReady,
+                gameState.guesses,
+                gameState.start,
+                gameState.shortest,
+                distStart,
+                distEnd,
+                iso3ToAlpha2,
+        ]);
 
 	return (
 		<div className="p-4 flex flex-col items-center text-center">
@@ -284,12 +297,13 @@ const TravleGame = () => {
 			)}
 			<h1 className="text-2xl font-bold mb-4">Travle Game</h1>
 			<div className="flex flex-col md:flex-row gap-4 w-full">
-				<MapContainer
-					className="w-full md:w-3/4 lg:w-4/5 h-[70vh] bg-gray-300 rounded-lg"
-					ariaLabel="World Map"
-					apiRef={mapApiRef}
-					onSvgLoad={() => setMapReady(true)}
-				/>
+                                <MapContainer
+                                        className="w-full md:w-3/4 lg:w-4/5 h-[70vh] bg-gray-300 rounded-lg"
+                                        ariaLabel="World Map"
+                                        apiRef={mapApiRef}
+                                        onSvgLoad={() => setMapReady(true)}
+                                        onApiReady={handleMapApiReady}
+                                />
 				<div className="w-full md:w-1/4 lg:w-1/5">
 					<div className="bg-white p-4 rounded-lg shadow">
 						<h2 className="text-xl font-bold">
