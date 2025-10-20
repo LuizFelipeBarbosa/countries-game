@@ -189,7 +189,7 @@ const GameBoard = ({
         return (
                 <div className="relative w-full">
                         <div
-                                className={`relative h-full w-full overflow-hidden rounded-3xl border border-cyan-400/20 bg-slate-950/60 p-3 shadow-[0_30px_70px_-45px_rgba(56,189,248,0.65)] transition-opacity duration-500 ${
+                                className={`relative h-full w-full overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/60 p-3 transition-opacity duration-500 ${
                                         isBlurred ? "opacity-50" : "opacity-100"
                                 }`}
                         >
@@ -202,9 +202,9 @@ const GameBoard = ({
                                         onTransformChange={setMapTransform}
                                 />
 			</div>
-			{isBlurred && (
-				<div className="absolute top-0 left-0 rounded-lg w-full h-full bg-opacity-50 backdrop-blur-3xl select-none transition-opacity duration-500"></div>
-			)}
+                        {isBlurred && (
+                                <div className="absolute inset-0 rounded-3xl bg-slate-950/40 backdrop-blur-lg transition-opacity duration-500" />
+                        )}
 		</div>
 	);
 };

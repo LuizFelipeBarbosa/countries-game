@@ -37,7 +37,7 @@ const CountryInput = ({ onSubmit, disabled, suggestions = [] }) => {
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 placeholder="Enter a country name"
-                                className="w-full flex-grow rounded-xl border border-cyan-400/25 bg-slate-950/80 px-4 py-3 font-montserrat text-sm text-white placeholder:text-white/40 shadow-[0_18px_40px_-30px_rgba(56,189,248,0.7)] focus:outline-none focus:ring-2 focus:ring-cyan-400/60 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="w-full flex-grow rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 font-montserrat text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500/40 disabled:cursor-not-allowed disabled:opacity-60"
                                 disabled={disabled}
                                 list="country-suggestions"
                                 ref={inputRef}
@@ -53,7 +53,7 @@ const CountryInput = ({ onSubmit, disabled, suggestions = [] }) => {
                         </datalist>
                         <button
                                 type="submit"
-                                className="w-full rounded-xl bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-500 px-5 py-3 font-montserrat text-sm font-semibold text-slate-900 shadow-[0_20px_50px_-25px_rgba(56,189,248,0.7)] transition hover:from-cyan-300 hover:via-sky-400 hover:to-blue-500 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 font-montserrat text-sm font-semibold text-slate-100 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-100"
                                 disabled={disabled}
                         >
                                 Submit

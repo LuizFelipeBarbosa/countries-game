@@ -17,14 +17,14 @@ import FeedbackMessage from "./components/ui/FeedbackMessage";
 import { useCountriesData } from "./hooks/useCountriesData";
 
 const BestScoreDisplay = ({ bestScore, bestTime }) => (
-        <div className="rounded-2xl border border-cyan-400/25 bg-white/5 px-4 py-3 font-montserrat text-sm text-cyan-100 shadow-[0_18px_40px_-28px_rgba(56,189,248,0.7)]">
-                <h3 className="text-xs font-semibold uppercase tracking-[0.35em] text-cyan-200/70">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3 font-montserrat text-sm text-slate-100">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
                         Personal Bests
                 </h3>
                 <p className="mt-2 text-base font-semibold text-white">
                         Best Score: {bestScore !== null ? bestScore : "N/A"}
                 </p>
-                <p className="text-base font-semibold text-white/80">
+                <p className="text-base font-semibold text-slate-200">
                         Best Time: {" "}
                         {bestTime !== null
                                 ? `${Math.floor(bestTime / 60)}:${(bestTime % 60)
@@ -191,129 +191,121 @@ const App = () => {
 		setTimeout(() => setFeedback(null), 3000);
 	};
 
-	if (!gameMode) {
-		return <Home onSelect={handleSelectGame} />;
-	}
-
-	if (gameMode === "outline") {
-		return (
-			<div className="min-h-screen bg-gray-200">
-				<NavBar onSelect={handleSelectGame} />
-				<div className="container mx-auto mt-8 relative px-4">
-					<OutlineGame onReturn={() => setGameMode(null)} />
-				</div>
-			</div>
-		);
-	}
-
-	if (gameMode === "travle") {
-		return (
-			<div className="min-h-screen bg-gray-200">
-				<NavBar onSelect={handleSelectGame} />
-				<div className="container mx-auto mt-8 relative px-4">
-					<TravleGame onReturn={() => setGameMode(null)} />
-				</div>
-			</div>
-		);
-	}
-
-        const areControlsDisabled = !isGameStarted || isGameEnded;
-
-        return (
+        const renderGameLayout = (content) => (
                 <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
                         <div
-                                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.22),_transparent_55%)]"
+                                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.12),_transparent_60%)]"
                                 aria-hidden="true"
                         />
                         <div className="relative z-10 flex min-h-screen flex-col">
                                 <NavBar onSelect={handleSelectGame} />
                                 <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 pb-12 pt-8 sm:px-6">
-                                        <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-                                                <div className="order-2 lg:order-1">
-                                                        <div className="relative isolate overflow-hidden rounded-3xl border border-cyan-400/25 bg-slate-900/60 p-3 shadow-[0_35px_60px_-35px_rgba(56,189,248,0.55)] backdrop-blur-xl">
-                                                                <GameBoard
-                                                                        isBlurred={isPaused}
-                                                                        guessedCountries={guessedCountries}
-                                                                        isGameEnded={isGameEnded}
-                                                                        isGameStarted={isGameStarted}
-                                                                />
-                                                                {!isGameStarted && !isGameEnded && (
-                                                                        <div className="absolute inset-0">
-                                                                                <StartOverlay
-                                                                                        onStart={handleStartGame}
-                                                                                        gameDuration={gameDuration}
-                                                                                        onDurationChange={setGameDuration}
-                                                                                />
-                                                                        </div>
-                                                                )}
-                                                                {isGameEnded && (
-                                                                        <div className="absolute inset-0 flex items-center justify-center bg-slate-950/75 backdrop-blur-xl">
-                                                                                <EndGameOverlay
-                                                                                        missedCountries={missedCountries}
-                                                                                        onPlayAgain={handleStartGame}
-                                                                                        countriesGuessed={countriesGuessed[0]}
-                                                                                        timeTaken={gameDuration - timeLeft}
-                                                                                />
-                                                                        </div>
-                                                                )}
-                                                        </div>
-                                                </div>
-                                                <aside className="order-1 lg:order-2 flex flex-col gap-5">
-                                                        <div className="rounded-3xl border border-cyan-400/25 bg-slate-900/70 p-6 shadow-[0_30px_80px_-45px_rgba(56,189,248,0.75)] backdrop-blur-xl">
-                                                                <div className="flex items-center justify-between">
-                                                                        <div>
-                                                                                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-cyan-200/70">
-                                                                                        Mission Control
-                                                                                </p>
-                                                                                <h2 className="text-2xl font-semibold font-montserrat text-white">
-                                                                                        World Map Challenge
-                                                                                </h2>
-                                                                        </div>
-                                                                        <GameTimer timeLeft={timeLeft} />
-                                                                </div>
-                                                                <div className="mt-4 space-y-4">
-                                                                        <CountryCounter
-                                                                                onToggleMenu={handleToggleMenu}
-                                                                                isMenuDown={isMenuDown}
-                                                                                count={countriesGuessed}
-                                                                        />
-                                                                        <div className="flex flex-col gap-3">
-                                                                                <div className="flex items-center justify-between gap-3">
-                                                                                        <PauseButton
-                                                                                                isPaused={isPaused}
-                                                                                                onTogglePause={handleTogglePause}
-                                                                                                disabled={areControlsDisabled}
-                                                                                        />
-                                                                                        <GiveUpButton
-                                                                                                onGiveUp={handleGiveUp}
-                                                                                                disabled={areControlsDisabled}
-                                                                                        />
-                                                                                </div>
-                                                                                <BestScoreDisplay
-                                                                                        bestScore={bestScore}
-                                                                                        bestTime={bestTime}
-                                                                                />
-                                                                        </div>
-                                                                        {feedback && (
-                                                                                <FeedbackMessage
-                                                                                        message={feedback.message}
-                                                                                        type={feedback.type}
-                                                                                />
-                                                                        )}
-                                                                </div>
-                                                        </div>
-                                                </aside>
-                                        </div>
-                                        <div className="rounded-2xl border border-cyan-400/25 bg-slate-900/70 p-4 shadow-[0_35px_60px_-40px_rgba(56,189,248,0.55)] backdrop-blur-xl">
-                                                <CountryInput
-                                                        onSubmit={handleCountrySubmit}
-                                                        disabled={!isGameStarted || isPaused || timeLeft === 0}
-                                                        suggestions={countryNames}
-                                                />
-                                        </div>
+                                        {content}
                                 </main>
                         </div>
                 </div>
+        );
+
+        if (!gameMode) {
+                return renderGameLayout(<Home onSelect={handleSelectGame} />);
+        }
+
+        if (gameMode === "outline") {
+                return renderGameLayout(<OutlineGame />);
+        }
+
+        if (gameMode === "travle") {
+                return renderGameLayout(<TravleGame />);
+        }
+
+        const areControlsDisabled = !isGameStarted || isGameEnded;
+
+        return renderGameLayout(
+                <>
+                        <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+                                <div className="order-2 lg:order-1">
+                                        <div className="relative isolate overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/60 p-3">
+                                                <GameBoard
+                                                        isBlurred={isPaused}
+                                                        guessedCountries={guessedCountries}
+                                                        isGameEnded={isGameEnded}
+                                                        isGameStarted={isGameStarted}
+                                                />
+                                                {!isGameStarted && !isGameEnded && (
+                                                        <div className="absolute inset-0">
+                                                                <StartOverlay
+                                                                        onStart={handleStartGame}
+                                                                        gameDuration={gameDuration}
+                                                                        onDurationChange={setGameDuration}
+                                                                />
+                                                        </div>
+                                                )}
+                                                {isGameEnded && (
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-slate-950/80">
+                                                                <EndGameOverlay
+                                                                        missedCountries={missedCountries}
+                                                                        onPlayAgain={handleStartGame}
+                                                                        countriesGuessed={countriesGuessed[0]}
+                                                                        timeTaken={gameDuration - timeLeft}
+                                                                />
+                                                        </div>
+                                                )}
+                                        </div>
+                                </div>
+                                <aside className="order-1 flex flex-col gap-5 lg:order-2">
+                                        <div className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
+                                                <div className="flex items-center justify-between">
+                                                        <div>
+                                                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                                                                        Mission Control
+                                                                </p>
+                                                                <h2 className="font-montserrat text-2xl font-semibold text-white">
+                                                                        World Map Challenge
+                                                                </h2>
+                                                        </div>
+                                                        <GameTimer timeLeft={timeLeft} />
+                                                </div>
+                                                <div className="mt-4 space-y-4">
+                                                        <CountryCounter
+                                                                onToggleMenu={handleToggleMenu}
+                                                                isMenuDown={isMenuDown}
+                                                                count={countriesGuessed}
+                                                        />
+                                                        <div className="flex flex-col gap-3">
+                                                                <div className="flex items-center justify-between gap-3">
+                                                                        <PauseButton
+                                                                                isPaused={isPaused}
+                                                                                onTogglePause={handleTogglePause}
+                                                                                disabled={areControlsDisabled}
+                                                                        />
+                                                                        <GiveUpButton
+                                                                                onGiveUp={handleGiveUp}
+                                                                                disabled={areControlsDisabled}
+                                                                        />
+                                                                </div>
+                                                                <BestScoreDisplay
+                                                                        bestScore={bestScore}
+                                                                        bestTime={bestTime}
+                                                                />
+                                                        </div>
+                                                        {feedback && (
+                                                                <FeedbackMessage
+                                                                        message={feedback.message}
+                                                                        type={feedback.type}
+                                                                />
+                                                        )}
+                                                </div>
+                                        </div>
+                                </aside>
+                        </div>
+                        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                                <CountryInput
+                                        onSubmit={handleCountrySubmit}
+                                        disabled={!isGameStarted || isPaused || timeLeft === 0}
+                                        suggestions={countryNames}
+                                />
+                        </div>
+                </>
         );
 };
 
