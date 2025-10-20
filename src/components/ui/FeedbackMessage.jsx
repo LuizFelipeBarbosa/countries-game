@@ -1,7 +1,8 @@
 const toneByType = {
-        success: "border-emerald-400/40 bg-emerald-500/15 text-emerald-100",
-        error: "border-rose-400/40 bg-rose-500/15 text-rose-100",
-        info: "border-cyan-300/40 bg-cyan-400/15 text-cyan-100",
+        success: "border-emerald-500/40 bg-emerald-500/10 text-emerald-100",
+        error: "border-rose-500/40 bg-rose-500/10 text-rose-100",
+        info: "border-sky-500/40 bg-sky-500/10 text-sky-100",
+        hint: "border-amber-500/40 bg-amber-500/10 text-amber-100",
 };
 
 const FeedbackMessage = ({ message, type = "info", className = "" }) => {
@@ -9,9 +10,7 @@ const FeedbackMessage = ({ message, type = "info", className = "" }) => {
 
         return (
                 <div
-                        className={`rounded-xl border px-4 py-3 font-montserrat text-sm shadow-[0_12px_30px_-18px_rgba(56,189,248,0.6)] backdrop-blur ${
-                                tone
-                        } ${className}`}
+                        className={`rounded-xl border px-4 py-3 font-montserrat text-sm ${tone} ${className}`}
                         role="status"
                         aria-live={type === "error" ? "assertive" : "polite"}
                 >

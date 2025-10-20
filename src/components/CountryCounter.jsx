@@ -2,27 +2,21 @@ import { ChevronRight } from "lucide-react";
 import { CONTINENTS, TOTAL_COUNTRIES } from "../constants/continents";
 
 const CountryCounter = ({ count, isMenuDown, onToggleMenu }) => (
-        <div className="rounded-2xl border border-cyan-400/25 bg-white/5 p-4 font-montserrat text-white shadow-[0_20px_50px_-35px_rgba(56,189,248,0.7)]">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 font-montserrat text-slate-100">
                 <button
                         type="button"
                         onClick={onToggleMenu}
                         className="flex w-full items-center justify-between gap-4 text-left"
                         aria-expanded={isMenuDown}
                 >
-                        <div>
-                                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-cyan-100/70">
-                                        Discovered
-                                </p>
-                                <p className="text-2xl font-semibold text-white">
-                                        {count[0]}/{TOTAL_COUNTRIES}
-                                </p>
-                                <p className="text-sm text-white/70">Countries found so far</p>
+                        <div className="space-y-1">
+                                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Discovered</p>
+                                <p className="text-2xl font-semibold text-white">{count[0]}/{TOTAL_COUNTRIES}</p>
+                                <p className="text-sm text-slate-400">Countries found so far</p>
                         </div>
-                        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-400/10 text-cyan-100 transition-transform duration-200">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-200 transition-transform duration-200">
                                 <ChevronRight
-                                        className={`h-5 w-5 transition-transform duration-200 ${
-                                                isMenuDown ? "rotate-90" : ""
-                                        }`}
+                                        className={`h-5 w-5 transition-transform duration-200 ${isMenuDown ? "rotate-90" : ""}`}
                                 />
                         </div>
                 </button>
@@ -32,11 +26,11 @@ const CountryCounter = ({ count, isMenuDown, onToggleMenu }) => (
                         }`}
                 >
                         <div className="min-h-0">
-                                <ul className="divide-y divide-white/10 text-sm">
+                                <ul className="divide-y divide-slate-800 text-sm">
                                         {CONTINENTS.map((continent, index) => (
                                                 <li
                                                         key={continent.name}
-                                                        className="flex items-center justify-between py-2 text-cyan-100/90"
+                                                        className="flex items-center justify-between py-2 text-slate-300"
                                                 >
                                                         <span>{continent.name}</span>
                                                         <span className="font-semibold text-white">
