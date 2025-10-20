@@ -2,46 +2,52 @@ import { ChevronRight } from "lucide-react";
 import { CONTINENTS, TOTAL_COUNTRIES } from "../constants/continents";
 
 const CountryCounter = ({ count, isMenuDown, onToggleMenu }) => (
-	<div className="absolute top-4 left-8 bg-white p-1 sm:p-2 rounded shadow">
-		<div className="flex gap-2">
-			<p className="pl-1 font-bold tracking-wide text-center text-gray-700 font-montserrat text-sm sm:text-base">
-				{count[0]}/{TOTAL_COUNTRIES}
-			</p>
-			<p className="pr-1 tracking-wide text-center text-gray-700 font-montserrat text-sm sm:text-base">
-				Countries
-			</p>
-			<button onClick={onToggleMenu}>
-				<ChevronRight
-					className={`hover:stroke-gray-500 transition-transform duration-150 ${
-						isMenuDown ? "rotate-90" : ""
-					}`}
-				/>
-			</button>
-		</div>
-		<div
-			className={`bg-slate-200 rounded transition-all duration-300 overflow-hidden ${
-				isMenuDown ? "max-h-40 mt-1 " : "max-h-0"
-			}`}
-		>
-			<div className="p-1">
-				<ul className="divide-y divide-gray-200">
-					{CONTINENTS.map((continent, index) => (
-						<li
-							key={continent.name}
-							className="flex justify-between"
-						>
-							<span className="font-light tracking-tight text-gray-900 font-montserrat">
-								{continent.name}
-							</span>
-							<span className="text-gray-600 font-semibold font-montserrat">
-								{count[index + 1]}/{continent.total}
-							</span>
-						</li>
-					))}
-				</ul>
-			</div>
-		</div>
-	</div>
+        <div className="rounded-2xl border border-cyan-400/25 bg-white/5 p-4 font-montserrat text-white shadow-[0_20px_50px_-35px_rgba(56,189,248,0.7)]">
+                <button
+                        type="button"
+                        onClick={onToggleMenu}
+                        className="flex w-full items-center justify-between gap-4 text-left"
+                        aria-expanded={isMenuDown}
+                >
+                        <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-cyan-100/70">
+                                        Discovered
+                                </p>
+                                <p className="text-2xl font-semibold text-white">
+                                        {count[0]}/{TOTAL_COUNTRIES}
+                                </p>
+                                <p className="text-sm text-white/70">Countries found so far</p>
+                        </div>
+                        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-400/10 text-cyan-100 transition-transform duration-200">
+                                <ChevronRight
+                                        className={`h-5 w-5 transition-transform duration-200 ${
+                                                isMenuDown ? "rotate-90" : ""
+                                        }`}
+                                />
+                        </div>
+                </button>
+                <div
+                        className={`grid overflow-hidden transition-[grid-template-rows,_margin-top] duration-300 ease-out ${
+                                isMenuDown ? "mt-4 grid-rows-[1fr]" : "mt-0 grid-rows-[0fr]"
+                        }`}
+                >
+                        <div className="min-h-0">
+                                <ul className="divide-y divide-white/10 text-sm">
+                                        {CONTINENTS.map((continent, index) => (
+                                                <li
+                                                        key={continent.name}
+                                                        className="flex items-center justify-between py-2 text-cyan-100/90"
+                                                >
+                                                        <span>{continent.name}</span>
+                                                        <span className="font-semibold text-white">
+                                                                {count[index + 1]}/{continent.total}
+                                                        </span>
+                                                </li>
+                                        ))}
+                                </ul>
+                        </div>
+                </div>
+        </div>
 );
 
 export default CountryCounter;
