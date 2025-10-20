@@ -186,21 +186,21 @@ const GameBoard = ({
 		});
 	}, [zoom]);
 
-	return (
-		<div className="relative w-full">
-			<div
-				className={`bg-blue-400 p-4 rounded-lg shadow-md relative w-full h-full overflow-hidden select-none transition-opacity duration-500 ${
-					isBlurred ? "opacity-50" : "opacity-100"
-				}`}
-			>
-				<MapContainer
-					apiRef={apiRef}
-					className="bg-blue-400 rounded-md relative select-none w-full h-full"
-					ariaLabel="World Map"
-					isDisabled={isBlurred}
-					onSvgLoad={() => {}}
-					onTransformChange={setMapTransform}
-				/>
+        return (
+                <div className="relative w-full">
+                        <div
+                                className={`relative h-full w-full overflow-hidden rounded-3xl border border-cyan-400/20 bg-slate-950/60 p-3 shadow-[0_30px_70px_-45px_rgba(56,189,248,0.65)] transition-opacity duration-500 ${
+                                        isBlurred ? "opacity-50" : "opacity-100"
+                                }`}
+                        >
+                                <MapContainer
+                                        apiRef={apiRef}
+                                        className="relative h-full w-full select-none rounded-2xl bg-slate-950"
+                                        ariaLabel="World Map"
+                                        isDisabled={isBlurred}
+                                        onSvgLoad={() => {}}
+                                        onTransformChange={setMapTransform}
+                                />
 			</div>
 			{isBlurred && (
 				<div className="absolute top-0 left-0 rounded-lg w-full h-full bg-opacity-50 backdrop-blur-3xl select-none transition-opacity duration-500"></div>
