@@ -9,49 +9,73 @@ function MapContainer({
 	isDisabled = false,
 	minZoom = 1,
 	maxZoom = 8,
-	onSvgLoad,
-	onTransformChange,
-	apiRef,
+        onSvgLoad,
+        onTransformChange,
+        apiRef,
+        onApiReady,
 }) {
 	const [zoom, setZoom] = useState(1);
 	const [pan, setPan] = useState({ x: 0, y: 0 });
 	const [isDragging, setIsDragging] = useState(false);
 	const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-	const [svgLoaded, setSvgLoaded] = useState(false);
+        const containerRef = useRef(null);
+        const svgObjectRef = useRef(null);
+        const pinchRef = useRef(null);
 
-	const containerRef = useRef(null);
-	const svgObjectRef = useRef(null);
-	const pinchRef = useRef(null);
+        const getSvgDocument = useCallback(
+                () => svgObjectRef.current?.contentDocument ?? null,
+                []
+        );
+        const resetColors = useCallback(
+                (codes, baseColor = "#d4d4d8") => {
+                        const doc = getSvgDocument();
+                        if (!doc || !codes?.length) return;
+                        applyHighlighting(doc, baseColor, codes);
+                },
+                [getSvgDocument]
+        );
+        const colorCountries = useCallback(
+                (color, codes) => {
+                        const doc = getSvgDocument();
+                        if (!doc || !codes?.length) return;
+                        applyHighlighting(doc, color, codes);
+                },
+                [getSvgDocument]
+        );
+        const colorCountry = useCallback(
+                (code, color) => {
+                        const doc = getSvgDocument();
+                        if (!doc || !code) return;
+                        applyHighlighting(doc, color, [code]);
+                },
+                [getSvgDocument]
+        );
 
-	const getSvgDocument = () => svgObjectRef.current?.contentDocument ?? null;
-	const resetColors = (codes, baseColor = "#d4d4d8") => {
-		const doc = getSvgDocument();
-		if (!doc || !codes?.length) return;
-		applyHighlighting(doc, baseColor, codes);
-	};
-	const colorCountries = (color, codes) => {
-		const doc = getSvgDocument();
-		if (!doc || !codes?.length) return;
-		applyHighlighting(doc, color, codes);
-	};
-	const colorCountry = (code, color) => {
-		const doc = getSvgDocument();
-		if (!doc || !code) return;
-		applyHighlighting(doc, color, [code]);
-	};
+        useEffect(() => {
+                if (!apiRef) return;
 
-	useEffect(() => {
-		if (!apiRef) return;
-		apiRef.current = {
-			resetColors,
-			colorCountries,
-			colorCountry,
-			getSvgDocument,
-		};
-		return () => {
-			if (apiRef) apiRef.current = null;
-		};
-	}, [apiRef]);
+                const api = {
+                        resetColors,
+                        colorCountries,
+                        colorCountry,
+                        getSvgDocument,
+                };
+
+                apiRef.current = api;
+                onApiReady?.(api);
+
+                return () => {
+                        if (apiRef) apiRef.current = null;
+                        onApiReady?.(null);
+                };
+        }, [
+                apiRef,
+                onApiReady,
+                resetColors,
+                colorCountries,
+                colorCountry,
+                getSvgDocument,
+        ]);
 
 	const calculatePanLimits = (containerRect, svgRect, currentZoom) => {
 		const horizontalOverflow = Math.max(
@@ -267,18 +291,16 @@ function MapContainer({
 		const svgObject = svgObjectRef.current;
 		if (!svgObject) return;
 
-		const onLoad = () => {
-			setSvgLoaded(true);
-			if (svgObject.contentDocument) {
-				onSvgLoad?.(svgObject.contentDocument);
-			}
-		};
+                const onLoad = () => {
+                        if (svgObject.contentDocument) {
+                                onSvgLoad?.(svgObject.contentDocument);
+                        }
+                };
 
-		if (svgObject.contentDocument) {
-			setSvgLoaded(true);
-			onSvgLoad?.(svgObject.contentDocument);
-			return;
-		}
+                if (svgObject.contentDocument) {
+                        onSvgLoad?.(svgObject.contentDocument);
+                        return;
+                }
 
 		svgObject.addEventListener("load", onLoad);
 		return () => svgObject.removeEventListener("load", onLoad);

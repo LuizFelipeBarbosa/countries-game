@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import MapContainer from "./MapContainer";
 import VALID_COUNTRIES from "../assets/countries_with_continents.json";
 
@@ -8,37 +8,17 @@ const GameBoard = ({
 	isGameEnded,
 	isGameStarted,
 }) => {
-	const [boardHeight, setBoardHeight] = useState(0);
-	const apiRef = useRef(null);
-	const [mapTransform, setMapTransform] = useState({
-		zoom: 1,
-		pan: { x: 0, y: 0 },
-	});
+        const apiRef = useRef(null);
+        const [mapTransform, setMapTransform] = useState({
+                zoom: 1,
+                pan: { x: 0, y: 0 },
+        });
 	const zoom = mapTransform.zoom;
 
 	const allAlpha2 = useMemo(
 		() => VALID_COUNTRIES.map((country) => country.alpha2),
 		[]
 	);
-
-	useEffect(() => {
-		const updateHeight = () => {
-			const height = window.visualViewport
-				? window.visualViewport.height
-				: window.innerHeight;
-			const ratio = window.innerWidth >= 640 ? 0.7 : 0.6;
-			setBoardHeight(height * ratio);
-		};
-
-		updateHeight();
-		window.addEventListener("resize", updateHeight);
-		window.visualViewport?.addEventListener("resize", updateHeight);
-
-		return () => {
-			window.removeEventListener("resize", updateHeight);
-			window.visualViewport?.removeEventListener("resize", updateHeight);
-		};
-	}, []);
 
 	useEffect(() => {
 		const api = apiRef.current;
